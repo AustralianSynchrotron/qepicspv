@@ -61,16 +61,10 @@ void QEpicsPV::setPV(const QString & _pvName) {
   // Qt::QueuedConnection here is needed to ensure the QEventLoop in
   // ::getUpdated() and ::getReady() methods are running smoothly.
   //
-  // This requirement to use the queued signal and slot connections in
+  // This requirement to use the queued signal and slot connections
   // caused the necessity to register the corresponding types using
   // qRegisterMetaType() functions.
   //
-  // Also I had to change the references in the original
-  //      QCaObject::dataChanged( const QVariant& value, QCaAlarmInfo& alarmInfo, QCaDateTime& timeStamp )
-  // and
-  //      QCaObject::connectionChanged( QCaConnectionInfo& connectionInfo )
-  // slots into the variables. Without doing so the connections below
-  // could not be established when used with the Qt::QueuedConnection.
   connect(_qCaField, SIGNAL(connectionChanged(QCaConnectionInfo&)),
           SLOT(updateConnection()), Qt::QueuedConnection);
   connect(_qCaField, SIGNAL(dataChanged(QVariant,QCaAlarmInfo&,QCaDateTime&)),
