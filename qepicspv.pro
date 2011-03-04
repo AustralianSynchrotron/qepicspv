@@ -42,7 +42,8 @@ HEADERS += qepicspv.h \
     src/QCaEventUpdate.h \
     src/QCaObject.h \
     src/QCaStateMachine.h \
-    src/UserMessage.h
+    src/UserMessage.h \
+    src/QCaPluginLibrary_global.h
 
 
 LIBS += -L${EPICS_BASE}/lib/${EPICS_HOST_ARCH} \

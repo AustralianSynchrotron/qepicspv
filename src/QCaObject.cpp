@@ -1,37 +1,32 @@
-/* $File: //ASP/Dev/SBS/4_Controls/4_8_GUI_Frameworks/4_8_2_Qt/sw/ca_framework/data/src/QCaObject.cpp $
- * $Revision: #12 $
- * $DateTime: 2009/10/19 12:41:58 $
- * Last checked in by: $Author: rhydera $
- */
-
-/*!
+/*! 
   \class QCaObject
-  \version $Revision: #12 $
-  \date $DateTime: 2009/10/19 12:41:58 $
+  \version $Revision: #15 $
+  \date $DateTime: 2010/08/30 16:37:08 $
   \author anthony.owen
   \brief Provides channel access to QT.
  */
-
-/* Copyright (c) 2009 Australian Synchrotron
+/*
+ *  This file is part of the EPICS QT Framework, initially developed at the Australian Synchrotron.
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * Licence as published by the Free Software Foundation; either
- * version 2.1 of the Licence, or (at your option) any later version.
+ *  The EPICS QT Framework is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
  *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public Licence for more details.
+ *  The EPICS QT Framework is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public
- * Licence along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
+ *  You should have received a copy of the GNU General Public License
+ *  along with the EPICS QT Framework.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Contact details:
- * anthony.owen@synchrotron.org.au
- * 800 Blackburn Road, Clayton, Victoria 3168, Australia.
+ *  Copyright (c) 2009, 2010
  *
+ *  Author:
+ *    Anthony Owen
+ *  Contact details:
+ *    anthony.owen@gmail.com
  */
 
 #include <QtCore>
@@ -49,7 +44,7 @@ using namespace generic;
 using namespace caconnection;
 
 //! Used to protect access to outstandingEvents list
-QMutex QCaObject::outstandingEventsLock;
+QMutex QCaObject::pendingEventsLock;
 
 //! An event filter for processing data updates in a Qt thread.
 QCaEventFilter QCaObject::eventFilter;
@@ -73,7 +68,24 @@ void QCaObject::initialise( const QString& newRecordName, QObject *newEventHandl
 
     // Initialise variables
     precision = 0;
+
+    displayLimitUpper = 0;
+    displayLimitLower = 0;
+
+    alarmLimitUpper = 0;
+    alarmLimitLower = 0;
+
+    warningLimitUpper = 0;
+    warningLimitLower = 0;
+
+    controlLimitUpper = 0;
+    controlLimitLower = 0;
+
     isStatField = false;
+
+    lastTimeStamp = QCaDateTime( QDateTime::currentDateTime() );
+//    lastAlarmInfo = ???;
+    lastValue = (double)0.0;
 
     // Setup any the mechanism to handle messages to the user, if supplied
     setUserMessage( userMessageIn );
@@ -108,7 +120,8 @@ void QCaObject::initialise( const QString& newRecordName, QObject *newEventHandl
 }
 
 /*!
-    ???
+    Destructor. Remove the channel and ensure that any unprocessed events posted by this obect will be ignored when
+    they pop out of the event queue. Also, remove the event filter if this is the last QCaObject.
 */
 QCaObject::~QCaObject() {
     /// Prevent channel access callbacks.
@@ -120,10 +133,10 @@ QCaObject::~QCaObject() {
     CaObjectPrivate* p = (CaObjectPrivate*)priPtr;
     p->removeChannel();
 
-    /// Protect access to outstanding events list
-    QMutexLocker locker( &outstandingEventsLock );
+    /// Protect access to pending events list
+    QMutexLocker locker( &pendingEventsLock );
 
-    /// Ensure processing of outstanding events wil not access this QCaObject after deletion.
+    /// Ensure processing of outstanding events will not access this QCaObject after deletion.
     /// If an event has been posted by a QCaObject, and the QCaObject is deleted before
     /// the event is processed, the event will still be processed if the event filter is
     /// still in place - and the filter will still be there if any other QCaObjects are using
@@ -145,7 +158,7 @@ QCaObject::~QCaObject() {
 }
 
 /*!
-    ???
+    Subcribe
 */
 bool QCaObject::subscribe() {
 
@@ -153,7 +166,7 @@ bool QCaObject::subscribe() {
 }
 
 /*!
-    ???
+    Initiate a single shot read
 */
 bool QCaObject::singleShotRead() {
 
@@ -161,14 +174,70 @@ bool QCaObject::singleShotRead() {
 }
 
 /*!
-   Process self generated events and only accept them if this event if the
+   Process self generated events and only accept them if the
    originating QCaObject still exists.
+   Note, this is a static method
 */
-void QCaObject::processEventStatic( QCaEventUpdate* dataUpdateEvent ) {
-    QMutexLocker locker( &outstandingEventsLock );
-    if( dataUpdateEvent->acceptThisEvent == true ) {
+void QCaObject::processEventStatic( QCaEventUpdate* dataUpdateEvent )
+{
+    bool eventValid;
+    eventValid = false;
+
+    { // Limit scope of pending event list lock
+
+        // Protect access to the pending events list
+        QMutexLocker locker( &pendingEventsLock );
+
+        // If the originating object still exists, remove the event from it's list of pending events
+        if( dataUpdateEvent->acceptThisEvent == true )
+        {
+            // Remove the event from the list of pending events.
+            eventValid = dataUpdateEvent->emitterObject->removeEventFromPendingList( dataUpdateEvent );
+        }
+
+    } // Pending event list unlocked here
+
+    // If the originating object still exists, process the event
+    if( eventValid && dataUpdateEvent->acceptThisEvent == true )
+    {
         dataUpdateEvent->emitterObject->processEvent( dataUpdateEvent );
     }
+}
+
+/**
+   Remove an event from the pending event list.
+   If the event can't be found log an error and return false indicating 'the event is suspect - don't use it'.
+   The list must be locked (using pendingEventsLock) prior to calling this method
+*/
+bool QCaObject::removeEventFromPendingList( QCaEventUpdate* dataUpdateEvent )
+{
+    /// If list is empty, something is wrong - report it
+    if( pendingEvents.isEmpty() )
+    {
+        QString msg( recordName );
+        if( userMessage )
+        {
+            QString msg( recordName );
+            userMessage->sendErrorMessage( msg.append( " Outstanding events list is empty. It should contain at least one event"), "QCaObject::processEvent()"  );
+        }
+        return false;
+    }
+
+    /// If the first item in the list is not the current event, something is wrong - report it
+    if( pendingEvents[0].event != dataUpdateEvent )
+    {
+        QString msg( recordName );
+        if( userMessage )
+        {
+            QString msg( recordName );
+            userMessage->sendErrorMessage( msg.append( " Outstanding events list is corrupt. The first event is not the event being processed" ), "QCaObject::processEvent()" );
+        }
+        return false;
+    }
+
+    /// Remove this event from the list
+    pendingEvents.removeFirst();
+    return true;
 }
 
 /*!
@@ -180,10 +249,14 @@ bool QCaObject::dataTypeKnown() {
 }
 
 /*!
-    ???
+    Create a channel
 */
 bool QCaObject::createChannel() {
+
+    // Get the private part of this object (not visible to users of this class)
     CaObjectPrivate* p = (CaObjectPrivate*)(priPtr);
+
+    // Try to create the channel
     caconnection::ca_responses response = p->setChannel( recordName.toStdString() );
     if( response == caconnection::REQUEST_SUCCESSFUL )
     {
@@ -206,18 +279,26 @@ bool QCaObject::createChannel() {
 }
 
 /*!
-    ???
+    Delete a channel
 */
 void QCaObject::deleteChannel() {
+
+    // Get the private part of this object (not visible to users of this class)
     CaObjectPrivate* p = (CaObjectPrivate*)(priPtr);
+
+    // Delete the channel
     p->removeChannel();
 }
 
 /*!
-    ???
+    Create a subscription
 */
 bool QCaObject::createSubscription() {
+
+    // Get the private part of this object (not visible to users of this class)
     CaObjectPrivate* p = (CaObjectPrivate*)(priPtr);
+
+    // Try to start a subscription
     caconnection::ca_responses response = p->startSubscription();
     if( response == caconnection::REQUEST_SUCCESSFUL )
     {
@@ -243,7 +324,11 @@ bool QCaObject::createSubscription() {
     ???
 */
 bool QCaObject::getChannel() {
+
+    // Get the private part of this object (not visible to users of this class)
     CaObjectPrivate* p = (CaObjectPrivate*)(priPtr);
+
+    // ???
     caconnection::ca_responses response = p->readChannel();
     if( response == caconnection::REQUEST_SUCCESSFUL )
     {
@@ -364,25 +449,57 @@ bool QCaObject::writeData( const QVariant& newData ) {
 */
 void QCaObject::signalCallback( caobject::callback_reasons newReason ) {
 
-    // Initialise sata package.
+    // Initialise data package.
     // It is really of type carecord::CaRecord*
     void* dataPackage = NULL;
 
-    ///Only case where data is processed
-    if( newReason == caobject::SUBSCRIPTION_SUCCESS || newReason == caobject::READ_SUCCESS)
+    /// Only case where data is processed. Package the data
+    if( newReason == caobject::SUBSCRIPTION_SUCCESS || newReason == caobject::READ_SUCCESS )
+    {
         dataPackage = getRecordCopyPtr();
+    }
 
-    /// Package the data to be processed within the context of a Qt thread.
-    QCaEventUpdate* newDataEvent = new QCaEventUpdate( this, newReason, dataPackage );
+    // If the callback is a data update callback, and there is an earlier, unprocessed, data event
+    // of the same type in the queue, replace the data package with this one.
+    // This is better than adding events faster than they can be processed.
+    bool replaced = false;  // True if data replaced in earlier event
+    if( dataPackage )
+    { // Limit scope of pending event list lock
+        QMutexLocker locker( &pendingEventsLock );
+        for( int i = 0; i < pendingEvents.count(); i++ )
+        {
+            QCaEventUpdate* event = pendingEvents[i].event;
+            if(event->reason == newReason )
+            {
+                delete (carecord::CaRecord*)(event->dataPtr);
+                event->dataPtr = dataPackage;
+                replaced = true;
+                break;
+            }
+        }
+    }
 
-    /// Add the event to the list of pending events.
-    /// A list is maintained to allow pending events to be updated 'in transit'.
-    /// This must be done before posting the event as the event is likely to be processed before the postEvent call returns.
-    QCaEventItem item( newDataEvent );
-    pendingEvents.append( item );
+    // This is not a data update event, or there is no earlier, unprocessed, data event in the queue,
+    // create a new event and post it to the event queue
+    if( !replaced )
+    {
+        /// Package the data to be processed within the context of a Qt thread.
+        QCaEventUpdate* newDataEvent = new QCaEventUpdate( this, newReason, dataPackage );
 
-    /// Post the data to be processed within the context of a Qt thread.
-    QCoreApplication::postEvent( eventHandler, newDataEvent );
+        /// Add the event to the list of pending events.
+        /// A list is maintained to allow pending events to be updated 'in transit'.
+        /// This must be done before posting the event as the event is likely to be processed before
+        /// the postEvent call returns.
+        QCaEventItem item( newDataEvent );
+        { // Limit scope of pending event list lock
+            QMutexLocker locker( &pendingEventsLock );
+            pendingEvents.append( item );
+        }
+
+        /// Post the data to be processed within the context of a Qt thread.
+        QCoreApplication::postEvent( eventHandler, newDataEvent );
+
+    }
 
     // Processing will continue within the context of a Qt thread in QCaObject::processEvent() below.
 }
@@ -390,10 +507,13 @@ void QCaObject::signalCallback( caobject::callback_reasons newReason ) {
 /*!
     Process events posted from the EPICS library thread. The event is expected
     to provide snapshot of data.
-    This method completes the processing of a CA callback, started in QCaObject::signalCallback() above, within a Qt thread
+    This method completes the processing of a CA callback, started in QCaObject::signalCallback() above,
+    within a Qt thread
+    Note,
 */
 void QCaObject::processEvent( QCaEventUpdate* dataUpdateEvent ) {
 
+    // Process the event, based on the event type
     switch( dataUpdateEvent->reason ) {
         case caobject::CONNECTION_UP :
         {
@@ -530,28 +650,6 @@ void QCaObject::processEvent( QCaEventUpdate* dataUpdateEvent ) {
         emit connectionChanged( connectionInfo );
     }
 
-    ///Remove event from outstanding list of event
-    if( pendingEvents.isEmpty() )
-    {
-        QString msg( recordName );
-        if( userMessage )
-        {
-            QString msg( recordName );
-            userMessage->sendErrorMessage( msg.append( " Outstanding events list is empty. It should contain at least one event"), "QCaObject::processEvent()"  );
-        }
-        return;
-    }
-    if( pendingEvents[0].event != dataUpdateEvent )
-    {
-        QString msg( recordName );
-        if( userMessage )
-        {
-            QString msg( recordName );
-            userMessage->sendErrorMessage( msg.append( " Outstanding events list is corrupt. The first event is not the event being processed" ), "QCaObject::processEvent()" );
-        }
-        return;
-    }
-    pendingEvents.removeFirst();
 }
 
 /*!
@@ -559,6 +657,7 @@ void QCaObject::processEvent( QCaEventUpdate* dataUpdateEvent ) {
     This is called when appropriate while processing an event containing CA data
 */
 void QCaObject::processData( void* newDataPtr ) {
+
     // Recover the data record
     carecord::CaRecord* newData = (carecord::CaRecord*)newDataPtr;
 
@@ -587,10 +686,28 @@ void QCaObject::processData( void* newDataPtr ) {
 
         // Note the precision
         precision = CaObject::getPrecision();
+
+        // Note the display limits
+        displayLimitUpper = CaObject::getDisplayUpper();
+        displayLimitLower = CaObject::getDisplayLower();
+
+        // Note the alarm limits
+        alarmLimitUpper = CaObject::getAlarmUpper();
+        alarmLimitLower = CaObject::getAlarmLower();
+
+        // Note the warning limits
+        warningLimitUpper = CaObject::getWarningUpper();
+        warningLimitLower = CaObject::getWarningLower();
+
+        // Note the control limits
+        controlLimitUpper = CaObject::getControlUpper();
+        controlLimitLower = CaObject::getControlLower();
+
     }
 
     // Package up the CA data as a Qt variant
     QVariant value;
+    unsigned long arrayCount = newData->getArrayCount();
     switch( newData->getType() ) {
         case generic::STRING :
             value = QVariant( QString::fromStdString( newData->getString() ) );
@@ -605,7 +722,22 @@ void QCaObject::processData( void* newDataPtr ) {
             value = QVariant( (qlonglong) newData->getUnsignedLong() );
         break;
         case generic::DOUBLE :
-            value = QVariant( newData->getDouble() );
+            if( arrayCount <= 1 )
+            {
+                value = QVariant( newData->getDouble() );
+            }
+            else
+            {
+                QVariantList values;
+                double* data;
+                newData->getDouble( &data );
+
+                for( unsigned long i = 0; i < arrayCount; i++ )
+                {
+                    values.append( data[i] );
+                }
+                value = QVariant( values );
+            }
         break;
         case generic::UNKNOWN :
             value = QVariant();
@@ -632,6 +764,13 @@ void QCaObject::processData( void* newDataPtr ) {
 
     // Send off the new data
     emit dataChanged( value, alarmInfo, timeStamp );
+
+    // Save the data just emited
+    lastValue = value;
+    lastAlarmInfo = alarmInfo;
+    lastTimeStamp = timeStamp;
+
+    // Discard the event data
     delete newData;
 }
 
@@ -668,6 +807,14 @@ void QCaObject::setUserMessage( UserMessage* userMessageIn )
 }
 
 /*!
+  Re-emit the last data emited, if any
+  */
+void QCaObject::resendLastData()
+{
+    emit dataChanged( lastValue, lastAlarmInfo, lastTimeStamp );
+}
+
+/*!
  Return the engineering units, if any
 */
 QString QCaObject::getEgu() {
@@ -688,3 +835,91 @@ unsigned int QCaObject::getPrecision()
 {
     return precision;
 }
+
+/*!
+ Return the display upper limit, if any
+*/
+double QCaObject::getDisplayLimitUpper()
+{
+    return displayLimitUpper;
+}
+
+/*!
+ Return the display lower limit, if any
+*/
+double QCaObject::getDisplayLimitLower()
+{
+    return displayLimitLower;
+}
+
+/*!
+ Return the alarm upper limit, if any
+*/
+double QCaObject::getAlarmLimitUpper()
+{
+    return alarmLimitUpper;
+}
+
+/*!
+ Return the alarm lower limit, if any
+*/
+double QCaObject::getAlarmLimitLower()
+{
+    return alarmLimitLower;
+}
+
+/*!
+ Return the warning upper limit, if any
+*/
+double QCaObject::getWarningLimitUpper()
+{
+    return warningLimitUpper;
+}
+
+/*!
+ Return the warning lower limit, if any
+*/
+double QCaObject::getWarningLimitLower()
+{
+    return warningLimitLower;
+}
+
+/*!
+ Return the control upper limit, if any
+*/
+double QCaObject::getControlLimitUpper()
+{
+    return controlLimitUpper;
+}
+
+/*!
+ Return the control lower limit, if any
+*/
+double QCaObject::getControlLimitLower()
+{
+    return controlLimitLower;
+}
+
+/*!
+  Set if callbacks are required on write completion. (default is write with no callback)
+  Note, this is not just for better write status, if affects the behaviour of the write as follows:
+  When using write with callback, then record will finish processing before accepting next write.
+  Writing with callback may be required when writing code that is tightly integrated with record
+  processing and code nneds to know processing has completed.
+  Writing with no callback is more desirable when a detachement from record processing is required, for
+  example in a GUI after issuing a motor record move a motor stop command will take effect immedietly
+  if writing without callback, but will only take affect after the move has finished if writing with callback.
+  */
+void QCaObject::enableWriteCallbacks( bool enable )
+{
+    setWriteWithCallback( enable );
+}
+
+/*!
+  Determine if callbacks are required on write completion.
+*/
+bool QCaObject::isWriteCallbacksEnabled()
+{
+    return getWriteWithCallback();
+}
+

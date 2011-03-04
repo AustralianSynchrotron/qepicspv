@@ -1,37 +1,32 @@
-/* $File: //ASP/Dev/SBS/4_Controls/4_8_GUI_Frameworks/4_8_2_Qt/sw/ca_framework/data/src/UserMessage.cpp $
- * $Revision: #2 $
- * $DateTime: 2009/07/21 17:58:00 $
- * Last checked in by: $Author: rhydera $
- */
-
 /*! 
   \class UserMessage
-  \version $Revision: #2 $
-  \date $DateTime: 2009/07/21 17:58:00 $
+  \version $Revision: #4 $
+  \date $DateTime: 2010/06/23 07:49:40 $
   \author andrew.rhyder
   \brief User message manager.
  */
-
-/* Copyright (c) 2009 Australian Synchrotron
+/*
+ *  This file is part of the EPICS QT Framework, initially developed at the Australian Synchrotron.
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * Licence as published by the Free Software Foundation; either
- * version 2.1 of the Licence, or (at your option) any later version.
+ *  The EPICS QT Framework is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
  *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public Licence for more details.
+ *  The EPICS QT Framework is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public
- * Licence along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
+ *  You should have received a copy of the GNU General Public License
+ *  along with the EPICS QT Framework.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Contact details:
- * andrew.rhyder@synchrotron.org.au
- * 800 Blackburn Road, Clayton, Victoria 3168, Australia.
+ *  Copyright (c) 2009, 2010
  *
+ *  Author:
+ *    Andrew Rhyder
+ *  Contact details:
+ *    andrew.rhyder@synchrotron.org.au
  */
 
 /** Description:

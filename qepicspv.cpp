@@ -11,10 +11,9 @@ const QVariant QEpicsPV::badData = QVariant();
 const bool QEpicsPV::inited = QEpicsPV::init();
 
 bool QEpicsPV::init() {
-  qRegisterMetaType<QCaConnectionInfo>("QCaConnectionInfo");
-  qRegisterMetaType<QCaAlarmInfo>("QCaAlarmInfo");
-  qRegisterMetaType<QCaDateTime>("QCaDateTime");
-  qRegisterMetaType<QVariant>("QVariant");
+  qRegisterMetaType<QCaConnectionInfo>("QCaConnectionInfo&");
+  qRegisterMetaType<QCaAlarmInfo>("QCaAlarmInfo&");
+  qRegisterMetaType<QCaDateTime>("QCaDateTime&");
   return true;
 }
 
@@ -72,9 +71,9 @@ void QEpicsPV::setPV(const QString & _pvName) {
   //      QCaObject::connectionChanged( QCaConnectionInfo& connectionInfo )
   // slots into the variables. Without doing so the connections below
   // could not be established when used with the Qt::QueuedConnection.
-  connect(_qCaField, SIGNAL(connectionChanged( QCaConnectionInfo )),
+  connect(_qCaField, SIGNAL(connectionChanged(QCaConnectionInfo&)),
           SLOT(updateConnection()), Qt::QueuedConnection);
-  connect(_qCaField, SIGNAL(dataChanged(QVariant,QCaAlarmInfo,QCaDateTime)),
+  connect(_qCaField, SIGNAL(dataChanged(QVariant,QCaAlarmInfo&,QCaDateTime&)),
           SLOT(updateValue(QVariant)), Qt::QueuedConnection);
 
   _qCaField->subscribe();

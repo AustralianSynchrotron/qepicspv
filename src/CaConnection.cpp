@@ -1,37 +1,32 @@
-/* $File: //ASP/Dev/SBS/4_Controls/4_8_GUI_Frameworks/4_8_2_Qt/sw/ca_framework/api/src/CaConnection.cpp $
- * $Revision: #1 $ 
- * $DateTime: 2009/07/14 15:59:56 $
- * Last checked in by: $Author: rhydera $
- */
-
 /*! 
   \class CaConnection
-  \version $Revision: #1 $
-  \date $DateTime: 2009/07/14 15:59:56 $
+  \version $Revision: #4 $
+  \date $DateTime: 2010/08/30 16:37:08 $
   \author anthony.owen
   \brief Low level wrapper around the EPICS library
  */
-
-/* Copyright (c) 2009 Australian Synchrotron
+/*
+ *  This file is part of the EPICS QT Framework, initially developed at the Australian Synchrotron.
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * Licence as published by the Free Software Foundation; either
- * version 2.1 of the Licence, or (at your option) any later version.
+ *  The EPICS QT Framework is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
  *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public Licence for more details.
+ *  The EPICS QT Framework is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public
- * Licence along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
+ *  You should have received a copy of the GNU General Public License
+ *  along with the EPICS QT Framework.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Contact details:
- * anthony.owen@synchrotron.org.au
- * 800 Blackburn Road, Clayton, Victoria 3168, Australia.
+ *  Copyright (c) 2009, 2010
  *
+ *  Author:
+ *    Anthony Owen
+ *  Contact details:
+ *    anthony.owen@gmail.com
  */
 
 #include <CaConnection.h>
@@ -111,13 +106,30 @@ ca_responses CaConnection::establishChannel( void (*connectionHandler)(struct co
     }
 }
 
+
+// Set the channel element count.
+// This can be done after the connection callback has been called and the connection is up
+void CaConnection::setChannelElementCount()
+{
+    // Get the channel element count. This can be done after the connection callback has been called and the connection is up
+    channel.elementCount = ca_element_count( channel.id );
+
+    // If fail, default element count to a single element
+
+    if( channel.elementCount < 1  )
+    {
+        channel.elementCount = 1;
+    }
+}
+
 /*!
     Subscribes to the established channel and registers for data callbacks
     Use isSubscribed() for feedback.
 */
 ca_responses CaConnection::establishSubscription( void (*subscriptionHandler)(struct event_handler_args), void* args, short dbrStructType ) {
+
     if( channel.activated == true && subscription.activated == false ) {
-        subscription.creation = ca_create_subscription( dbrStructType, 1, channel.id, DBE_VALUE|DBE_ALARM, subscriptionHandler, args, NULL );
+        subscription.creation = ca_create_subscription( dbrStructType, channel.elementCount, channel.id, DBE_VALUE|DBE_ALARM, subscriptionHandler, args, NULL );
         ca_pend_io( link.searchTimeout );
         subscription.activated = true;
         switch( subscription.creation ) {
@@ -158,7 +170,7 @@ void CaConnection::removeSubscription() {
 */
 ca_responses CaConnection::readChannel( void (*readHandler)(struct event_handler_args), void* args, short dbrStructType ) {
     if( channel.activated == true ) {
-        channel.readResponse = ca_get_callback( dbrStructType, channel.id, readHandler, args);
+        channel.readResponse = ca_array_get_callback( dbrStructType, channel.elementCount, channel.id, readHandler, args);
         ca_pend_io( link.readTimeout );
         switch( channel.readResponse ) {
             case ECA_NORMAL :
@@ -181,7 +193,11 @@ ca_responses CaConnection::readChannel( void (*readHandler)(struct event_handler
 */
 ca_responses CaConnection::writeChannel( void (*writeHandler)(struct event_handler_args), void* args, short dbrStructType, const void* newDbrValue ) {
     if( channel.activated == true ) {
-        channel.writeResponse = ca_put_callback( dbrStructType, channel.id, newDbrValue, writeHandler, args);
+        if( channel.writeWithCallback )
+            channel.writeResponse = ca_put_callback( dbrStructType, channel.id, newDbrValue, writeHandler, args);
+        else
+            channel.writeResponse = ca_put( dbrStructType, channel.id, newDbrValue);
+
         ca_pend_io( link.readTimeout );
         switch( channel.writeResponse ) {
             case ECA_NORMAL :
@@ -197,6 +213,30 @@ ca_responses CaConnection::writeChannel( void (*writeHandler)(struct event_handl
     } else {
         return CHANNEL_DISCONNECTED;
     }
+}
+
+/*!
+    Set the write callback mode.
+    Write with no callback using ca_put() (default)
+    or write with callback using ca_put_callback()
+    When using write with callback, then record will finish processing before accepting next write.
+    Writing with callback may be required when writing code that is tightly integrated with record
+    processing and code nneds to know processing has completed.
+    Writing with no callback is more desirable when a detachement from record processing is required, for
+    example in a GUI after issuing a motor record move a motor stop command will take effect immedietly
+    if writing without callback, but will only take affect after the move has finished if writing with callback.
+*/
+void CaConnection::setWriteWithCallback( bool writeWithCallbackIn )
+{
+    channel.writeWithCallback = writeWithCallbackIn;
+}
+
+/*!
+    Get the write callback mode.
+*/
+bool CaConnection::getWriteWithCallback()
+{
+    return channel.writeWithCallback;
 }
 
 /*!
@@ -289,6 +329,7 @@ void CaConnection::reset() {
     channel.state = cs_never_conn;
     channel.type = -1;
     channel.id = NULL;
+    channel.writeWithCallback = false;
 
     subscription.activated = false;
     subscription.creation = false;

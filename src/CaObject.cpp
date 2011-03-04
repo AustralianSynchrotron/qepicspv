@@ -1,44 +1,32 @@
-/* $File: //ASP/Dev/SBS/4_Controls/4_8_GUI_Frameworks/4_8_2_Qt/sw/ca_framework/api/src/CaObject.cpp $
- * $Revision: #8 $ 
- * $DateTime: 2009/11/18 10:21:48 $
- * Last checked in by: $Author: rhydera $
- */
-
 /*! 
   \class CaObject
-  \version $Revision: #8 $
-  \date $DateTime: 2009/11/18 10:21:48 $
+  \version $Revision: #11 $
+  \date $DateTime: 2010/08/30 16:37:08 $
   \author anthony.owen
   \brief Provides CA to an EPICS channel.
  */
-
-/* Copyright (c) 2009 Australian Synchrotron
+/*
+ *  This file is part of the EPICS QT Framework, initially developed at the Australian Synchrotron.
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * Licence as published by the Free Software Foundation; either
- * version 2.1 of the Licence, or (at your option) any later version.
+ *  The EPICS QT Framework is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
  *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public Licence for more details.
+ *  The EPICS QT Framework is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public
- * Licence along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
+ *  You should have received a copy of the GNU General Public License
+ *  along with the EPICS QT Framework.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Contact details:
- * anthony.owen@synchrotron.org.au
- * 800 Blackburn Road, Clayton, Victoria 3168, Australia.
+ *  Copyright (c) 2009, 2010
  *
- *
- * Description
- *
- * CaObject is a non Qt C++ wrapper around the EPICS CA library.
- *
- * It is uses a void* pointer to a private class (CaObjectPrivate) to hide
- * CA definitions from users.
+ *  Author:
+ *    Anthony Owen
+ *  Contact details:
+ *    anthony.owen@gmail.com
  */
 
 #define epicsAlarmGLOBAL
@@ -348,6 +336,102 @@ short CaObject::getAlarmSeverity()
 }
 
 /*!
+    Returns the display upper limit
+*/
+double CaObject::getDisplayUpper()
+{
+    // Get the parts not shared with the non CA world
+    CaObjectPrivate* p = (CaObjectPrivate*)priPtr;
+
+    carecord::ca_limit limit = p->caRecord.getDisplayLimit();
+    return limit.upper;
+}
+
+/*!
+    Returns the display lower limit
+*/
+double CaObject::getDisplayLower()
+{
+    // Get the parts not shared with the non CA world
+    CaObjectPrivate* p = (CaObjectPrivate*)priPtr;
+
+    carecord::ca_limit limit = p->caRecord.getDisplayLimit();
+    return limit.lower;
+}
+
+/*!
+    Returns the alarm upper limit
+*/
+double CaObject::getAlarmUpper()
+{
+    // Get the parts not shared with the non CA world
+    CaObjectPrivate* p = (CaObjectPrivate*)priPtr;
+
+    carecord::ca_limit limit = p->caRecord.getAlarmLimit();
+    return limit.upper;
+}
+
+/*!
+    Returns the alarm lower limit
+*/
+double CaObject::getAlarmLower()
+{
+    // Get the parts not shared with the non CA world
+    CaObjectPrivate* p = (CaObjectPrivate*)priPtr;
+
+    carecord::ca_limit limit = p->caRecord.getAlarmLimit();
+    return limit.lower;
+}
+
+/*!
+    Returns the warning upper limit
+*/
+double CaObject::getWarningUpper()
+{
+    // Get the parts not shared with the non CA world
+    CaObjectPrivate* p = (CaObjectPrivate*)priPtr;
+
+    carecord::ca_limit limit = p->caRecord.getWarningLimit();
+    return limit.upper;
+}
+
+/*!
+    Returns the warning lower limit
+*/
+double CaObject::getWarningLower()
+{
+    // Get the parts not shared with the non CA world
+    CaObjectPrivate* p = (CaObjectPrivate*)priPtr;
+
+    carecord::ca_limit limit = p->caRecord.getWarningLimit();
+    return limit.lower;
+}
+
+/*!
+    Returns the control upper limit
+*/
+double CaObject::getControlUpper()
+{
+    // Get the parts not shared with the non CA world
+    CaObjectPrivate* p = (CaObjectPrivate*)priPtr;
+
+    carecord::ca_limit limit = p->caRecord.getControlLimit();
+    return limit.upper;
+}
+
+/*!
+    Returns the control lower limit
+*/
+double CaObject::getControlLower()
+{
+    // Get the parts not shared with the non CA world
+    CaObjectPrivate* p = (CaObjectPrivate*)priPtr;
+
+    carecord::ca_limit limit = p->caRecord.getControlLimit();
+    return limit.lower;
+}
+
+/*!
     Returns the link status for the connection for the current record
 */
 caconnection::link_states CaObjectPrivate::getLinkState() {
@@ -560,21 +644,23 @@ bool CaObjectPrivate::processChannel( struct event_handler_args args ) {
         }
         case DBR_CTRL_DOUBLE :
         {
-            struct dbr_ctrl_double incommingData;
-            memcpy( &incommingData, args.dbr, dbr_size_n(args.type, args.count) );
+//            struct dbr_ctrl_double incommingData;
+//            memcpy( &incommingData, args.dbr, dbr_size_n(args.type, args.count) );
+            struct dbr_ctrl_double* incommingData = (dbr_ctrl_double*)(args.dbr);
             caRecord.setName( ca_name( args.chid ) );
             caRecord.setValid( true );
             caRecord.updateProcessState();
-            caRecord.setStatus( incommingData.status );
-            caRecord.setAlarmSeverity( incommingData.severity );
-            caRecord.setPrecision( incommingData.precision );
-            caRecord.setUnits( std::string( incommingData.units ) );
-            caRecord.setRiscAlignment( incommingData.RISC_pad0 );
-            caRecord.setDisplayLimit( incommingData.upper_disp_limit, incommingData.lower_disp_limit );
-            caRecord.setAlarmLimit( incommingData.upper_alarm_limit, incommingData.lower_alarm_limit );
-            caRecord.setWarningLimit( incommingData.upper_warning_limit, incommingData.lower_warning_limit );
-            caRecord.setControlLimit( incommingData.upper_ctrl_limit, incommingData.lower_ctrl_limit );
-            caRecord.setDouble( incommingData.value );
+            caRecord.setStatus( incommingData->status );
+            caRecord.setAlarmSeverity( incommingData->severity );
+            caRecord.setPrecision( incommingData->precision );
+            caRecord.setUnits( std::string( incommingData->units ) );
+            caRecord.setRiscAlignment( incommingData->RISC_pad0 );
+            caRecord.setDisplayLimit( incommingData->upper_disp_limit, incommingData->lower_disp_limit );
+            caRecord.setAlarmLimit( incommingData->upper_alarm_limit, incommingData->lower_alarm_limit );
+            caRecord.setWarningLimit( incommingData->upper_warning_limit, incommingData->lower_warning_limit );
+            caRecord.setControlLimit( incommingData->upper_ctrl_limit, incommingData->lower_ctrl_limit );
+  //          caRecord.setDouble( incommingData->value );
+            caRecord.setDouble( &incommingData->value, args.count );
             break;
         }
         default :
@@ -701,6 +787,7 @@ void CaObjectPrivate::connectionHandler( struct connection_handler_args args ) {
                 CaObjectPrivate* grandParentPri = (CaObjectPrivate*)(grandParent->priPtr);
                 grandParentPri->caRecord.setDbrType( parent->getChannelType() );
             }
+            parent->setChannelElementCount();
             parent->setLinkState( caconnection::LINK_UP );
             grandParent->signalCallback( CONNECTION_UP );
         break;
@@ -715,3 +802,35 @@ void CaObjectPrivate::connectionHandler( struct connection_handler_args args ) {
     }   
     epicsMutexUnlock( accessMutex );
 }
+
+/*!
+  Set if callbacks are required on write completion. (default is write with no callback)
+  Note, this is not just for better write status, if affects the behaviour of the write as follows:
+  When using write with callback, then record will finish processing before accepting next write.
+  Writing with callback may be required when writing code that is tightly integrated with record
+  processing and code nneds to know processing has completed.
+  Writing with no callback is more desirable when a detachement from record processing is required, for
+  example in a GUI after issuing a motor record move a motor stop command will take effect immedietly
+  if writing without callback, but will only take affect after the move has finished if writing with callback.
+  */
+void CaObject::setWriteWithCallback( bool writeWithCallbackIn )
+{
+    // Get the parts not shared with the non CA world
+    CaObjectPrivate* p = (CaObjectPrivate*)priPtr;
+
+    // Set the write callback requirements
+    p->caConnection->setWriteWithCallback( writeWithCallbackIn );
+}
+
+/*!
+  Determine if callbacks are delivered on write completion.
+  */
+bool CaObject::getWriteWithCallback()
+{
+    // Get the parts not shared with the non CA world
+    CaObjectPrivate* p = (CaObjectPrivate*)priPtr;
+
+    // return the write callback requirements
+    return p->caConnection->getWriteWithCallback();
+}
+

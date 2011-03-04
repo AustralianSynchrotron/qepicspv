@@ -1,9 +1,9 @@
 /*!
-  \class QCaEventFilter
-  \version $Revision: #4 $
-  \date $DateTime: 2010/08/30 16:37:08 $
-  \author andrew.rhyder
-  \brief CA Date Time manager
+  \class
+  \version $Revision: #3 $
+  \date $DateTime: 2010/06/23 07:49:40 $
+  \author <andrew.rhyder>
+  \brief
  */
 /*
  *  This file is part of the EPICS QT Framework, initially developed at the Australian Synchrotron.
@@ -29,24 +29,22 @@
  *    andrew.rhyder@synchrotron.org.au
  */
 
-#ifndef QCADATETIME_H
-#define QCADATETIME_H
+/* Description:
+ *
+ * Manage the declaration of library public functions as either exported functions
+ * when building the library, or imported functions when using the library.
+ *
+ */
 
-#include <QDateTime>
-#include <QCaPluginLibrary_global.h>
+#ifndef QCAPLUGINLIBRARY_GLOBAL_H
+#define QCAPLUGINLIBRARY_GLOBAL_H
 
-class QCAPLUGINLIBRARYSHARED_EXPORT QCaDateTime : public QDateTime
-{
-public:
-    QCaDateTime();
-    QCaDateTime( QDateTime dt );
-    void operator=( const QCaDateTime& other );
-    QCaDateTime( unsigned long seconds, unsigned long nanoseconds );
+#include <QtCore/qglobal.h>
 
-    QString text();
+#if defined(QCAPLUGIN_LIBRARY)
+#  define QCAPLUGINLIBRARYSHARED_EXPORT Q_DECL_EXPORT
+#else
+#  define QCAPLUGINLIBRARYSHARED_EXPORT Q_DECL_IMPORT
+#endif
 
-    unsigned long nSec;
-    double floating( QDateTime base );
-};
-
-#endif // QCADATETIME_H
+#endif // QCAPLUGINLIBRARY_GLOBAL_H

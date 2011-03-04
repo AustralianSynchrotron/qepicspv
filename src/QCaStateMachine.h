@@ -1,37 +1,32 @@
-/* $File: //ASP/Dev/SBS/4_Controls/4_8_GUI_Frameworks/4_8_2_Qt/sw/ca_framework/data/include/QCaStateMachine.h $
- * $Revision: #3 $
- * $DateTime: 2009/07/22 13:02:25 $
- * Last checked in by: $Author: owena $
- */
-
 /*!
   \class QCaStateMachine
-  \version $Revision: #3 $
-  \date $DateTime: 2009/07/22 13:02:25 $
+  \version $Revision: #7 $
+  \date $DateTime: 2010/06/23 07:49:40 $
   \author anthony.owen
   \brief Statemachine architecture.
  */
-
-/* Copyright (c) 2009 Australian Synchrotron
+/*
+ *  This file is part of the EPICS QT Framework, initially developed at the Australian Synchrotron.
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * Licence as published by the Free Software Foundation; either
- * version 2.1 of the Licence, or (at your option) any later version.
+ *  The EPICS QT Framework is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
  *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public Licence for more details.
+ *  The EPICS QT Framework is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public
- * Licence along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
+ *  You should have received a copy of the GNU General Public License
+ *  along with the EPICS QT Framework.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Contact details:
- * anthony.owen@synchrotron.org.au
- * 800 Blackburn Road, Clayton, Victoria 3168, Australia.
+ *  Copyright (c) 2009, 2010
  *
+ *  Author:
+ *    Anthony Owen
+ *  Contact details:
+ *    anthony.owen@gmail.com
  */
 
 #ifndef QCASTATEMACHINE_H_
@@ -42,6 +37,7 @@
 
 class StateMachineTemplate {
   public:
+    virtual ~StateMachineTemplate(){};
     int currentState;
     int requestState;
     virtual bool process( int requestedState ) = 0;
@@ -57,7 +53,7 @@ namespace qcastatemachine {
   class QCaStateMachine : public StateMachineTemplate {
     public:
       QCaStateMachine( void *parent );
-      //virtual ~QCaStateMachine();
+      virtual ~QCaStateMachine(){};
       QMutex lock;
       bool pending;
       bool active;
@@ -69,28 +65,28 @@ namespace qcastatemachine {
   class ConnectionQCaStateMachine : public QCaStateMachine {
     public:
       ConnectionQCaStateMachine( void *parent );
-      ~ConnectionQCaStateMachine();
+      ~ConnectionQCaStateMachine(){};
       bool process( int requestedState );
   };
 
   class SubscriptionQCaStateMachine : public QCaStateMachine {
     public:
       SubscriptionQCaStateMachine( void *parent );
-      ~SubscriptionQCaStateMachine();
+      ~SubscriptionQCaStateMachine(){};
       bool process( int requestedState );
   };
 
   class ReadQCaStateMachine : public QCaStateMachine {
     public:
       ReadQCaStateMachine( void *parent );
-      ~ReadQCaStateMachine();
+      ~ReadQCaStateMachine(){};
       bool process( int requestedState );
   };
 
   class WriteQCaStateMachine : public QCaStateMachine {
     public:
       WriteQCaStateMachine( void *parent );
-      ~WriteQCaStateMachine();
+      ~WriteQCaStateMachine(){};
       bool process( int requestedState );
   };
 
