@@ -14,6 +14,8 @@ bool QEpicsPV::init() {
   qRegisterMetaType<QCaConnectionInfo>("QCaConnectionInfo&");
   qRegisterMetaType<QCaAlarmInfo>("QCaAlarmInfo&");
   qRegisterMetaType<QCaDateTime>("QCaDateTime&");
+  qRegisterMetaType<QVariant>("QVariant&");
+  qRegisterMetaType<QVariant>("QVariant");
   return true;
 }
 
