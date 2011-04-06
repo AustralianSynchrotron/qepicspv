@@ -100,6 +100,8 @@ const QVariant & QEpicsPV::getUpdated(int delay) const {
   if ( updated )
     return lastData;
 
+
+
   if (delay < 0) delay = 0;
 
   QEventLoop q;
