@@ -3,12 +3,15 @@
 
 #include <QTime>
 #include <QCoreApplication>
+#include <QDebug>
 
 using namespace qcaobject;
 
 const QVariant QEpicsPV::badData = QVariant();
 
 const bool QEpicsPV::inited = QEpicsPV::init();
+
+unsigned QEpicsPV::debugLevel = 0;
 
 bool QEpicsPV::init() {
   qRegisterMetaType<QCaConnectionInfo>("QCaConnectionInfo&");
@@ -17,6 +20,10 @@ bool QEpicsPV::init() {
   qRegisterMetaType<QVariant>("QVariant&");
   qRegisterMetaType<QVariant>("QVariant");
   return true;
+}
+
+void QEpicsPV::setDebugLevel(unsigned level){
+  debugLevel = level;
 }
 
 QEpicsPV::QEpicsPV(const QString & _pvName, QObject *parent) :
@@ -161,18 +168,43 @@ QVariant QEpicsPV::get(const QString & _pvName, int delay) {
   return  ret;
 }
 
-const QVariant & QEpicsPV::set(const QVariant & value, int delay) {
+const QVariant & QEpicsPV::set(QVariant value, int delay) {
 
-  if ( ! isConnected() )
+  if ( debugLevel > 0 )
+    qDebug() << "QEpicsPV DEBUG: SET" << this << isConnected() << pv() << get() << value << getEnum();
+
+  if ( ! isConnected() || ! value.isValid() )
     return badData ;
 
   if (delay >= 0)
     needUpdated();
 
-  if (getEnum().size() && value.canConvert<int>())
-    ((QCaObject *) qCaField) -> writeData(getEnum()[value.toInt()]);
-  else
-    ((QCaObject *) qCaField) -> writeData(value);
+  if ( getEnum().size() ) {
+    if ( ! getEnum().contains(value.toString()) ) {
+      bool ok;
+      qlonglong val = value.toLongLong(&ok);
+      if (!ok) {
+        qDebug() << "QEpicsPV. Error. Value" << value << "to set the PV" << pv()
+            << "of the enum type could not be found in the list of possible values"
+            << getEnum() << "and could not be converted into integer.";
+        return badData;
+      }
+      if ( val >= getEnum().size() || val < 0 ) {
+        qDebug() << "QEpicsPV. Error. Value" << value << "to set the PV" << pv()
+            << "of the enum type, when converted into integer" << val
+            << "is not a valid index in the list of possible values"
+            << getEnum() << ".";
+        return badData;
+      }
+      value = val;
+    }
+  } else if ( get().type() != value.type()  && ! value.convert(get().type()) ) {
+    qDebug() << "QEpicsPV. Error. Could not convert type QVariant from" << value.typeName()
+        << "to" << get().typeName() << "to set the PV" << pv();
+    return badData;
+  }
+
+  ((QCaObject *) qCaField) -> writeData(value);
 
   return delay >= 0  ?  getUpdated(delay)  :  get();
 
@@ -192,6 +224,9 @@ QVariant QEpicsPV::set(QString & _pvName, const QVariant & value, int delay) {
 
 void QEpicsPV::updateValue(const QVariant & data){
 
+  if ( debugLevel > 0 )
+    qDebug() << "QEpicsPV DEBUG: UPD" << this << isConnected() << pv() << get() << data << getEnum();
+
   updated = true;
   bool firstRead = ! lastData.isValid();
   bool changed = firstRead || (lastData != data);
@@ -209,6 +244,8 @@ void QEpicsPV::updateValue(const QVariant & data){
 
 
 void QEpicsPV::updateConnection() {
+  if ( debugLevel > 0 )
+    qDebug() << "QEpicsPV DEBUG: CON" << this << pv() << isConnected();
   if (isConnected()) {
     emit connected();
   } else {

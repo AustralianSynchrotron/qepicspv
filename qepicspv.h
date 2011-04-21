@@ -56,6 +56,9 @@ private:
   /// Used to automatically run ::init() before any instance of the object is created.
   static const bool inited;
 
+  /// debug level. 0 - no debug;
+  static unsigned debugLevel;
+
 
 public:
 
@@ -70,6 +73,8 @@ public:
 
   /// Destructor
   ~QEpicsPV();
+
+  static void setDebugLevel(unsigned level = 0);
 
   /// Returns current value of the field.
   ///
@@ -192,7 +197,7 @@ public slots:
   /// @return Last updated value or invalid object if could not confirm the update within
   /// the specified delay time.
   ///
-  const QVariant & set(const QVariant & value, int delay = -1);
+  const QVariant & set(QVariant value, int delay = -1);
 
   /// \brief Sets new PV.
   ///
