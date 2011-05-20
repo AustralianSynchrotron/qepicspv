@@ -1,4 +1,4 @@
-/*! 
+/*!
   \class QCaObject
   \version $Revision: #15 $
   \date $DateTime: 2010/08/30 16:37:08 $
@@ -647,6 +647,9 @@ void QCaObject::processEvent( QCaEventUpdate* dataUpdateEvent ) {
     if( connectionChange )
     {
         QCaConnectionInfo connectionInfo( lastEventChannelState, lastEventLinkState );
+        connectionMachine->currentState =
+            connectionInfo.isChannelConnected() && connectionInfo.isLinkUp()  ?
+            qcastatemachine::CONNECTED  :  qcastatemachine::DISCONNECTED;
         emit connectionChanged( connectionInfo );
     }
 
@@ -783,6 +786,9 @@ void QCaObject::setChannelExpired() {
     // (This is done with some licence. There isn't really a connection change.
     //  The connection has gone from 'no connection' to 'there never is going to be a connection')
     QCaConnectionInfo connectionInfo( caconnection::NEVER_CONNECTED, caconnection::LINK_DOWN );
+    connectionMachine->currentState =
+        connectionInfo.isChannelConnected() && connectionInfo.isLinkUp()  ?
+          qcastatemachine::CONNECTED  :  qcastatemachine::DISCONNECTED;
     emit connectionChanged( connectionInfo );
 
     // Generate a user message
