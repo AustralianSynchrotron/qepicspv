@@ -35,6 +35,8 @@ QEpicsPV::QEpicsPV(const QString & _pvName, QObject *parent) :
   theEnum(),
   iAmReady(false)
 {
+  if ( debugLevel > 0 )
+    qDebug() << "QEpicsPV DEBUG: INI" << this << _pvName;
   setPV(pvName);
 }
 
@@ -47,15 +49,23 @@ QEpicsPV::QEpicsPV(QObject *parent) :
   theEnum(),
   iAmReady(false)
 {
+  if ( debugLevel > 0 )
+    qDebug() << "QEpicsPV DEBUG: INI" << this;
 }
 
 
 QEpicsPV::~QEpicsPV(){
+  if ( debugLevel > 0 )
+    qDebug() << "QEpicsPV DEBUG: DEL" << this << isConnected() << pv();
   setPV();
 }
 
 
 void QEpicsPV::setPV(const QString & _pvName) {
+
+  if ( debugLevel > 0 )
+    qDebug() << "QEpicsPV DEBUG: SPV" << this << _pvName ;
+
   pvName = _pvName;
   if (qCaField) {
     delete (QCaObject *) qCaField;
