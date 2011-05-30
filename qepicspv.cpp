@@ -27,23 +27,25 @@ void QEpicsPV::setDebugLevel(unsigned level){
 }
 
 QEpicsPV::QEpicsPV(const QString & _pvName, QObject *parent) :
-    QObject(parent),
-    qCaField(0),
-    pvName(_pvName),
-    lastData(),
-    updated(false),
-    theEnum()
+  QObject(parent),
+  qCaField(0),
+  pvName(_pvName),
+  lastData(),
+  updated(false),
+  theEnum(),
+  iAmReady(false)
 {
   setPV(pvName);
 }
 
 QEpicsPV::QEpicsPV(QObject *parent) :
-    QObject(parent),
-    qCaField(0),
-    pvName(),
-    lastData(),
-    updated(false),
-    theEnum()
+  QObject(parent),
+  qCaField(0),
+  pvName(),
+  lastData(),
+  updated(false),
+  theEnum(),
+  iAmReady(false)
 {
 }
 
@@ -60,6 +62,9 @@ void QEpicsPV::setPV(const QString & _pvName) {
     qCaField = 0;
   }
   updateConnection();
+
+  iAmReady = false;
+  lastData = QVariant();
 
   if ( pvName.isEmpty() )
     return;
@@ -90,6 +95,10 @@ const QString & QEpicsPV::pv() const {
 
 bool QEpicsPV::isConnected() const {
   return qCaField && ((QCaObject *) qCaField) -> isChannelConnected();
+}
+
+bool QEpicsPV::isReady() const {
+  return iAmReady;
 }
 
 const QVariant & QEpicsPV::get() const {
@@ -160,7 +169,7 @@ const QVariant & QEpicsPV::getReady(int delay) const {
 
 
 QVariant QEpicsPV::get(const QString & _pvName, int delay) {
-  if (_pvName.isEmpty())
+  if ( _pvName.isEmpty() )
     return badData;
   QEpicsPV * tpv = new QEpicsPV(_pvName);
   QVariant ret = tpv->getReady(delay);
@@ -173,7 +182,7 @@ const QVariant & QEpicsPV::set(QVariant value, int delay) {
   if ( debugLevel > 0 )
     qDebug() << "QEpicsPV DEBUG: SET" << this << isConnected() << pv() << get() << value << getEnum();
 
-  if ( ! isConnected() || ! value.isValid() )
+  if ( ! isReady() || ! value.isValid() )
     return badData ;
 
   if (delay >= 0)
@@ -184,13 +193,13 @@ const QVariant & QEpicsPV::set(QVariant value, int delay) {
       bool ok;
       qlonglong val = value.toLongLong(&ok);
       if (!ok) {
-        qDebug() << "QEpicsPV. Error. Value" << value << "to set the PV" << pv()
+        qDebug() << "ERROR in QEpicsPV! Value" << value << "to set the PV" << pv()
             << "of the enum type could not be found in the list of possible values"
             << getEnum() << "and could not be converted into integer.";
         return badData;
       }
       if ( val >= getEnum().size() || val < 0 ) {
-        qDebug() << "QEpicsPV. Error. Value" << value << "to set the PV" << pv()
+        qDebug() << "ERROR in QEpicsPV! Value" << value << "to set the PV" << pv()
             << "of the enum type, when converted into integer" << val
             << "is not a valid index in the list of possible values"
             << getEnum() << ".";
@@ -199,8 +208,8 @@ const QVariant & QEpicsPV::set(QVariant value, int delay) {
       value = val;
     }
   } else if ( get().type() != value.type()  && ! value.convert(get().type()) ) {
-    qDebug() << "QEpicsPV. Error. Could not convert type QVariant from" << value.typeName()
-        << "to" << get().typeName() << "to set the PV" << pv();
+    qDebug() << "ERROR in QEpicsPV! Could not convert type QVariant from \"" << value.typeName()
+             << "\" to \"" << get().typeName() << "\" to set the PV" << pv();
     return badData;
   }
 
@@ -228,6 +237,7 @@ void QEpicsPV::updateValue(const QVariant & data){
     qDebug() << "QEpicsPV DEBUG: UPD" << this << isConnected() << pv() << get() << data << getEnum();
 
   updated = true;
+  iAmReady = data.isValid();
   bool firstRead = ! lastData.isValid();
   bool changed = firstRead || (lastData != data);
   lastData = data;

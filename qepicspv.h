@@ -59,6 +59,9 @@ private:
   /// debug level. 0 - no debug;
   static unsigned debugLevel;
 
+  /// true when the PV is operatable (connected and a value received).
+  bool iAmReady;
+
 
 public:
 
@@ -111,6 +114,10 @@ public:
   /// Connection status.
   /// @return true if connected, false otherwise.
   bool isConnected() const;
+
+  /// Ready status.
+  /// @return true if connected and first data received, false otherwise.
+  bool isReady() const;
 
   /// PV's enumeration.
   /// @return The enumeration of the PV field, or the empty list if the PV is not an enumeration.
