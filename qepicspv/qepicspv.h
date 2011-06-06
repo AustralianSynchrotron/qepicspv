@@ -1,5 +1,5 @@
-#ifndef QEPICSPV_H
-#define QEPICSPV_H
+#ifndef QEpicsPv_H
+#define QEpicsPv_H
 
 #include <QtCore/qglobal.h>
 #include <QObject>
@@ -14,7 +14,7 @@
 /// unimportant and unclear for the end-user. Also implements some frequently
 /// used operations in a single methods.
 ///
-class QEpicsPV : public QObject {
+class QEpicsPv : public QObject {
   Q_OBJECT;
 
 private:
@@ -68,14 +68,14 @@ public:
   /// Constructor.
   /// @param _pvName new PV name.
   /// @param parent Object's parent.
-  QEpicsPV(const QString & _pvName, QObject *parent = 0);
+  QEpicsPv(const QString & _pvName, QObject *parent = 0);
 
   /// Constructor.
   /// @param parent Object's parent.
-  QEpicsPV(QObject *parent = 0);
+  QEpicsPv(QObject *parent = 0);
 
   /// Destructor
-  ~QEpicsPV();
+  ~QEpicsPv();
 
   static void setDebugLevel(unsigned level = 0);
 
@@ -150,7 +150,7 @@ public:
 
   /// \brief Static version of the ::getUpdated() method.
   ///
-  /// Constructs new object of the QEpicsPV type, gets it ready and returns the value.
+  /// Constructs new object of the QEpicsPv type, gets it ready and returns the value.
   /// Useful for the single shot readouts.
   ///
   /// @param _pvName PV name of the field.
@@ -168,7 +168,7 @@ public:
 
   /// \brief Static version of the ::set() method.
   ///
-  /// Constructs new object of the QEpicsPV type, gets it ready, sets the new value
+  /// Constructs new object of the QEpicsPv type, gets it ready, sets the new value
   /// and returns the result of the ::set() method. Useful for the single shot write.
   ///
   /// @param _pvName PV name of the field.
@@ -249,4 +249,4 @@ signals:
 
 };
 
-#endif // QEPICSPV_H
+#endif // QEpicsPv_H
