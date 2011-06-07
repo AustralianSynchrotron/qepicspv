@@ -1,8 +1,8 @@
 #ifndef QEpicsPvGUI_H
 #define QEpicsPvGUI_H
 
-#include "qepicspv.h"
-#include "ui_qepicspvgui.h"
+#include "qtpv.h"
+#include "ui_qtpvgui.h"
 
 #include <QtGui/QWidget>
 

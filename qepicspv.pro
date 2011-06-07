@@ -1,7 +1,7 @@
 CONFIG += ordered
 
-SUBDIRS = qepicspv \
-          qepicspvgui \
+SUBDIRS = qtpv \
+          qtpvgui \
     qpvcontrol
 
 TEMPLATE = subdirs

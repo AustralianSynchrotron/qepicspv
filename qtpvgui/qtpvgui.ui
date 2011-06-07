@@ -132,7 +132,7 @@
   <customwidget>
    <class>QMDoubleSpinBox</class>
    <extends>QDoubleSpinBox</extends>
-   <header>qepicspv_guielements.h</header>
+   <header>qtpv_guielements.h</header>
    <slots>
     <signal>valueEdited(double)</signal>
     <signal>escaped()</signal>
@@ -141,17 +141,17 @@
   <customwidget>
    <class>QMSpinBox</class>
    <extends>QSpinBox</extends>
-   <header>qepicspv_guielements.h</header>
+   <header>qtpv_guielements.h</header>
   </customwidget>
   <customwidget>
    <class>QMComboBox</class>
    <extends>QComboBox</extends>
-   <header>qepicspv_guielements.h</header>
+   <header>qtpv_guielements.h</header>
   </customwidget>
   <customwidget>
    <class>QMLineEdit</class>
    <extends>QLineEdit</extends>
-   <header>qepicspv_guielements.h</header>
+   <header>qtpv_guielements.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

@@ -4,13 +4,13 @@
 
 QT -= gui
 
-TARGET = qepicspv
+TARGET = qtpv
 
 TEMPLATE = lib
 
-DEFINES += qepicspv_LIBRARY
+DEFINES += qtpv_LIBRARY
 
-SOURCES += qepicspv.cpp \
+SOURCES += qtpv.cpp \
     src/CaConnection.cpp \
     src/CaObject.cpp \
     src/CaRecord.cpp \
@@ -29,7 +29,7 @@ INCLUDEPATH += . src \
     ${EPICS_BASE}/include \
     ${EPICS_BASE}/include/os/Linux
 
-HEADERS += qepicspv.h \
+HEADERS += qtpv.h \
     src/CaConnection.h \
     src/CaObject.h \
     src/CaObjectPrivate.h \
@@ -51,7 +51,7 @@ LIBS += -L${EPICS_BASE}/lib/${EPICS_HOST_ARCH} \
     -lca
 
 
-instheaders.files = qepicspv.h
+instheaders.files = qtpv.h
 instheaders.path = $$[INSTALLBASE]/include
 INSTALLS += instheaders
 
