@@ -1,4 +1,4 @@
-#include "qepicspv_guielements.h"
+#include "qtpvwidgets.h"
 
 
 void QMLineEdit::focusInEvent(QFocusEvent * event){

@@ -1,7 +1,7 @@
 #ifndef QEpicsPvAPP_H
 #define QEpicsPvAPP_H
 
-#include "qepicspvgui.h"
+#include "qtpvgui.h"
 #include "ui_qpvcontrol.h"
 
 #include <QtGui/QMainWindow>

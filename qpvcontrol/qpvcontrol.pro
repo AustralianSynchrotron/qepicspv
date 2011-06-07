@@ -9,10 +9,11 @@ QT       += core gui
 TARGET = qpvcontrol
 TEMPLATE = app
 
-LIBS += -L../qepicspv -lqepicspv \
-        -L../qepicspvgui -lqepicspvgui
+LIBS += -L../qtpv -lqtpv \
+        -L../qtpvgui -lqtpvgui \
+	-L../qtpvwidgets -lqtpvwidgets
 
-INCLUDEPATH += ../qepicspv ../qepicspvgui
+INCLUDEPATH += ../qtpv ../qtpvwidgets ../qtpvgui
 
 SOURCES +=\
         qpvcontrol.cpp \

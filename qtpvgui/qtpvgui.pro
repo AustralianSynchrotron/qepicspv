@@ -1,21 +1,16 @@
 TARGET = qtpvgui
 TEMPLATE = lib
-INCLUDEPATH += ../qtpv
-LIBS += -L../qtpv -lqtpv
+INCLUDEPATH += ../qtpv ../qtpvwidgets
+LIBS += -L../qtpv -lqtpv \
+	-L../qtpvwidgets -lqtpvwidgets
 
-HEADERS += \
-    qtpvgui.h \
-    qtpv_guielements.h
+HEADERS += qtpvgui.h
 
-SOURCES += \
-    qtpvgui.cpp \
-    qtpv_guielements.cpp
+SOURCES += qtpvgui.cpp
 
-FORMS += \
-    qtpvgui.ui
+FORMS += qtpvgui.ui
 
 headers.files = qtpvgui.h \
-    qtpv_guielements.h \
     ui_qtpvgui.h
 headers.path = $$[INSTALLBASE]/include
 INSTALLS += headers
