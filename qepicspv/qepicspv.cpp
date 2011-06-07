@@ -76,8 +76,10 @@ void QEpicsPv::setPV(const QString & _pvName) {
   iAmReady = false;
   lastData = QVariant();
 
-  if ( pvName.isEmpty() )
+  if ( pvName.isEmpty() ) {
+    emit pvChanged(pvName);
     return;
+  }
 
   QCaObject * _qCaField = new QCaObject(pvName, this);
   qCaField = _qCaField;
@@ -95,6 +97,9 @@ void QEpicsPv::setPV(const QString & _pvName) {
           SLOT(updateValue(QVariant)), Qt::QueuedConnection);
 
   _qCaField->subscribe();
+
+  emit pvChanged(pvName);
+
 
 }
 

@@ -2,6 +2,6 @@ CONFIG += ordered
 
 SUBDIRS = qepicspv \
           qepicspvgui \
-    qepicspvapp
+    qpvcontrol
 
 TEMPLATE = subdirs

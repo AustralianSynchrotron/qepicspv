@@ -35,13 +35,14 @@ void QEpicsPvGUI::initialize() {
 
   connect(ui->pv, SIGNAL(editingFinished(QString)), SLOT(setPV(QString)));
 
+  connect(this, SIGNAL(pvChanged(QString)), ui->pv, SLOT(setText(QString)));
   connect(this, SIGNAL(connectionChanged(bool)), SLOT(onConnectionChange(bool)));
   connect(this, SIGNAL(valueInited(QVariant)), SLOT(onValueInited(QVariant)));
   connect(this, SIGNAL(valueUpdated(QVariant)), SLOT(onValueChange(QVariant)));
 
   connect(ui->lineBox, SIGNAL(editingFinished(QString)), SLOT(onSet()));
   connect(ui->doubleBox, SIGNAL(valueEdited(double)), SLOT(onSet()));
-  connect(ui->intBox, SIGNAL(valueEdited(double)), SLOT(onSet()));
+  connect(ui->intBox, SIGNAL(valueEdited(int)), SLOT(onSet()));
   connect(ui->enumBox, SIGNAL(currentIndexChanged(int)), SLOT(onSet()));
 
 }
@@ -86,7 +87,9 @@ void QEpicsPvGUI::onValueInited(const QVariant & val) {
   } else if (getEnum().size()) {
 
     ui->enumBox->clear();
-    ui->enumBox->addItems(getEnum());
+    int idx=0;
+    foreach ( QString str, getEnum() )
+      ui->enumBox->addItem( "\"" + str + "\" ("+ QString::number(idx++) + ")" );
     ui->enumBox->setCurrentIndex(val.toInt());
     ui->set->setCurrentWidget(ui->enumW);
 

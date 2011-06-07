@@ -247,6 +247,8 @@ signals:
   /// Emitted on first value update after the connection was established.
   void valueInited(const QVariant & value);
 
+  void pvChanged(const QString & newpv);
+
 };
 
 #endif // QEpicsPv_H

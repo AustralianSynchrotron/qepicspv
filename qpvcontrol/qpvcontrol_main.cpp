@@ -1,10 +1,10 @@
 #include <QtGui/QApplication>
-#include "qepicspvapp.h"
+#include "qpvcontrol.h"
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    QEpicsPvapp w;
+    QEpicsPvApp w;
     w.show();
 
     return a.exec();

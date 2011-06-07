@@ -21,9 +21,12 @@ private:
   void initialize();
 
 public:
+
   QEpicsPvGUI(QWidget *parent = 0);
   QEpicsPvGUI(const QString & _pvName, QWidget *parent = 0);
   ~QEpicsPvGUI();
+
+  inline Ui::QEpicsPvGUI * basicUI() {return ui;}
 
 private slots:
 

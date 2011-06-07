@@ -6,7 +6,7 @@
 
 QT       += core gui
 
-TARGET = qepicspvapp
+TARGET = qpvcontrol
 TEMPLATE = app
 
 LIBS += -L../qepicspv -lqepicspv \
@@ -15,9 +15,13 @@ LIBS += -L../qepicspv -lqepicspv \
 INCLUDEPATH += ../qepicspv ../qepicspvgui
 
 SOURCES +=\
-        qepicspvapp.cpp \
-    qepicspvapp_main.cpp
+        qpvcontrol.cpp \
+    qpvcontrol_main.cpp
 
-HEADERS  += qepicspvapp.h
+HEADERS  += qpvcontrol.h
 
-FORMS    += qepicspvapp.ui
+FORMS    += qpvcontrol.ui
+
+target.files = $$[TARGET]
+target.path = $$[INSTALLBASE]/bin
+INSTALLS += target
