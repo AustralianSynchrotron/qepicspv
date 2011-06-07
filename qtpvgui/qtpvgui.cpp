@@ -9,7 +9,7 @@
 
 QEpicsPvGUI::QEpicsPvGUI(QWidget *parent) :
   QEpicsPv(parent),
-  theWidget( new QWidget(parent) ),
+  theWidget( new QWidget ),
   ui(new Ui::QEpicsPvGUI)
 {
   ui->setupUi(theWidget);
@@ -18,7 +18,7 @@ QEpicsPvGUI::QEpicsPvGUI(QWidget *parent) :
 
 QEpicsPvGUI::QEpicsPvGUI(const QString & _pvName, QWidget *parent) :
   QEpicsPv(_pvName, parent),
-  theWidget( new QWidget(parent) ),
+  theWidget( new QWidget ),
   ui(new Ui::QEpicsPvGUI)
 {
   ui->setupUi(theWidget);
