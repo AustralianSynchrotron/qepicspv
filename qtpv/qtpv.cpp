@@ -57,7 +57,8 @@ QEpicsPv::QEpicsPv(QObject *parent) :
 QEpicsPv::~QEpicsPv(){
   if ( debugLevel > 0 )
     qDebug() << "QEpicsPv DEBUG: DEL" << this << isConnected() << pv();
-  setPV();
+  if ( ! pv().isEmpty() )
+    setPV();
 }
 
 
@@ -68,6 +69,7 @@ void QEpicsPv::setPV(const QString & _pvName) {
 
   pvName = _pvName;
   if (qCaField) {
+    ( (QCaObject *) qCaField )->deleteChannel();
     delete (QCaObject *) qCaField;
     qCaField = 0;
   }
@@ -113,7 +115,7 @@ bool QEpicsPv::isConnected() const {
 }
 
 bool QEpicsPv::isReady() const {
-  return iAmReady;
+  return qCaField && iAmReady;
 }
 
 const QVariant & QEpicsPv::get() const {
@@ -247,6 +249,9 @@ QVariant QEpicsPv::set(QString & _pvName, const QVariant & value, int delay) {
 
 
 void QEpicsPv::updateValue(const QVariant & data){
+
+  if ( ! qCaField )
+    return;
 
   if ( debugLevel > 0 )
     qDebug() << "QEpicsPv DEBUG: UPD" << this << isConnected() << pv() << get() << data << getEnum();

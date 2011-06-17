@@ -2,8 +2,20 @@
 <ui version="4.0">
  <class>QEpicsPvApp</class>
  <widget class="QMainWindow" name="QEpicsPvApp">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>264</width>
+    <height>258</height>
+   </rect>
+  </property>
   <property name="windowTitle">
    <string>QEpicsPvapp</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="qtpvcontrol.qrc">
+    <normaloff>:/new/prefix1/icon.svg</normaloff>:/new/prefix1/icon.svg</iconset>
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QVBoxLayout" name="verticalLayout">
@@ -96,6 +108,8 @@
   <widget class="QStatusBar" name="statusBar"/>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <resources/>
+ <resources>
+  <include location="qtpvcontrol.qrc"/>
+ </resources>
  <connections/>
 </ui>

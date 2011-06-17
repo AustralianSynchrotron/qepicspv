@@ -26,3 +26,6 @@ FORMS    += qpvcontrol.ui
 target.files = $$[TARGET]
 target.path = $$[INSTALLBASE]/bin
 INSTALLS += target
+
+RESOURCES += \
+    qtpvcontrol.qrc
