@@ -188,7 +188,7 @@ public:
   // if this static member is called (directly or inderectly)
   // from whithin a constructor.
   // It has something to do with the threading.
-  static QVariant set(QString & _pvName, const QVariant & value, int delay = -1);
+  static QVariant set(const QString & _pvName, const QVariant & value, int delay = -1);
 
 public slots:
 

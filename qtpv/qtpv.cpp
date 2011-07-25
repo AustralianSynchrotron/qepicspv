@@ -238,7 +238,7 @@ const QVariant & QEpicsPv::set(QVariant value, int delay) {
 
 
 
-QVariant QEpicsPv::set(QString & _pvName, const QVariant & value, int delay) {
+QVariant QEpicsPv::set(const QString & _pvName, const QVariant & value, int delay) {
   if (_pvName.isEmpty())
     return badData;
   QEpicsPv * tpv = new QEpicsPv(_pvName);
