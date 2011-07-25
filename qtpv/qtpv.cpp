@@ -279,6 +279,7 @@ void QEpicsPv::updateConnection() {
   if (isConnected()) {
     emit connected();
   } else {
+    iAmReady = false;
     updated=false;
     lastData.clear();
     theEnum.clear();
