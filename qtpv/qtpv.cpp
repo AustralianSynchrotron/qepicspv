@@ -5,6 +5,62 @@
 #include <QCoreApplication>
 #include <QDebug>
 
+
+
+
+bool qtWait(const QList<ObjSig> & osS, int delay) {
+
+  QEventLoop q;
+  foreach(ObjSig os, osS)
+    QObject::connect(os.sender, os.signal, &q, SLOT(quit()));
+
+  QTimer * tT = 0;
+  if (delay>0) {
+    tT = new QTimer;
+    tT->setSingleShot(true);
+    QObject::connect(tT, SIGNAL(timeout()), &q, SLOT(quit()));
+    tT->start(delay);
+  }
+
+  q.exec();
+
+  bool ret = true;
+  if (tT) {
+    ret = tT->isActive();
+    delete tT;
+  }
+  return ret;
+
+}
+
+bool qtWait(const QObject * sender, const char * signal, int delay) {
+  QList<ObjSig> osS;
+  osS << ObjSig(sender,signal);
+  return qtWait(osS,delay);
+}
+
+bool qtWait(int delay){
+
+  if (delay <= 0)
+    return true;
+
+  QTimer * tT = 0;
+  tT = new QTimer;
+  tT->setSingleShot(true);
+  QEventLoop q;
+
+  QObject::connect(tT, SIGNAL(timeout()), &q, SLOT(quit()));
+
+  tT->start(delay);
+  q.exec();
+
+  delete tT;
+
+  return false;
+
+}
+
+
 using namespace qcaobject;
 
 const QVariant QEpicsPv::badData = QVariant();
@@ -32,8 +88,7 @@ QEpicsPv::QEpicsPv(const QString & _pvName, QObject *parent) :
   pvName(_pvName),
   lastData(),
   updated(false),
-  theEnum(),
-  iAmReady(false)
+  theEnum()
 {
   if ( debugLevel > 0 )
     qDebug() << "QEpicsPv DEBUG: INI" << this << _pvName;
@@ -46,8 +101,7 @@ QEpicsPv::QEpicsPv(QObject *parent) :
   pvName(),
   lastData(),
   updated(false),
-  theEnum(),
-  iAmReady(false)
+  theEnum()
 {
   if ( debugLevel > 0 )
     qDebug() << "QEpicsPv DEBUG: INI" << this;
@@ -68,15 +122,14 @@ void QEpicsPv::setPV(const QString & _pvName) {
     qDebug() << "QEpicsPv DEBUG: SPV" << this << _pvName ;
 
   pvName = _pvName;
+  setObjectName(pvName);
+
   if (qCaField) {
     ( (QCaObject *) qCaField )->deleteChannel();
     delete (QCaObject *) qCaField;
     qCaField = 0;
   }
   updateConnection();
-
-  iAmReady = false;
-  lastData = QVariant();
 
   if ( pvName.isEmpty() ) {
     emit pvChanged(pvName);
@@ -111,11 +164,9 @@ const QString & QEpicsPv::pv() const {
 
 
 bool QEpicsPv::isConnected() const {
-  return qCaField && ((QCaObject *) qCaField) -> isChannelConnected();
-}
-
-bool QEpicsPv::isReady() const {
-  return qCaField && iAmReady;
+  return qCaField
+      && ((QCaObject *) qCaField) -> isChannelConnected()
+      && get().isValid();
 }
 
 const QVariant & QEpicsPv::get() const {
@@ -128,58 +179,31 @@ void QEpicsPv::needUpdated() const {
 
 const QVariant & QEpicsPv::getUpdated(int delay) const {
 
-  if ( ! isConnected() )
+  if ( ! qCaField )
     return badData;
   if ( updated )
     return lastData;
 
+  QList<ObjSig> osS;
+  osS
+      << ObjSig(this, SIGNAL(valueUpdated(QVariant)))
+      << ObjSig(this, SIGNAL(connectionChanged(bool)));
+  qtWait(osS, delay);
 
-
-  if (delay < 0) delay = 0;
-
-  QEventLoop q;
-  QTimer tT;
-  tT.setSingleShot(true);
-
-  connect(&tT, SIGNAL(timeout()), &q, SLOT(quit()));
-  connect(this, SIGNAL(valueUpdated(QVariant)), &q, SLOT(quit()));
-  connect(this, SIGNAL(connectionChanged(bool)), &q, SLOT(quit()));
-
-  if (delay) tT.start(delay);
-  q.exec();
-  if(tT.isActive()) tT.stop();
-
-  return updated ? lastData : badData ;
+  QCoreApplication::processEvents(); // needed to process updateValue
+  return ( ! isConnected() || ! updated )
+      ? badData : lastData;
 
 }
 
 
 
-const QVariant & QEpicsPv::getReady(int delay) const {
-
+const QVariant & QEpicsPv::getConnected(int delay) const {
   if ( ! qCaField )
     return badData;
-
-  if ( ! isConnected() ) {
-
-    QEventLoop q;
-    QTimer tT;
-    tT.setSingleShot(true);
-
-    connect(&tT, SIGNAL(timeout()), &q, SLOT(quit()));
-    connect(this, SIGNAL(connectionChanged(bool)), &q, SLOT(quit()));
-
-    if (delay) tT.start(delay);
-    q.exec();
-    if (tT.isActive()) tT.stop();
-
-    if ( ! isConnected() )
-      return badData;
-
-  }
-
-  return lastData.isValid()  ?  get()  :  getUpdated(delay);
-
+  if ( ! isConnected() )
+    qtWait(this, SIGNAL(connected()), delay);
+  return lastData;
 }
 
 
@@ -188,10 +212,8 @@ const QVariant & QEpicsPv::getReady(int delay) const {
 QVariant QEpicsPv::get(const QString & _pvName, int delay) {
   if ( _pvName.isEmpty() )
     return badData;
-  QEpicsPv * tpv = new QEpicsPv(_pvName);
-  QVariant ret = tpv->getReady(delay);
-  delete tpv;
-  return  ret;
+  QEpicsPv tpv(_pvName);
+  return tpv.getConnected(delay);
 }
 
 const QVariant & QEpicsPv::set(QVariant value, int delay) {
@@ -199,7 +221,7 @@ const QVariant & QEpicsPv::set(QVariant value, int delay) {
   if ( debugLevel > 0 )
     qDebug() << "QEpicsPv DEBUG: SET" << this << isConnected() << pv() << get() << value << getEnum();
 
-  if ( ! isReady() || ! value.isValid() )
+  if ( ! isConnected() || ! value.isValid() )
     return badData ;
 
   if (delay >= 0)
@@ -241,30 +263,28 @@ const QVariant & QEpicsPv::set(QVariant value, int delay) {
 QVariant QEpicsPv::set(const QString & _pvName, const QVariant & value, int delay) {
   if (_pvName.isEmpty())
     return badData;
-  QEpicsPv * tpv = new QEpicsPv(_pvName);
-  QVariant ret = tpv->getReady().isValid()  ?  tpv->set(value, delay)  :  badData;
-  delete tpv;
-  return  ret;
+  QEpicsPv tpv(_pvName);
+  return tpv.getConnected().isValid()  ?  tpv.set(value, delay)  :  badData;
 }
 
 
 void QEpicsPv::updateValue(const QVariant & data){
 
-  if ( ! qCaField )
-    return;
-
   if ( debugLevel > 0 )
     qDebug() << "QEpicsPv DEBUG: UPD" << this << isConnected() << pv() << get() << data << getEnum();
 
+  if ( ! qCaField || ! data.isValid() )
+    return;
+
   updated = true;
-  iAmReady = data.isValid();
   bool firstRead = ! lastData.isValid();
   bool changed = firstRead || (lastData != data);
   lastData = data;
 
   if (firstRead) {
     theEnum = ((QCaObject *) qCaField) -> getEnumerations();
-    emit valueInited(lastData);
+    emit connected();
+    emit connectionChanged(true);
   }
   if (changed)
     emit valueChanged(lastData);
@@ -274,18 +294,19 @@ void QEpicsPv::updateValue(const QVariant & data){
 
 
 void QEpicsPv::updateConnection() {
+
+  bool con =  qCaField && ((QCaObject *) qCaField) -> isChannelConnected();
   if ( debugLevel > 0 )
-    qDebug() << "QEpicsPv DEBUG: CON" << this << pv() << isConnected();
-  if (isConnected()) {
-    emit connected();
-  } else {
-    iAmReady = false;
-    updated=false;
-    lastData.clear();
-    theEnum.clear();
-    emit disconnected();
-  }
-  emit connectionChanged(isConnected());
+    qDebug() << "QEpicsPv DEBUG: CON" << this << pv() << con ;
+  if (con)
+    return;
+
+  updated=false;
+  lastData = badData;
+  theEnum.clear();
+  emit disconnected();
+  emit connectionChanged(false);
+
 }
 
 const QStringList & QEpicsPv::getEnum() const {

@@ -6,7 +6,16 @@
 #include <QVariant>
 #include <QStringList>
 
+struct ObjSig {
+  const QObject * sender;
+  const char * signal;
+  inline ObjSig(const QObject * _sender, const char * _signal) :
+    sender(_sender), signal(_signal) {};
+};
 
+bool qtWait(const QList<ObjSig> & osS, int delay=0);
+bool qtWait(const QObject * sender, const char * signal, int delay=0);
+bool qtWait(int delay);
 
 /// \brief Class representing an EPICS PV field.
 ///
@@ -30,16 +39,16 @@ private:
   /// Is invalid if the pv is not connected or before first update.
   QVariant lastData;
 
+  /// Invalid QVariant object to be returned by ::get(), ::getUpdated(),
+  /// ::set(), etc.
+  static const QVariant badData;
+
   /// Turns true whenever the value is updated in the ::updateValue() slot.
   /// Used in the ::needUpdated() / ::getUpdated() pair.
   mutable bool updated;
 
   /// The enumeration of the PV field (if any, empty list otherwise).
   QStringList theEnum;
-
-  /// Invalid QVariant object to be returned by ::get(), ::getUpdated(),
-  /// ::set(), etc.
-  static const QVariant badData;
 
   /// Default delay in milliseconds used in the ::getUpdated(), ::getReady() and get() methods.
   static const int defaultDelay = 1000;
@@ -58,10 +67,6 @@ private:
 
   /// debug level. 0 - no debug;
   static unsigned debugLevel;
-
-  /// true when the PV is operatable (connected and a value received).
-  bool iAmReady;
-
 
 public:
 
@@ -111,13 +116,14 @@ public:
   // It has something to do with the threading.
   const QVariant & getUpdated(int delay=defaultDelay) const;
 
-  /// Connection status.
+  /// \brief Connection status.
+  ///
+  /// Note that this status is different from the QCaObject::isChannelConnected() :
+  /// It is true if QCaObject::isChannelConnected() _and_ a first value update has happened.
+  ///
   /// @return true if connected, false otherwise.
+  ///
   bool isConnected() const;
-
-  /// Ready status.
-  /// @return true if connected and first data received, false otherwise.
-  bool isReady() const;
 
   /// PV's enumeration.
   /// @return The enumeration of the PV field, or the empty list if the PV is not an enumeration.
@@ -143,10 +149,9 @@ public:
   ///
   // WARNING: BUG
   // There is a bug which may cause the main application to crash
-  // if this static member is called (directly or inderectly)
-  // from whithin a constructor.
+  // if this member is called (directly or inderectly) from whithin a constructor.
   // It has something to do with the threading.
-  const QVariant & getReady(int delay=defaultDelay) const;
+  const QVariant & getConnected(int delay=defaultDelay) const;
 
   /// \brief Static version of the ::getUpdated() method.
   ///
@@ -243,9 +248,6 @@ signals:
   /// Emitted whenever the field is updated (even if the new value is equal to the old one).
   /// @param value new value.
   void valueUpdated(const QVariant & value);
-
-  /// Emitted on first value update after the connection was established.
-  void valueInited(const QVariant & value);
 
   void pvChanged(const QString & newpv);
 

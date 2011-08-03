@@ -4,7 +4,7 @@
 #include "qtpv.h"
 #include "ui_qtpvgui.h"
 
-#include <QtGui/QWidget>
+#include <QWidget>
 
 
 namespace Ui {
@@ -32,7 +32,6 @@ private slots:
 
   void onConnectionChange(bool con);
   void onValueChange(const QVariant & val);
-  void onValueInited(const QVariant & val);
 
   void onSet();
 
