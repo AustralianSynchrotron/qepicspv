@@ -2,7 +2,6 @@
 #define QEpicsPvGUI_H
 
 #include "qtpv.h"
-#include "ui_qtpvgui.h"
 
 #include <QWidget>
 

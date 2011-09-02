@@ -2,7 +2,7 @@
 #define QEpicsPvAPP_H
 
 #include "qtpvgui.h"
-#include "ui_qpvcontrol.h"
+#include "qtpvwidgets.h"
 
 #include <QtGui/QMainWindow>
 #include <QFile>

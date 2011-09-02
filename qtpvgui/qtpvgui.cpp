@@ -1,3 +1,4 @@
+#include "ui_qtpvgui.h"
 #include "qtpvgui.h"
 #include <QHBoxLayout>
 

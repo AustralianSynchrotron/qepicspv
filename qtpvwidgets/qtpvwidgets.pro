@@ -3,7 +3,7 @@ TEMPLATE = lib
 HEADERS += qtpvwidgets.h
 SOURCES += qtpvwidgets.cpp
 
-headers.files = qtpvwidgets.h 
+headers.files = $$HEADERS
 headers.path = $$[INSTALLBASE]/include
 INSTALLS += headers
 

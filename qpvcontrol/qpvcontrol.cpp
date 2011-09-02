@@ -1,4 +1,6 @@
 #include "qpvcontrol.h"
+#include "ui_qtpvgui.h"
+#include "ui_qpvcontrol.h"
 #include <QCheckBox>
 #include <QDir>
 #include <QFileDialog>
