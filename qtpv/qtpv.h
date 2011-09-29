@@ -17,6 +17,13 @@ bool qtWait(const QList<ObjSig> & osS, int delay=0);
 bool qtWait(const QObject * sender, const char * signal, int delay=0);
 bool qtWait(int delay);
 
+
+
+
+namespace qcaobject {
+class QCaObject;
+}
+
 /// \brief Class representing an EPICS PV field.
 ///
 /// A wrapper around the QCaObject designed to hide EPICS-related features
@@ -28,9 +35,8 @@ class QEpicsPv : public QObject {
 
 private:
 
-  /// Basic object representing the field. Is always of type QCaObject*,
-  /// here is void* to avoid installing all headers in the src directory.
-  void* qCaField;
+  /// Basic object representing the field.
+  qcaobject::QCaObject * qCaField;
 
   /// The PV name of the field
   QString pvName;
@@ -228,6 +234,11 @@ private slots:
 
   /// Used to catch QCaObject::connectionChanged() signal from the ::qCaField.
   void updateConnection();
+
+  /// Actually does all the job to set the pv name.
+  /// Is called from the setPv(...) via a 0-timed timer to
+  /// guarantee that nothing happens before the QCoreApplication::exec()
+  void preSetPV();
 
 signals:
 

@@ -61,6 +61,12 @@ bool qtWait(int delay){
 }
 
 
+
+
+
+
+
+
 using namespace qcaobject;
 
 const QVariant QEpicsPv::badData = QVariant();
@@ -117,16 +123,21 @@ QEpicsPv::~QEpicsPv(){
 
 
 void QEpicsPv::setPV(const QString & _pvName) {
-
-  if ( debugLevel > 0 )
-    qDebug() << "QEpicsPv DEBUG: SPV" << this << _pvName ;
-
   pvName = _pvName;
   setObjectName(pvName);
+  // to guarantee that the preSetPV is not called before the QCoreApplication::exec()
+  QTimer::singleShot(0,this,SLOT(preSetPV()));
+}
+
+
+void QEpicsPv::preSetPV() {
+
+  if ( debugLevel > 0 )
+    qDebug() << "QEpicsPv DEBUG: SPV" << this << pvName ;
 
   if (qCaField) {
-    ( (QCaObject *) qCaField )->deleteChannel();
-    delete (QCaObject *) qCaField;
+    qCaField->deleteChannel();
+    delete qCaField;
     qCaField = 0;
   }
   updateConnection();
@@ -136,8 +147,7 @@ void QEpicsPv::setPV(const QString & _pvName) {
     return;
   }
 
-  QCaObject * _qCaField = new QCaObject(pvName, this);
-  qCaField = _qCaField;
+  qCaField = new QCaObject(pvName, this);
 
   // Qt::QueuedConnection here is needed to ensure the QEventLoop in
   // ::getUpdated() and ::getReady() methods are running smoothly.
@@ -146,17 +156,21 @@ void QEpicsPv::setPV(const QString & _pvName) {
   // caused the necessity to register the corresponding types using
   // qRegisterMetaType() functions.
   //
-  connect(_qCaField, SIGNAL(connectionChanged(QCaConnectionInfo&)),
+  connect(qCaField, SIGNAL(connectionChanged(QCaConnectionInfo&)),
           SLOT(updateConnection()), Qt::QueuedConnection);
-  connect(_qCaField, SIGNAL(dataChanged(QVariant,QCaAlarmInfo&,QCaDateTime&)),
+  connect(qCaField, SIGNAL(dataChanged(QVariant,QCaAlarmInfo&,QCaDateTime&)),
           SLOT(updateValue(QVariant)), Qt::QueuedConnection);
 
-  _qCaField->subscribe();
+  qCaField->subscribe();
 
   emit pvChanged(pvName);
 
 
 }
+
+
+
+
 
 const QString & QEpicsPv::pv() const {
   return pvName;
@@ -165,7 +179,7 @@ const QString & QEpicsPv::pv() const {
 
 bool QEpicsPv::isConnected() const {
   return qCaField
-      && ((QCaObject *) qCaField) -> isChannelConnected()
+      && qCaField -> isChannelConnected()
       && get().isValid();
 }
 
@@ -213,6 +227,7 @@ QVariant QEpicsPv::get(const QString & _pvName, int delay) {
   if ( _pvName.isEmpty() )
     return badData;
   QEpicsPv tpv(_pvName);
+  QCoreApplication::processEvents();
   return tpv.getConnected(delay);
 }
 
@@ -252,7 +267,7 @@ const QVariant & QEpicsPv::set(QVariant value, int delay) {
     return badData;
   }
 
-  ((QCaObject *) qCaField) -> writeData(value);
+  qCaField->writeData(value);
 
   return delay >= 0  ?  getUpdated(delay)  :  get();
 
@@ -264,6 +279,7 @@ QVariant QEpicsPv::set(const QString & _pvName, const QVariant & value, int dela
   if (_pvName.isEmpty())
     return badData;
   QEpicsPv tpv(_pvName);
+  QCoreApplication::processEvents();
   return tpv.getConnected().isValid()  ?  tpv.set(value, delay)  :  badData;
 }
 
@@ -282,7 +298,7 @@ void QEpicsPv::updateValue(const QVariant & data){
   lastData = data;
 
   if (firstRead) {
-    theEnum = ((QCaObject *) qCaField) -> getEnumerations();
+    theEnum = qCaField->getEnumerations();
     emit connected();
     emit connectionChanged(true);
   }
@@ -295,7 +311,7 @@ void QEpicsPv::updateValue(const QVariant & data){
 
 void QEpicsPv::updateConnection() {
 
-  bool con =  qCaField && ((QCaObject *) qCaField) -> isChannelConnected();
+  bool con =  qCaField && qCaField->isChannelConnected();
   if ( debugLevel > 0 )
     qDebug() << "QEpicsPv DEBUG: CON" << this << pv() << con ;
   if (con)
