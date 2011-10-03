@@ -74,6 +74,9 @@ private:
   /// debug level. 0 - no debug;
   static unsigned debugLevel;
 
+protected:
+  bool eventFilter(QObject *obj, QEvent *event);
+
 public:
 
   /// Constructor.

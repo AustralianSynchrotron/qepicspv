@@ -98,6 +98,7 @@ QEpicsPv::QEpicsPv(const QString & _pvName, QObject *parent) :
 {
   if ( debugLevel > 0 )
     qDebug() << "QEpicsPv DEBUG: INI" << this << _pvName;
+  installEventFilter(this);
   setPV(pvName);
 }
 
@@ -111,6 +112,7 @@ QEpicsPv::QEpicsPv(QObject *parent) :
 {
   if ( debugLevel > 0 )
     qDebug() << "QEpicsPv DEBUG: INI" << this;
+  installEventFilter(this);
 }
 
 
@@ -121,12 +123,21 @@ QEpicsPv::~QEpicsPv(){
     setPV();
 }
 
+bool QEpicsPv::eventFilter(QObject *obj, QEvent *event) {
+  if ( event->type() == QEvent::ApplicationActivate )
+    preSetPV();
+  return QObject::eventFilter(obj, event);
+}
+
 
 void QEpicsPv::setPV(const QString & _pvName) {
   pvName = _pvName;
   setObjectName(pvName);
   // to guarantee that the preSetPV is not called before the QCoreApplication::exec()
-  QTimer::singleShot(0,this,SLOT(preSetPV()));
+  if ( QCoreApplication::startingUp() )
+    QCoreApplication::postEvent(this, new QEvent(QEvent::ApplicationActivate));
+  else
+    QTimer::singleShot(0,this,SLOT(preSetPV()));
 }
 
 
