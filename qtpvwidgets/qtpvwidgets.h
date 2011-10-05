@@ -46,6 +46,9 @@ private slots:
 
 
 
+
+
+
 /// Widget which modifies the behaviour of the QDoubleSpinBox.
 ///
 /// The modifications:
@@ -64,6 +67,8 @@ private:
   /// Needed to restore the old value if the new one was not confirmed with the
   /// Enter press.
   double oldvalue;
+
+  bool validateMe;
 
   /// Reimplements the QDoubleSpinBox::focusInEvent().
   /// Updates the ::oldvalue and selects the text in the edit line.
@@ -93,6 +98,8 @@ public:
   /// @param value value to represent as the string
   /// @return String representation of the value.
   QString textFromValue ( double value ) const ;
+
+  virtual QValidator::State	validate ( QString & text, int & pos ) const;
 
 signals:
 
@@ -135,6 +142,10 @@ private slots:
 
 
 
+
+
+
+
 /// Widget which modifies the behaviour of the QSpinBox.
 ///
 /// Setting new value must be confirmed with the press of the Enter key.
@@ -149,6 +160,8 @@ private:
   /// Needed to restore the old value if the new one was not confirmed with the
   /// Enter press.
   int oldvalue;
+
+  bool validateMe;
 
   /// Reimplements the QSpinBox::focusInEvent().
   /// Updates the ::oldvalue and selects the text in the edit line.
@@ -173,6 +186,8 @@ public:
   /// Constructor
   /// @param paren object's parent.
   QMSpinBox(QWidget * parent = 0);
+
+  virtual QValidator::State	validate ( QString & text, int & pos ) const;
 
 signals:
 

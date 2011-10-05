@@ -28,6 +28,13 @@ QMLineEdit::QMLineEdit(QWidget * parent) :
 
 
 
+
+
+
+
+
+
+
 void QMDoubleSpinBox::focusInEvent(QFocusEvent * event){
   QDoubleSpinBox::focusInEvent(event);
   selectAll();
@@ -43,21 +50,24 @@ void QMDoubleSpinBox::focusOutEvent(QFocusEvent * event){
 void QMDoubleSpinBox::keyPressEvent( QKeyEvent * event ){
   QDoubleSpinBox::keyPressEvent(event);
   int key = event->key();
-  if ( key == Qt::Key_Enter || key == Qt::Key_Return )
+  if ( key == Qt::Key_Enter || key == Qt::Key_Return ) {
+    validateMe = true;
+    interpretText();
+    validateMe = false;
     emit valueEdited(oldvalue=value());
-  else if ( key == Qt::Key_Escape )
+  } else if ( key == Qt::Key_Escape )
     emit escaped();
 }
 
 
 QMDoubleSpinBox::QMDoubleSpinBox(QWidget * parent) :
-  QDoubleSpinBox(parent)
+  QDoubleSpinBox(parent),
+  validateMe(false)
 {
   connect(this, SIGNAL(valueChanged(double)), SLOT(recalculateStep(double)));
   connect(this, SIGNAL(escaped()), SLOT(restore()));
   connect(this->lineEdit(), SIGNAL(cursorPositionChanged(int,int)),
           SLOT(correctPosition(int,int)));
-
   recalculateStep(value());
 }
 
@@ -98,6 +108,14 @@ void QMDoubleSpinBox::recalculateStep(double val){
   if ( step != singleStep() )
     setSingleStep(step);
 }
+
+QValidator::State	QMDoubleSpinBox::validate ( QString & text, int & pos ) const {
+  return validateMe ?
+        QDoubleSpinBox::validate(text, pos) :
+        QValidator::Intermediate;
+}
+
+
 
 
 
@@ -143,6 +161,13 @@ void QMSpinBox::correctPosition(int , int newPos) {
       ledt->setSelection(selSt,maxPos-selSt);
   }
 }
+
+QValidator::State	QMSpinBox::validate ( QString & text, int & pos ) const {
+  return validateMe ?
+        QSpinBox::validate(text, pos) :
+        QValidator::Intermediate;
+}
+
 
 
 
