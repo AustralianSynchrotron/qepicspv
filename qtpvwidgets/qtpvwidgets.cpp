@@ -112,7 +112,7 @@ void QMDoubleSpinBox::recalculateStep(double val){
 QValidator::State	QMDoubleSpinBox::validate ( QString & text, int & pos ) const {
   return validateMe ?
         QDoubleSpinBox::validate(text, pos) :
-        QValidator::Intermediate;
+        QValidator::Acceptable;
 }
 
 
@@ -165,7 +165,7 @@ void QMSpinBox::correctPosition(int , int newPos) {
 QValidator::State	QMSpinBox::validate ( QString & text, int & pos ) const {
   return validateMe ?
         QSpinBox::validate(text, pos) :
-        QValidator::Intermediate;
+        QValidator::Acceptable;
 }
 
 
