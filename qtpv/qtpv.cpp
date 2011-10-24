@@ -153,26 +153,25 @@ void QEpicsPv::preSetPV() {
   }
   updateConnection();
 
-  if ( pvName.isEmpty() ) {
-    emit pvChanged(pvName);
-    return;
+  if ( ! pvName.isEmpty() ) {
+
+    qCaField = new QCaObject(pvName, QCoreApplication::instance());
+
+    // Qt::QueuedConnection here is needed to ensure the QEventLoop in
+    // ::getUpdated() and ::getReady() methods are running smoothly.
+    //
+    // This requirement to use the queued signal and slot connections
+    // caused the necessity to register the corresponding types using
+    // qRegisterMetaType() functions.
+    //
+    connect(qCaField, SIGNAL(connectionChanged(QCaConnectionInfo&)),
+            SLOT(updateConnection()), Qt::QueuedConnection);
+    connect(qCaField, SIGNAL(dataChanged(QVariant,QCaAlarmInfo&,QCaDateTime&)),
+            SLOT(updateValue(QVariant)), Qt::QueuedConnection);
+
+    qCaField->subscribe();
+
   }
-
-  qCaField = new QCaObject(pvName, this);
-
-  // Qt::QueuedConnection here is needed to ensure the QEventLoop in
-  // ::getUpdated() and ::getReady() methods are running smoothly.
-  //
-  // This requirement to use the queued signal and slot connections
-  // caused the necessity to register the corresponding types using
-  // qRegisterMetaType() functions.
-  //
-  connect(qCaField, SIGNAL(connectionChanged(QCaConnectionInfo&)),
-          SLOT(updateConnection()), Qt::QueuedConnection);
-  connect(qCaField, SIGNAL(dataChanged(QVariant,QCaAlarmInfo&,QCaDateTime&)),
-          SLOT(updateValue(QVariant)), Qt::QueuedConnection);
-
-  qCaField->subscribe();
 
   emit pvChanged(pvName);
 
@@ -322,17 +321,19 @@ void QEpicsPv::updateValue(const QVariant & data){
 
 void QEpicsPv::updateConnection() {
 
-  bool con =  qCaField && qCaField->isChannelConnected();
+  bool con =  isConnected();
   if ( debugLevel > 0 )
     qDebug() << "QEpicsPv DEBUG: CON" << this << pv() << con ;
-  if (con)
-    return;
 
-  updated=false;
-  lastData = badData;
-  theEnum.clear();
-  emit disconnected();
-  emit connectionChanged(false);
+  if (con) {
+    emit connected();
+  } else {
+    updated=false;
+    lastData = badData;
+    theEnum.clear();
+    emit disconnected();
+  }
+  emit connectionChanged(con);
 
 }
 
