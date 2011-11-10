@@ -243,6 +243,8 @@ QVariant QEpicsPv::get(const QString & _pvName, int delay) {
 
 const QVariant & QEpicsPv::set(QVariant value, int delay) {
 
+  emit valueUpdated(get());
+
   if ( debugLevel > 0 )
     qDebug() << "QEpicsPv DEBUG: SET" << this << isConnected() << pv() << get() << value << getEnum();
 
