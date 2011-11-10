@@ -1,3 +1,4 @@
+
 #include "qtpvwidgets.h"
 
 
@@ -34,6 +35,17 @@ QMLineEdit::QMLineEdit(QWidget * parent) :
 
 
 
+QMDoubleSpinBox::QMDoubleSpinBox(QWidget * parent) :
+  QDoubleSpinBox(parent),
+  validateMe(false)
+{
+  setKeyboardTracking(false);
+  connect(this, SIGNAL(valueChanged(double)), SLOT(recalculateStep(double)));
+  connect(this, SIGNAL(escaped()), SLOT(restore()));
+  connect(this->lineEdit(), SIGNAL(cursorPositionChanged(int,int)),
+          SLOT(correctPosition(int,int)));
+  recalculateStep(value());
+}
 
 void QMDoubleSpinBox::focusInEvent(QFocusEvent * event){
   QDoubleSpinBox::focusInEvent(event);
@@ -47,8 +59,8 @@ void QMDoubleSpinBox::focusOutEvent(QFocusEvent * event){
   emit escaped();
 }
 
+
 void QMDoubleSpinBox::keyPressEvent( QKeyEvent * event ){
-  QDoubleSpinBox::keyPressEvent(event);
   int key = event->key();
   if ( key == Qt::Key_Enter || key == Qt::Key_Return ) {
     validateMe = true;
@@ -57,19 +69,10 @@ void QMDoubleSpinBox::keyPressEvent( QKeyEvent * event ){
     emit valueEdited(oldvalue=value());
   } else if ( key == Qt::Key_Escape )
     emit escaped();
+  QDoubleSpinBox::keyPressEvent(event);
 }
 
 
-QMDoubleSpinBox::QMDoubleSpinBox(QWidget * parent) :
-  QDoubleSpinBox(parent),
-  validateMe(false)
-{
-  connect(this, SIGNAL(valueChanged(double)), SLOT(recalculateStep(double)));
-  connect(this, SIGNAL(escaped()), SLOT(restore()));
-  connect(this->lineEdit(), SIGNAL(cursorPositionChanged(int,int)),
-          SLOT(correctPosition(int,int)));
-  recalculateStep(value());
-}
 
 
 void QMDoubleSpinBox::correctPosition(int , int newPos) {
@@ -122,6 +125,16 @@ QValidator::State	QMDoubleSpinBox::validate ( QString & text, int & pos ) const 
 
 
 
+
+QMSpinBox::QMSpinBox(QWidget * parent)  :
+  QSpinBox(parent)
+{
+  setKeyboardTracking(false);
+  connect(this, SIGNAL(escaped()), SLOT(restore()));
+  connect(this->lineEdit(), SIGNAL(cursorPositionChanged(int,int)),
+          SLOT(correctPosition(int,int)));
+}
+
 void QMSpinBox::focusInEvent(QFocusEvent * event){
   QSpinBox::focusInEvent(event);
   selectAll();
@@ -140,15 +153,6 @@ void QMSpinBox::keyPressEvent( QKeyEvent * event ){
     emit valueEdited(oldvalue=value());
   else if ( key == Qt::Key_Escape )
     emit escaped();
-}
-
-
-QMSpinBox::QMSpinBox(QWidget * parent)  :
-  QSpinBox(parent)
-{
-  connect(this, SIGNAL(escaped()), SLOT(restore()));
-  connect(this->lineEdit(), SIGNAL(cursorPositionChanged(int,int)),
-          SLOT(correctPosition(int,int)));
 }
 
 void QMSpinBox::correctPosition(int , int newPos) {
