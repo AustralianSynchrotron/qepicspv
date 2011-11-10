@@ -147,12 +147,12 @@ void QMSpinBox::focusOutEvent(QFocusEvent * event){
 }
 
 void QMSpinBox::keyPressEvent( QKeyEvent * event ){
-  QSpinBox::keyPressEvent(event);
   int key = event->key();
   if ( key == Qt::Key_Enter || key == Qt::Key_Return )
     emit valueEdited(oldvalue=value());
   else if ( key == Qt::Key_Escape )
     emit escaped();
+  QSpinBox::keyPressEvent(event);
 }
 
 void QMSpinBox::correctPosition(int , int newPos) {
