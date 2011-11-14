@@ -229,6 +229,7 @@ public slots:
   ///
   void setPV(const QString & _pvName="");
 
+
 private slots:
 
   /// Used to catch the QCaObject::dataChanged() signal from the ::qCaField.
@@ -242,6 +243,7 @@ private slots:
   /// Is called from the setPv(...) via a 0-timed timer to
   /// guarantee that nothing happens before the QCoreApplication::exec()
   void preSetPV();
+
 
 signals:
 
