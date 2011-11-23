@@ -13,9 +13,9 @@ struct ObjSig {
     sender(_sender), signal(_signal) {};
 };
 
-bool qtWait(const QList<ObjSig> & osS, int delay=0);
-bool qtWait(const QObject * sender, const char * signal, int delay=0);
-bool qtWait(int delay);
+bool qtWait(const QList<ObjSig> & osS, int delay_msec=0);
+bool qtWait(const QObject * sender, const char * signal, int delay_msec=0);
+bool qtWait(int delay_msec);
 
 
 
@@ -91,6 +91,11 @@ public:
   /// Destructor
   ~QEpicsPv();
 
+  /// Expected time gap between the PV is set and the update arrives.
+  /// This number is an average of the measured time gaps, NOT the
+  /// guaranteed.
+  static const int expectedResponse=100;
+
   static void setDebugLevel(unsigned level = 0);
 
   /// Returns current value of the field.
@@ -123,7 +128,7 @@ public:
   // if this static member is called (directly or inderectly)
   // from whithin a constructor.
   // It has something to do with the threading.
-  const QVariant & getUpdated(int delay=defaultDelay) const;
+  const QVariant & getUpdated(int delay_msec=defaultDelay) const;
 
   /// \brief Connection status.
   ///
@@ -160,7 +165,7 @@ public:
   // There is a bug which may cause the main application to crash
   // if this member is called (directly or inderectly) from whithin a constructor.
   // It has something to do with the threading.
-  const QVariant & getConnected(int delay=defaultDelay) const;
+  const QVariant & getConnected(int delay_msec=defaultDelay) const;
 
   /// \brief Static version of the ::getUpdated() method.
   ///
@@ -178,7 +183,7 @@ public:
   // if this static member is called (directly or inderectly)
   // from whithin a constructor.
   // It has something to do with the threading.
-  static QVariant get(const QString & _pvName, int delay=defaultDelay);
+  static QVariant get(const QString & _pvName, int delay_msec=defaultDelay);
 
   /// \brief Static version of the ::set() method.
   ///
@@ -202,7 +207,7 @@ public:
   // if this static member is called (directly or inderectly)
   // from whithin a constructor.
   // It has something to do with the threading.
-  static QVariant set(const QString & _pvName, const QVariant & value, int delay = -1);
+  static QVariant set(const QString & _pvName, const QVariant & value, int delay_msec = -1);
 
 public slots:
 
