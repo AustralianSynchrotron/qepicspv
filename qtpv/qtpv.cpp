@@ -8,18 +8,18 @@
 
 
 
-bool qtWait(const QList<ObjSig> & osS, int delay) {
+bool qtWait(const QList<ObjSig> & osS, int delay_msec) {
 
   QEventLoop q;
   foreach(ObjSig os, osS)
     QObject::connect(os.sender, os.signal, &q, SLOT(quit()));
 
   QTimer * tT = 0;
-  if (delay>0) {
+  if (delay_msec>0) {
     tT = new QTimer;
     tT->setSingleShot(true);
     QObject::connect(tT, SIGNAL(timeout()), &q, SLOT(quit()));
-    tT->start(delay);
+    tT->start(delay_msec);
   }
 
   q.exec();
@@ -33,15 +33,15 @@ bool qtWait(const QList<ObjSig> & osS, int delay) {
 
 }
 
-bool qtWait(const QObject * sender, const char * signal, int delay) {
+bool qtWait(const QObject * sender, const char * signal, int delay_msec) {
   QList<ObjSig> osS;
   osS << ObjSig(sender,signal);
-  return qtWait(osS,delay);
+  return qtWait(osS,delay_msec);
 }
 
-bool qtWait(int delay){
+bool qtWait(int delay_msec){
 
-  if (delay <= 0)
+  if (delay_msec <= 0)
     return true;
 
   QTimer * tT = 0;
@@ -51,7 +51,7 @@ bool qtWait(int delay){
 
   QObject::connect(tT, SIGNAL(timeout()), &q, SLOT(quit()));
 
-  tT->start(delay);
+  tT->start(delay_msec);
   q.exec();
 
   delete tT;
@@ -205,7 +205,7 @@ void QEpicsPv::needUpdated() const {
   updated = false;
 }
 
-const QVariant & QEpicsPv::getUpdated(int delay) const {
+const QVariant & QEpicsPv::getUpdated(int delay_msec) const {
 
   if ( ! qCaField )
     return badData;
@@ -216,7 +216,7 @@ const QVariant & QEpicsPv::getUpdated(int delay) const {
   osS
       << ObjSig(this, SIGNAL(valueUpdated(QVariant)))
       << ObjSig(this, SIGNAL(connectionChanged(bool)));
-  qtWait(osS, delay);
+  qtWait(osS, delay_msec);
 
   QCoreApplication::processEvents(); // needed to process updateValue
   return ( ! isConnected() || ! updated )
@@ -226,26 +226,26 @@ const QVariant & QEpicsPv::getUpdated(int delay) const {
 
 
 
-const QVariant & QEpicsPv::getConnected(int delay) const {
+const QVariant & QEpicsPv::getConnected(int delay_msec) const {
   if ( ! qCaField )
     return badData;
   if ( ! isConnected() )
-    qtWait(this, SIGNAL(connected()), delay);
+    qtWait(this, SIGNAL(connected()), delay_msec);
   return lastData;
 }
 
 
 
 
-QVariant QEpicsPv::get(const QString & _pvName, int delay) {
+QVariant QEpicsPv::get(const QString & _pvName, int delay_msec) {
   if ( _pvName.isEmpty() )
     return badData;
   QEpicsPv tpv(_pvName);
   QCoreApplication::processEvents();
-  return tpv.getConnected(delay);
+  return tpv.getConnected(delay_msec);
 }
 
-const QVariant & QEpicsPv::set(QVariant value, int delay) {
+const QVariant & QEpicsPv::set(QVariant value, int delay_msec) {
 
   emit valueUpdated(get());
 
@@ -256,7 +256,7 @@ const QVariant & QEpicsPv::set(QVariant value, int delay) {
   if ( ! isConnected() || ! value.isValid() )
     return badData ;
 
-  if (delay >= 0)
+  if (delay_msec >= 0)
     needUpdated();
 
   if ( getEnum().size() ) {
@@ -286,18 +286,18 @@ const QVariant & QEpicsPv::set(QVariant value, int delay) {
 
   qCaField->writeData(value);
 
-  return delay >= 0  ?  getUpdated(delay)  :  get();
+  return delay_msec >= 0  ?  getUpdated(delay_msec)  :  get();
 
 }
 
 
 
-QVariant QEpicsPv::set(const QString & _pvName, const QVariant & value, int delay) {
+QVariant QEpicsPv::set(const QString & _pvName, const QVariant & value, int delay_msec) {
   if (_pvName.isEmpty())
     return badData;
   QEpicsPv tpv(_pvName);
   QCoreApplication::processEvents();
-  return tpv.getConnected().isValid()  ?  tpv.set(value, delay)  :  badData;
+  return tpv.getConnected().isValid()  ?  tpv.set(value, delay_msec)  :  badData;
 }
 
 
