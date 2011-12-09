@@ -267,6 +267,9 @@ signals:
   /// @param double new value
   void textEdited(QString);
 
+  /// Emitted on the confirmed value change.
+  void indexEdited(int);
+
   /// Emitted when the focus is lost or Escape pressed.
   void escaped();
 

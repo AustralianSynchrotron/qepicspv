@@ -202,6 +202,7 @@ void QMComboBox::keyPressEvent( QKeyEvent * event ){
   int key = event->key();
   if ( key == Qt::Key_Enter || key == Qt::Key_Return ) {
     emit textEdited(currentText());
+    emit indexEdited(currentIndex());
     oldvalue = currentIndex();
   } else if ( key == Qt::Key_Escape )
     emit escaped();
