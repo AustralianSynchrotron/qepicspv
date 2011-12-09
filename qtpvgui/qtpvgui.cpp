@@ -84,7 +84,7 @@ void QEpicsPvGUI::onConnectionChange(bool con) {
       ui->enumBox->addItem( "\"" + str + "\" ("+ QString::number(idx++) + ")" );
     ui->enumBox->setCurrentIndex(val.toInt());
     ui->set->setCurrentWidget(ui->enumW);
-    connect(ui->enumBox, SIGNAL(currentIndexChanged(int)), SLOT(onSet()));
+    connect(ui->enumBox, SIGNAL(indexEdited(int)), SLOT(onSet()));
 
   } else if ( val.type() == QVariant::Double ) {
 
