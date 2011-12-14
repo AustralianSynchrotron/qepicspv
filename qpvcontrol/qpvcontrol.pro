@@ -6,7 +6,7 @@
 
 QT       += core gui
 
-TARGET = ptpv
+TARGET = qtpv
 TEMPLATE = app
 
 LIBS += -L../qtpv -lqtpv \
