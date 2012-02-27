@@ -53,8 +53,6 @@ private:
   /// Used in the ::needUpdated() / ::getUpdated() pair.
   mutable bool updated;
 
-  /// The enumeration of the PV field (if any, empty list otherwise).
-  QStringList theEnum;
 
   /// Default delay in milliseconds used in the ::getUpdated(), ::getReady() and get() methods.
   static const int defaultDelay = 1000;

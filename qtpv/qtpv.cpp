@@ -93,8 +93,7 @@ QEpicsPv::QEpicsPv(const QString & _pvName, QObject *parent) :
   qCaField(0),
   pvName(_pvName),
   lastData(),
-  updated(false),
-  theEnum()
+  updated(false)
 {
   if ( debugLevel > 0 )
     qDebug() << "QEpicsPv DEBUG: INI" << QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss.zzz") <<
@@ -108,8 +107,7 @@ QEpicsPv::QEpicsPv(QObject *parent) :
   qCaField(0),
   pvName(),
   lastData(),
-  updated(false),
-  theEnum()
+  updated(false)
 {
   if ( debugLevel > 0 )
     qDebug() << "QEpicsPv DEBUG: INI" << QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss.zzz")
@@ -316,7 +314,6 @@ void QEpicsPv::updateValue(const QVariant & data){
   lastData = data;
 
   if (firstRead) {
-    theEnum = qCaField->getEnumerations();
     emit connected();
     emit connectionChanged(true);
   }
@@ -339,7 +336,6 @@ void QEpicsPv::updateConnection() {
   } else {
     updated=false;
     lastData = badData;
-    theEnum.clear();
     emit disconnected();
   }
   emit connectionChanged(con);
@@ -347,5 +343,5 @@ void QEpicsPv::updateConnection() {
 }
 
 const QStringList & QEpicsPv::getEnum() const {
-  return theEnum;
+  return qCaField->getEnumerations();
 }

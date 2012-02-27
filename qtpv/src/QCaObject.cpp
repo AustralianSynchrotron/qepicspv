@@ -923,14 +923,14 @@ void QCaObject::resendLastData()
 /*!
  Return the engineering units, if any
 */
-QString QCaObject::getEgu() {
+const QString & QCaObject::getEgu() const {
     return egu;
 }
 
 /*!
  Return the enumerations strings, if any
 */
-QStringList QCaObject::getEnumerations() {
+const QStringList &  QCaObject::getEnumerations() const {
     return enumerations;
 }
 

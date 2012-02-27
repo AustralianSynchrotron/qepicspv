@@ -1,4 +1,4 @@
-/*! 
+/*!
   \class QCaObject
   \version $Revision: #10 $
   \date $DateTime: 2010/09/06 13:16:04 $
@@ -83,8 +83,8 @@ namespace qcaobject {
       bool isWriteCallbacksEnabled();
 
       // Get database information relating to the variable
-      QString getEgu();
-      QStringList getEnumerations();
+      const QString & getEgu() const;
+      const QStringList & getEnumerations() const;
       unsigned int getPrecision();
       double getDisplayLimitUpper();
       double getDisplayLimitLower();
