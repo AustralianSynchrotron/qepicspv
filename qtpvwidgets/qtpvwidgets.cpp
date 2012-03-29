@@ -120,7 +120,11 @@ QValidator::State	QMDoubleSpinBox::validate ( QString & text, int & pos ) const 
         QValidator::Acceptable;
 }
 
-
+void QMDoubleSpinBox::setValue(double val) {
+  oldvalue = val;
+  if ( ! hasFocus() )
+    QDoubleSpinBox::setValue(val);
+}
 
 
 
@@ -179,6 +183,13 @@ QValidator::State	QMSpinBox::validate ( QString & text, int & pos ) const {
         QSpinBox::validate(text, pos) :
         QValidator::Acceptable;
 }
+
+void QMSpinBox::setValue(int val) {
+  oldvalue = val;
+  if ( ! hasFocus() )
+    QSpinBox::setValue(val);
+}
+
 
 
 
