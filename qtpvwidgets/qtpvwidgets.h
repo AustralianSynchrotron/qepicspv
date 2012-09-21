@@ -287,6 +287,45 @@ private slots:
 };
 
 
+class QNumberLabel : public QLabel {
+
+  Q_OBJECT;
+  Q_PROPERTY(QString suffix READ suffix WRITE setSuffix);
+  Q_PROPERTY(QString prefix READ prefix WRITE setPrefix);
+  QString m_suffix;
+  QString m_prefix;
+
+private:
+  void setNumber(const QString & numberText) {QLabel::setText(m_prefix + numberText + m_suffix);}
+
+public:
+
+  QNumberLabel( QWidget * parent=0, Qt::WindowFlags f=0) :
+    QLabel(parent, f) {}
+
+  QNumberLabel( const QString & text, QWidget * parent=0, Qt::WindowFlags f=0) :
+    QLabel(text, parent, f) {}
+
+  const QString & prefix() const {return m_prefix;}
+  const QString & suffix() const {return m_suffix;}
+
+public slots:
+
+  void setNumber ( long n, int base = 10 ) {setNumber(QString::number(n, base));}
+  void setNumber ( double n, char format = 'g', int precision = 6 ) {setNumber(QString::number(n, format, precision));}
+  void setNumber ( ulong n, int base = 10 ) {setNumber(QString::number(n,base));}
+  void setNumber ( int n, int base = 10 ) {setNumber(QString::number(n, base));}
+  void setNumber ( uint n, int base = 10 ) {setNumber(QString::number(n, base));}
+  void setNumber ( qlonglong n, int base = 10 ) {setNumber(QString::number(n, base));}
+  void setNumber ( qulonglong n, int base = 10 ) {setNumber(QString::number(n, base));}
+
+  void setPrefix(const QString &prefix) {m_prefix=prefix;}
+  void setSuffix(const QString &suffix) {m_suffix=suffix;}
+
+};
+
+
+
 
 
 
