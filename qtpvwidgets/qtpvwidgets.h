@@ -13,6 +13,7 @@
 #include <QLineEdit>
 #include <QToolButton>
 #include <QLabel>
+#include <QVariant>
 
 #include <math.h>
 
@@ -287,40 +288,52 @@ private slots:
 };
 
 
-class QNumberLabel : public QLabel {
+class QVariantLabel : public QLabel {
 
   Q_OBJECT;
   Q_PROPERTY(QString suffix READ suffix WRITE setSuffix);
   Q_PROPERTY(QString prefix READ prefix WRITE setPrefix);
+  Q_PROPERTY(int param READ param WRITE setParam);
+  Q_PROPERTY(char format READ format WRITE setFormat);
   QString m_suffix;
   QString m_prefix;
+  int m_param;
+  char m_format;
+  QVariant variable;
 
 private:
-  void setNumber(const QString & numberText) {QLabel::setText(m_prefix + numberText + m_suffix);}
+
+  void setParam(int param);
+  int param() const;
+
+  void retext();
 
 public:
 
-  QNumberLabel( QWidget * parent=0, Qt::WindowFlags f=0) :
-    QLabel(parent, f) {}
+  QVariantLabel( QWidget * parent=0, Qt::WindowFlags f=0) :
+    QLabel(parent, f), m_param(10), m_format('g') {}
 
-  QNumberLabel( const QString & text, QWidget * parent=0, Qt::WindowFlags f=0) :
-    QLabel(text, parent, f) {}
+  QVariantLabel( const QString & text, QWidget * parent=0, Qt::WindowFlags f=0) :
+    QLabel(text, parent, f), m_param(10), m_format('g') {}
 
-  const QString & prefix() const {return m_prefix;}
-  const QString & suffix() const {return m_suffix;}
+  void  setDecimals(int prec);
+  void  setBase(int base);
+  void  setFormat(char f);
+
+  const QString & suffix() const;
+  const QString & prefix() const;
+  char format() const;
 
 public slots:
 
-  void setNumber ( long n, int base = 10 ) {setNumber(QString::number(n, base));}
-  void setNumber ( double n, char format = 'g', int precision = 6 ) {setNumber(QString::number(n, format, precision));}
-  void setNumber ( ulong n, int base = 10 ) {setNumber(QString::number(n,base));}
-  void setNumber ( int n, int base = 10 ) {setNumber(QString::number(n, base));}
-  void setNumber ( uint n, int base = 10 ) {setNumber(QString::number(n, base));}
-  void setNumber ( qlonglong n, int base = 10 ) {setNumber(QString::number(n, base));}
-  void setNumber ( qulonglong n, int base = 10 ) {setNumber(QString::number(n, base));}
+  void setText(const QString & s);
+  void setValue(double n);
+  void setValue(qlonglong n);
+  void setValue(qulonglong n);
+  void setVariant(QVariant v);
 
-  void setPrefix(const QString &prefix) {m_prefix=prefix;}
-  void setSuffix(const QString &suffix) {m_suffix=suffix;}
+  void setPrefix(const QString &prefix);
+  void setSuffix(const QString &suffix);
 
 };
 

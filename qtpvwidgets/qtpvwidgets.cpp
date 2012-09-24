@@ -242,4 +242,109 @@ void QMComboBox::setIndexFromText(const QString & text) {
 
 
 
+void QVariantLabel::setParam(int param) {
+  m_param=param;
+  retext();
+}
+
+int QVariantLabel::param() const {
+  return m_param;
+}
+
+void QVariantLabel::retext() {
+  QString nText;
+  if (!variable.isValid())
+    return;
+  switch (variable.type()) {
+    case QVariant::Double :
+      nText =
+          m_prefix +
+          QString::number(variable.toDouble(), m_format, m_param) +
+          m_suffix;
+      break;
+    case QVariant::LongLong :
+      nText =
+          m_prefix +
+          QString::number(variable.toLongLong(), m_param) +
+          m_suffix;
+      break;
+    case QVariant::ULongLong:
+      nText =
+          m_prefix +
+          QString::number(variable.toLongLong(), m_param) +
+          m_suffix;
+      break;
+    default :
+      nText = variable.toString();
+      break;
+  }
+  setText(nText);
+}
+
+void QVariantLabel::setDecimals(int prec) {
+  setParam(prec);
+}
+
+void QVariantLabel::setBase(int base) {
+  setParam(base);
+}
+
+char QVariantLabel::format() const {
+  return m_format;
+}
+
+
+void QVariantLabel::setFormat(char f){
+  m_format=f;
+  retext();
+}
+
+void QVariantLabel::setText(const QString & s) {
+  variable=s;
+  QLabel::setText(s);
+}
+
+void QVariantLabel::setValue(double n) {
+  variable=n;
+  retext();
+}
+
+void QVariantLabel::setValue(qlonglong n) {
+  variable=n;
+  retext();
+}
+
+void QVariantLabel::setValue(qulonglong n) {
+  variable=n;
+  retext();
+}
+
+void QVariantLabel::setVariant(QVariant v) {
+  variable=v;
+  retext();
+}
+
+void QVariantLabel::setPrefix(const QString &prefix) {
+  m_prefix=prefix;
+  retext();
+}
+
+void QVariantLabel::setSuffix(const QString &suffix) {
+  m_suffix=suffix;
+  retext();
+}
+
+const QString & QVariantLabel::suffix() const {
+  return m_suffix;
+}
+
+const QString & QVariantLabel::prefix() const {
+  return m_prefix;
+}
+
+
+
+
+
+
 
