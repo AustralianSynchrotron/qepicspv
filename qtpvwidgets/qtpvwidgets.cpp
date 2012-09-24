@@ -278,7 +278,7 @@ void QVariantLabel::retext() {
       nText = variable.toString();
       break;
   }
-  setText(nText);
+  QLabel::setText(nText);
 }
 
 void QVariantLabel::setDecimals(int prec) {
