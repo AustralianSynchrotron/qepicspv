@@ -1,10 +1,3 @@
-/*!
-  \class QCaObject
-  \version $Revision: #15 $
-  \date $DateTime: 2010/08/30 16:37:08 $
-  \author anthony.owen
-  \brief Provides channel access to QT.
- */
 /*
  *  This file is part of the EPICS QT Framework, initially developed at the Australian Synchrotron.
  *
@@ -31,6 +24,7 @@
 
 #include <QtCore>
 #include <QtDebug>
+#include <QByteArray>
 
 #include <CaObjectPrivate.h>
 #include <CaObject.h>
@@ -38,6 +32,7 @@
 #include <QCaEventUpdate.h>
 #include <CaRecord.h>
 #include <CaConnection.h>
+
 
 using namespace qcaobject;
 using namespace generic;
@@ -56,15 +51,15 @@ QCaEventFilter QCaObject::eventFilter;
    In other words, the event object does not need to be set up in any way.
    It just need to have a suitable event loop running.
 */
-QCaObject::QCaObject( const QString& newRecordName, QObject *newEventHandler ) {
-    initialise( newRecordName, newEventHandler, NULL );
+QCaObject::QCaObject( const QString& newRecordName, QObject *newEventHandler, unsigned char signalsToSendIn ) {
+    initialise( newRecordName, newEventHandler, NULL, signalsToSendIn );
 }
 
-QCaObject::QCaObject( const QString& newRecordName, QObject *newEventHandler, UserMessage* userMessageIn ) {
-    initialise( newRecordName, newEventHandler, userMessageIn );
+QCaObject::QCaObject( const QString& newRecordName, QObject *newEventHandler, UserMessage* userMessageIn, unsigned char signalsToSendIn ) {
+    initialise( newRecordName, newEventHandler, userMessageIn, signalsToSendIn );
 }
 
-void QCaObject::initialise( const QString& newRecordName, QObject *newEventHandler, UserMessage* userMessageIn ) {
+void QCaObject::initialise( const QString& newRecordName, QObject *newEventHandler, UserMessage* userMessageIn, unsigned char signalsToSendIn ) {
 
     // Initialise variables
     precision = 0;
@@ -84,8 +79,11 @@ void QCaObject::initialise( const QString& newRecordName, QObject *newEventHandl
     isStatField = false;
 
     lastTimeStamp = QCaDateTime( QDateTime::currentDateTime() );
-//    lastAlarmInfo = ???;
-    lastValue = (double)0.0;
+    lastVariantValue = (double)0.0;
+
+    lastNewData = NULL;
+
+    signalsToSend = signalsToSendIn;
 
     // Setup any the mechanism to handle messages to the user, if supplied
     setUserMessage( userMessageIn );
@@ -100,11 +98,11 @@ void QCaObject::initialise( const QString& newRecordName, QObject *newEventHandl
     if( recordName.right( statName.length() ) == statName )
         isStatField = true;
 
-    /// Set initial states of the connection and link as reported by the event system.
+    // Set initial states of the connection and link as reported by the event system.
     lastEventChannelState = caconnection::NEVER_CONNECTED;
     lastEventLinkState = caconnection::LINK_DOWN;
 
-    /// This object will post events to itself to transfer processing to a Qt aware thread via this filter.
+    // This object will post events to itself to transfer processing to a Qt aware thread via this filter.
     eventHandler = newEventHandler;
     eventFilter.addFilter( eventHandler );
 
@@ -113,10 +111,18 @@ void QCaObject::initialise( const QString& newRecordName, QObject *newEventHandl
     readMachine = new qcastatemachine::ReadQCaStateMachine( this );
     writeMachine = new qcastatemachine::WriteQCaStateMachine( this );
 
+    // Set a timer to retry if no connection
+    channelExpiredMessage = false;
     QObject::connect( &setChannelTimer, SIGNAL( timeout() ), this, SLOT( setChannelExpired() ) );
     setChannelTimer.stop();
-    /// Start/request connecting state
+
+    // Start/request connecting state
     connectionMachine->process( qcastatemachine::CONNECTED );
+
+    // Add the record name to the drag text
+    QStringList dragText = eventHandler->property( "dragText" ).toStringList();
+    dragText.append( recordName );
+    eventHandler->setProperty( "dragText", dragText );
 }
 
 /*!
@@ -124,37 +130,55 @@ void QCaObject::initialise( const QString& newRecordName, QObject *newEventHandl
     they pop out of the event queue. Also, remove the event filter if this is the last QCaObject.
 */
 QCaObject::~QCaObject() {
-    /// Prevent channel access callbacks.
-    /// There will be no more callbacks from CaObject after this call returns.
-    /// Without this, a callback could occur while the outstanding events list contents
-    /// is being marked as 'to be ignored' (below). While access to the list is thread safe, this would
-    /// result in an active event in the event queue which would be cause this QCaObject to be accessed
-    /// after deletion.
+    // Remove our PV from the drag text.
+    QStringList dragText = eventHandler->property( "dragText" ).toStringList();
+    for( int i = 0; i < dragText.size(); i++ )
+    {
+        if( !dragText[i].compare( recordName ) )
+        {
+            dragText.removeAt( i );
+            eventHandler->setProperty( "dragText", dragText );
+            break;
+        }
+    }
+
+    // Prevent channel access callbacks.
+    // There will be no more callbacks from CaObject after this call returns.
+    // Without this, a callback could occur while the outstanding events list contents
+    // is being marked as 'to be ignored' (below). While access to the list is thread safe, this would
+    // result in an active event in the event queue which would be cause this QCaObject to be accessed
+    // after deletion.
     CaObjectPrivate* p = (CaObjectPrivate*)priPtr;
     p->removeChannel();
 
-    /// Protect access to pending events list
+    // Protect access to pending events list
     QMutexLocker locker( &pendingEventsLock );
 
-    /// Ensure processing of outstanding events will not access this QCaObject after deletion.
-    /// If an event has been posted by a QCaObject, and the QCaObject is deleted before
-    /// the event is processed, the event will still be processed if the event filter is
-    /// still in place - and the filter will still be there if any other QCaObjects are using
-    /// the same QObject to process events. In this case the event will reference a QCaObject
-    /// which no longer exists.
-    /// To manage this problem outstanding events are marked 'to be ignored'.
-    for( int i = 0; i < pendingEvents.size(); i++ ) {
+    // Ensure processing of outstanding events will not access this QCaObject after deletion.
+    // If an event has been posted by a QCaObject, and the QCaObject is deleted before
+    // the event is processed, the event will still be processed if the event filter is
+    // still in place - and the filter will still be there if any other QCaObjects are using
+    // the same QObject to process events. In this case the event will reference a QCaObject
+    // which no longer exists.
+    // To manage this problem outstanding events are marked 'to be ignored'.
+    int pendingEventsSize = pendingEvents.size();
+    for( int i = 0; i < pendingEventsSize; i++ ) {
         pendingEvents[i].event->acceptThisEvent = false;
-        pendingEvents[i].event->emitterObject = NULL;   /// Ensure a 'nice' crash if referenced in error
+        pendingEvents[i].event->emitterObject = NULL;   // Ensure a 'nice' crash if referenced in error
     }
     pendingEvents.clear();
 
-    /// Remove the event filter for this QCaObject.
-    /// Note, this only removes the filter if this is the last QCaObject to use the event loop for 'eventObject'.
-    /// If this is not the last QCaObject to use the event loop for 'eventObject' any remaining events will still
-    /// be processed as the event filter remains to handle events for other QCaOjects. The outstanding events are,
-    /// however, now safe.
+    // Remove the event filter for this QCaObject.
+    // Note, this only removes the filter if this is the last QCaObject to use the event loop for 'eventObject'.
+    // If this is not the last QCaObject to use the event loop for 'eventObject' any remaining events will still
+    // be processed as the event filter remains to handle events for other QCaOjects. The outstanding events are,
+    // however, now safe.
     eventFilter.deleteFilter( eventHandler );
+
+    // Release any 'last data'
+    if( lastNewData )
+        delete (carecord::CaRecord*)lastNewData;
+
 }
 
 /*!
@@ -211,31 +235,31 @@ void QCaObject::processEventStatic( QCaEventUpdate* dataUpdateEvent )
 */
 bool QCaObject::removeEventFromPendingList( QCaEventUpdate* dataUpdateEvent )
 {
-    /// If list is empty, something is wrong - report it
+    // If list is empty, something is wrong - report it
     if( pendingEvents.isEmpty() )
     {
         QString msg( recordName );
         if( userMessage )
         {
             QString msg( recordName );
-            userMessage->sendErrorMessage( msg.append( " Outstanding events list is empty. It should contain at least one event"), "QCaObject::processEvent()"  );
+            userMessage->sendMessage( msg.append( " Outstanding events list is empty. It should contain at least one event"), "QCaObject::processEvent()", MESSAGE_TYPE_ERROR );
         }
         return false;
     }
 
-    /// If the first item in the list is not the current event, something is wrong - report it
+    // If the first item in the list is not the current event, something is wrong - report it
     if( pendingEvents[0].event != dataUpdateEvent )
     {
         QString msg( recordName );
         if( userMessage )
         {
             QString msg( recordName );
-            userMessage->sendErrorMessage( msg.append( " Outstanding events list is corrupt. The first event is not the event being processed" ), "QCaObject::processEvent()" );
+            userMessage->sendMessage( msg.append( " Outstanding events list is corrupt. The first event is not the event being processed" ), "QCaObject::processEvent()", MESSAGE_TYPE_ERROR );
         }
         return false;
     }
 
-    /// Remove this event from the list
+    // Remove this event from the list
     pendingEvents.removeFirst();
     return true;
 }
@@ -272,7 +296,7 @@ bool QCaObject::createChannel() {
             case REQUEST_FAILED:       msg.append( " Request failed.");       break;
             default:                   msg.append( " Unknown error");         break;
         }
-        userMessage->sendErrorMessage( msg, "QCaObject::createChannel()"  );
+        userMessage->sendMessage( msg, "QCaObject::createChannel()", MESSAGE_TYPE_ERROR );
         return false;
     }
     return false;
@@ -314,14 +338,14 @@ bool QCaObject::createSubscription() {
             case REQUEST_FAILED:       msg.append( " Request failed.");       break;
             default:                   msg.append( " Unknown error");         break;
         }
-        userMessage->sendErrorMessage( msg, "QCaObject::createSubscription()"  );
+        userMessage->sendMessage( msg, "QCaObject::createSubscription()", MESSAGE_TYPE_ERROR );
         return false;
     }
     return false;
 }
 
 /*!
-    ???
+    Read from a PV
 */
 bool QCaObject::getChannel() {
 
@@ -344,14 +368,14 @@ bool QCaObject::getChannel() {
             case REQUEST_FAILED:       msg.append( " Request failed.");       break;
             default:                   msg.append( " Unknown error");         break;
         }
-        userMessage->sendErrorMessage( msg, "QCaObject::getChannel()"  );
+        userMessage->sendMessage( msg, "QCaObject::getChannel()", MESSAGE_TYPE_ERROR );
         return false;
     }
     return false;
 }
 
 /*!
-    ???
+    Write to a PV
 */
 bool QCaObject::putChannel() {
 
@@ -395,33 +419,29 @@ bool QCaObject::putChannel() {
             case REQUEST_FAILED:       msg.append( " Request failed.");       break;
             default:                   msg.append( " Unknown error");         break;
         }
-        userMessage->sendErrorMessage( msg, "QCaObject::putChannel()"  );
+        userMessage->sendMessage( msg, "QCaObject::putChannel()", MESSAGE_TYPE_ERROR );
         return false;
     }
     return false;
 }
 
 /*!
-    ???
+    Determine if the channel is currently connected
 */
 bool QCaObject::isChannelConnected() {
-    if( connectionMachine->currentState == qcastatemachine::CONNECTED ) {
-        return true;
-    } else {
-        return false;
-    }
+    return ( connectionMachine->currentState == qcastatemachine::CONNECTED );
 }
 
 /*!
-    ???
-*/
+    Wait one minute for a connection, then re-attempt the connection
+ */
 void QCaObject::startConnectionTimer() {
-    setChannelTimer.start( 3000 );
+    setChannelTimer.start( 60000 );
 }
 
 /*!
-    ???
-*/
+    Connection has been achieved within the expected time, stop the timer used to wait for a connection
+ */
 void QCaObject::stopConnectionTimer() {
     setChannelTimer.stop();
 }
@@ -453,14 +473,15 @@ void QCaObject::signalCallback( caobject::callback_reasons newReason ) {
     // It is really of type carecord::CaRecord*
     void* dataPackage = NULL;
 
-    /// Only case where data is processed. Package the data
+    // Only case where data is processed. Package the data
     if( newReason == caobject::SUBSCRIPTION_SUCCESS || newReason == caobject::READ_SUCCESS )
     {
         dataPackage = getRecordCopyPtr();
     }
 
     // If the callback is a data update callback, and there is an earlier, unprocessed, data event
-    // of the same type in the queue, replace the data package with this one.
+    // of the same type in the queue (but not an initial update that carries extra info such as precision and units),
+    // then replace the data package with this one.
     // This is better than adding events faster than they can be processed.
     bool replaced = false;  // True if data replaced in earlier event
     if( dataPackage )
@@ -469,11 +490,15 @@ void QCaObject::signalCallback( caobject::callback_reasons newReason ) {
         for( int i = 0; i < pendingEvents.count(); i++ )
         {
             QCaEventUpdate* event = pendingEvents[i].event;
-            if(event->reason == newReason )
+            if( event->reason == newReason )
             {
-                delete (carecord::CaRecord*)(event->dataPtr);
-                event->dataPtr = dataPackage;
-                replaced = true;
+                carecord::CaRecord* record = (carecord::CaRecord*)(event->dataPtr);
+                if( record->isFirstUpdate() == false )
+                {
+                    delete (carecord::CaRecord*)(event->dataPtr);
+                    event->dataPtr = dataPackage;
+                    replaced = true;
+                }
                 break;
             }
         }
@@ -483,20 +508,20 @@ void QCaObject::signalCallback( caobject::callback_reasons newReason ) {
     // create a new event and post it to the event queue
     if( !replaced )
     {
-        /// Package the data to be processed within the context of a Qt thread.
+        // Package the data to be processed within the context of a Qt thread.
         QCaEventUpdate* newDataEvent = new QCaEventUpdate( this, newReason, dataPackage );
 
-        /// Add the event to the list of pending events.
-        /// A list is maintained to allow pending events to be updated 'in transit'.
-        /// This must be done before posting the event as the event is likely to be processed before
-        /// the postEvent call returns.
+        // Add the event to the list of pending events.
+        // A list is maintained to allow pending events to be updated 'in transit'.
+        // This must be done before posting the event as the event is likely to be processed before
+        // the postEvent call returns.
         QCaEventItem item( newDataEvent );
         { // Limit scope of pending event list lock
             QMutexLocker locker( &pendingEventsLock );
             pendingEvents.append( item );
         }
 
-        /// Post the data to be processed within the context of a Qt thread.
+        // Post the data to be processed within the context of a Qt thread.
         QCoreApplication::postEvent( eventHandler, newDataEvent );
 
     }
@@ -517,6 +542,7 @@ void QCaObject::processEvent( QCaEventUpdate* dataUpdateEvent ) {
     switch( dataUpdateEvent->reason ) {
         case caobject::CONNECTION_UP :
         {
+            channelExpiredMessage = false;
             connectionMachine->active = true;
             connectionMachine->process( qcastatemachine::CONNECTED );
             subscriptionMachine->process( subscriptionMachine->requestState );
@@ -529,7 +555,7 @@ void QCaObject::processEvent( QCaEventUpdate* dataUpdateEvent ) {
             if( userMessage )
             {
                 QString msg( recordName );
-                userMessage->sendWarningMessage( msg.append( " Connection down" ), "QCaObject::processEvent()"  );
+                userMessage->sendMessage( msg.append( " Connection down" ), "QCaObject::processEvent()", MESSAGE_TYPE_WARNING );
             }
             connectionMachine->active = false;
             connectionMachine->process( qcastatemachine::DISCONNECTED );
@@ -554,7 +580,7 @@ void QCaObject::processEvent( QCaEventUpdate* dataUpdateEvent ) {
             if( userMessage )
             {
                 QString msg( recordName );
-                userMessage->sendWarningMessage( msg.append( " Subscription failed" ), "QCaObject::processEvent()"  );
+                userMessage->sendMessage( msg.append( " Subscription failed" ), "QCaObject::processEvent()", MESSAGE_TYPE_WARNING );
             }
 
             subscriptionMachine->active = false;
@@ -574,7 +600,7 @@ void QCaObject::processEvent( QCaEventUpdate* dataUpdateEvent ) {
             if( userMessage )
             {
                 QString msg( recordName );
-                userMessage->sendWarningMessage( msg.append( " Read failed" ), "QCaObject::processEvent()"  );
+                userMessage->sendMessage( msg.append( " Read failed" ), "QCaObject::processEvent()", MESSAGE_TYPE_WARNING );
             }
             readMachine->active = false;
             readMachine->process( qcastatemachine::READING_FAIL );
@@ -591,7 +617,7 @@ void QCaObject::processEvent( QCaEventUpdate* dataUpdateEvent ) {
             if( userMessage )
             {
                 QString msg( recordName );
-                userMessage->sendWarningMessage( msg.append( " Write failed" ), "QCaObject::processEvent()"  );
+                userMessage->sendMessage( msg.append( " Write failed" ), "QCaObject::processEvent()", MESSAGE_TYPE_WARNING );
             }
 
             writeMachine->active = false;
@@ -603,7 +629,7 @@ void QCaObject::processEvent( QCaEventUpdate* dataUpdateEvent ) {
             if( userMessage )
             {
                 QString msg( recordName );
-                userMessage->sendErrorMessage( msg.append( " Exception" ), "QCaObject::processEvent()"  );
+                userMessage->sendMessage( msg.append( " Exception" ), "QCaObject::processEvent()", MESSAGE_TYPE_ERROR );
             }
             break;
         }
@@ -612,7 +638,7 @@ void QCaObject::processEvent( QCaEventUpdate* dataUpdateEvent ) {
             if( userMessage )
             {
                 QString msg( recordName );
-                userMessage->sendWarningMessage( msg.append( " Unknown connection" ), "QCaObject::processEvent()"  );
+                userMessage->sendMessage( msg.append( " Unknown connection" ), "QCaObject::processEvent()", MESSAGE_TYPE_WARNING );
             }
             break;
         }
@@ -621,7 +647,7 @@ void QCaObject::processEvent( QCaEventUpdate* dataUpdateEvent ) {
             if( userMessage )
             {
                 QString msg( recordName );
-                userMessage->sendErrorMessage( msg.append( " Unknown CA callback" ), "QCaObject::processEvent()"  );
+                userMessage->sendMessage( msg.append( " Unknown CA callback" ), "QCaObject::processEvent()", MESSAGE_TYPE_ERROR );
             }
         }
         break;
@@ -630,27 +656,24 @@ void QCaObject::processEvent( QCaEventUpdate* dataUpdateEvent ) {
     // Assume there will be no change in the channel or link
     bool connectionChange = false;
 
-    /// If the channel state has changed, signal if the channel is connected or not
+    // If the channel state has changed, signal if the channel is connected or not
     CaObjectPrivate* p = (CaObjectPrivate*)(priPtr);
     if( p->getChannelState() != lastEventChannelState ) {
         lastEventChannelState = p->getChannelState();
         connectionChange = true;
     }
 
-    /// If the link state has changed, signal if the link is up or not
+    // If the link state has changed, signal if the link is up or not
     if( p->getLinkState() != lastEventLinkState ) {
         lastEventLinkState = p->getLinkState();
         connectionChange = true;
     }
 
-    /// If there is a change in the connection (link of channel), signal it
+    // If there is a change in the connection (link of channel), signal it
     if( connectionChange )
     {
-      QCaConnectionInfo connectionInfo( lastEventChannelState, lastEventLinkState );
-      connectionMachine->currentState =
-          connectionInfo.isChannelConnected() && connectionInfo.isLinkUp()  ?
-            qcastatemachine::CONNECTED  :  qcastatemachine::DISCONNECTED ;
-      emit connectionChanged( connectionInfo );
+        QCaConnectionInfo connectionInfo( lastEventChannelState, lastEventLinkState );
+        emit connectionChanged( connectionInfo );
     }
 
 }
@@ -671,8 +694,7 @@ void QCaObject::processData( void* newDataPtr ) {
         return;
 
     // On the first update, gather static information for the variable
-    if( isFirstUpdate() ) {
-
+    if( newData->isFirstUpdate() ) {
         // Note the engineering units
         egu = QString( getUnits().c_str() );
 
@@ -708,145 +730,6 @@ void QCaObject::processData( void* newDataPtr ) {
 
     }
 
-    // Package up the CA data as a Qt variant
-    QVariant value;
-    unsigned long arrayCount = newData->getArrayCount();
-    switch( newData->getType() ) {
-        case generic::STRING :
-            value = QVariant( QString::fromStdString( newData->getString() ) );
-        break;
-        case generic::SHORT :
-            if( arrayCount <= 1 )
-            {
-                value = QVariant( (qlonglong)newData->getShort() );
-            }
-            else
-            {
-                QVariantList values;
-                short* data;
-                newData->getShort( &data );
-
-                for( unsigned long i = 0; i < arrayCount; i++ )
-                {
-                    values.append( (qlonglong)(data[i]) );
-                }
-                value = QVariant( values );
-            }
-        break;
-        case generic::UNSIGNED_SHORT :
-            if( arrayCount <= 1 )
-            {
-                value = QVariant( (qulonglong)newData->getUnsignedShort() );
-            }
-            else
-            {
-                QVariantList values;
-                unsigned short* data;
-                newData->getUnsignedShort( &data );
-
-                for( unsigned long i = 0; i < arrayCount; i++ )
-                {
-                    values.append( (qulonglong)(data[i]) );
-                }
-                value = QVariant( values );
-            }
-        break;
-        case generic::UNSIGNED_CHAR :
-            if( arrayCount <= 1 )
-            {
-                value = QVariant( (qulonglong)newData->getUnsignedChar() );
-            }
-            else
-            {
-                QVariantList values;
-                unsigned char* data;
-                newData->getUnsignedChar( &data );
-
-                for( unsigned long i = 0; i < arrayCount; i++ )
-                {
-                    values.append( (qulonglong)(data[i]) );
-                }
-                value = QVariant( values );
-            }
-        break;
-        case generic::LONG :
-            if( arrayCount <= 1 )
-            {
-                value = QVariant( (qlonglong)newData->getLong() );
-            }
-            else
-            {
-                QVariantList values;
-                long* data;
-                newData->getLong( &data );
-
-                for( unsigned long i = 0; i < arrayCount; i++ )
-                {
-                    values.append( (qlonglong)(data[i]) );
-                }
-                value = QVariant( values );
-            }
-        break;
-        case generic::UNSIGNED_LONG :
-            value = QVariant( (qlonglong)newData->getUnsignedLong() );
-            if( arrayCount <= 1 )
-            {
-                value = QVariant( (qulonglong)newData->getUnsignedLong() );
-            }
-            else
-            {
-                QVariantList values;
-                unsigned long* data;
-                newData->getUnsignedLong( &data );
-
-                for( unsigned long i = 0; i < arrayCount; i++ )
-                {
-                    values.append( (qulonglong)(data[i]) );
-                }
-                value = QVariant( values );
-            }
-        break;
-        case generic::FLOAT :
-            if( arrayCount <= 1 )
-            {
-                value = QVariant( (double)newData->getFloat() );
-            }
-            else
-            {
-                QVariantList values;
-                float* data;
-                newData->getFloat( &data );
-
-                for( unsigned long i = 0; i < arrayCount; i++ )
-                {
-                    values.append( (double)(data[i]) );
-                }
-                value = QVariant( values );
-            }
-        break;
-        case generic::DOUBLE :
-            if( arrayCount <= 1 )
-            {
-                value = QVariant( newData->getDouble() );
-            }
-            else
-            {
-                QVariantList values;
-                double* data;
-                newData->getDouble( &data );
-
-                for( unsigned long i = 0; i < arrayCount; i++ )
-                {
-                    values.append( data[i] );
-                }
-                value = QVariant( values );
-            }
-        break;
-        case generic::UNKNOWN :
-            value = QVariant();
-        break;
-    }
-
     // Build the alarm infomation (alarm state and severity)
     QCaAlarmInfo alarmInfo( getAlarmStatus(), getAlarmSeverity() );
 
@@ -865,42 +748,241 @@ void QCaObject::processData( void* newDataPtr ) {
         timeStamp = localTimeStamp;
     }
 
-    // Send off the new data
-    emit dataChanged( value, alarmInfo, timeStamp );
+    // Determine size of data array.
+    unsigned long arrayCount = newData->getArrayCount();
+
+    // Build and emit a Qt variantg containing the data
+    if( signalsToSend & SIG_VARIANT )
+    {
+        // Package up the CA data as a Qt variant
+        QVariant value;
+        switch( newData->getType() ) {
+            case generic::STRING :
+                value = QVariant( QString::fromStdString( newData->getString() ) );
+            break;
+            case generic::SHORT :
+                if( arrayCount <= 1 )
+                {
+                    value = QVariant( (qlonglong)newData->getShort() );
+                }
+                else
+                {
+                    QVariantList values;
+                    short* data;
+                    newData->getShort( &data );
+
+                    for( unsigned long i = 0; i < arrayCount; i++ )
+                    {
+                        values.append( (qlonglong)(data[i]) );
+                    }
+                    value = QVariant( values );
+                }
+            break;
+            case generic::UNSIGNED_SHORT :
+                if( arrayCount <= 1 )
+                {
+                    value = QVariant( (qulonglong)newData->getUnsignedShort() );
+                }
+                else
+                {
+                    QVariantList values;
+                    unsigned short* data;
+                    newData->getUnsignedShort( &data );
+
+                    for( unsigned long i = 0; i < arrayCount; i++ )
+                    {
+                        values.append( (qulonglong)(data[i]) );
+                    }
+                    value = QVariant( values );
+                }
+            break;
+            case generic::UNSIGNED_CHAR :
+                if( arrayCount <= 1 )
+                {
+                    value = QVariant( (qulonglong)newData->getUnsignedChar() );
+                }
+                else
+                {
+                    QVariantList values;
+                    unsigned char* data;
+                    newData->getUnsignedChar( &data );
+
+                    for( unsigned long i = 0; i < arrayCount; i++ )
+                    {
+                        values.append( (qulonglong)(data[i]) );
+                    }
+                    value = QVariant( values );
+                }
+            break;
+            case generic::LONG :
+                if( arrayCount <= 1 )
+                {
+                    value = QVariant( (qlonglong)newData->getLong() );
+                }
+                else
+                {
+                    QVariantList values;
+                    long* data;
+                    newData->getLong( &data );
+
+                    for( unsigned long i = 0; i < arrayCount; i++ )
+                    {
+                        values.append( (qlonglong)(data[i]) );
+                    }
+                    value = QVariant( values );
+                }
+            break;
+            case generic::UNSIGNED_LONG :
+                value = QVariant( (qlonglong)newData->getUnsignedLong() );
+                if( arrayCount <= 1 )
+                {
+                    value = QVariant( (qulonglong)newData->getUnsignedLong() );
+                }
+                else
+                {
+                    QVariantList values;
+                    unsigned long* data;
+                    newData->getUnsignedLong( &data );
+
+                    for( unsigned long i = 0; i < arrayCount; i++ )
+                    {
+                        values.append( (qulonglong)(data[i]) );
+                    }
+                    value = QVariant( values );
+                }
+            break;
+            case generic::FLOAT :
+                if( arrayCount <= 1 )
+                {
+                    value = QVariant( (double)newData->getFloat() );
+                }
+                else
+                {
+                    QVariantList values;
+                    float* data;
+                    newData->getFloat( &data );
+
+                    for( unsigned long i = 0; i < arrayCount; i++ )
+                    {
+                        values.append( (double)(data[i]) );
+                    }
+                    value = QVariant( values );
+                }
+            break;
+            case generic::DOUBLE :
+                if( arrayCount <= 1 )
+                {
+                    value = QVariant( newData->getDouble() );
+                }
+                else
+                {
+                    QVariantList values;
+                    double* data;
+                    newData->getDouble( &data );
+
+                    for( unsigned long i = 0; i < arrayCount; i++ )
+                    {
+                        values.append( data[i] );
+                    }
+                    value = QVariant( values );
+                }
+            break;
+            case generic::UNKNOWN :
+                value = QVariant();
+            break;
+        }
+
+        // Send off the new data
+        emit dataChanged( value, alarmInfo, timeStamp );
+
+        // Save the data just emited
+        lastVariantValue = value;
+    }
+
+    // Build and emit a byte array containing the data.
+    // Note, the byte array (and copies of it such as the lastByteArrayValue will
+    // have a pointer directly into the data, so don't delete the data until all
+    // byte arrays referencing it have been deleted.
+    if( signalsToSend & SIG_BYTEARRAY )
+    {
+        char* data;
+        unsigned long dataSize = 0;
+
+        switch( newData->getType() ) {
+            case generic::STRING         : newData->getString       ( (char**)          (&data) ); dataSize = 1; break;
+            case generic::SHORT          : newData->getShort        ( (short**)         (&data) ); dataSize = 2; break;
+            case generic::UNSIGNED_SHORT : newData->getUnsignedShort( (unsigned short**)(&data) ); dataSize = 2; break;
+            case generic::UNSIGNED_CHAR  : newData->getUnsignedChar ( (unsigned char**) (&data) ); dataSize = 1; break;
+            case generic::LONG           : newData->getLong         ( (long**)          (&data) ); dataSize = 4; break;
+            case generic::UNSIGNED_LONG  : newData->getUnsignedLong ( (unsigned long**) (&data) ); dataSize = 4; break;
+            case generic::FLOAT          : newData->getFloat        ( (float**)         (&data) ); dataSize = 4; break;
+            case generic::DOUBLE         : newData->getDouble       ( (double**)        (&data) ); dataSize = 8; break;
+            case generic::UNKNOWN        : data = NULL;                                            dataSize = 0; break;
+        }
+
+        unsigned long arraySize = arrayCount * dataSize;
+#if QT_VERSION >= 0x040700
+        byteArrayValue.setRawData( data, arraySize );
+#else
+        byteArrayValue = QByteArray::fromRawData( data, arraySize );
+#endif
+
+        // Send off the new data
+        // NOTE, the signal/slot connections to this signal must be Qt::DirectConnection
+        // as the byte array refernces the data directly which may be deleted before a queued connection is completed
+        emit dataChanged( byteArrayValue, dataSize, alarmInfo, timeStamp );
+
+        // Save the data just emited so it can be re-sent if required
+        lastByteArrayValue = byteArrayValue;
+
+        // Delete any old data now it is no longer referenced by byte arrays
+        if( lastNewData )
+            delete (carecord::CaRecord*)lastNewData;
+        lastNewData = (void*)newData;
+    }
+
+    // If not emiting an array, the data can be deleted (emitted byte arrays have pointers directly into the data)
+    else
+    {
+        // Discard the event data
+        delete newData;
+    }
 
     // Save the data just emited
-    lastValue = value;
     lastAlarmInfo = alarmInfo;
     lastTimeStamp = timeStamp;
 
-    // Discard the event data
-    delete newData;
 }
 
 /*!
-    Connecting timeout
+    Connecting timeout.
+    Generally, we could just wait forever for a connection to complete, but due to
+    rumours of gateways not honouring an old request when an IOC serving the requested
+    PV finally appears, we re-attempt the connection here after an extended wait.
 */
 void QCaObject::setChannelExpired() {
 
     // Signal a connection change.
     // (This is done with some licence. There isn't really a connection change.
-    //  The connection has gone from 'no connection' to 'there never is going to be a connection')
-  QCaConnectionInfo connectionInfo( caconnection::NEVER_CONNECTED, caconnection::LINK_DOWN );
-  connectionMachine->currentState =
-      connectionInfo.isChannelConnected() && connectionInfo.isLinkUp()  ?
-        qcastatemachine::CONNECTED  :  qcastatemachine::DISCONNECTED ;
-  emit connectionChanged( connectionInfo );
+    //  The connection has gone from 'no connection' to 'given up waiting for a connection')
+    QCaConnectionInfo connectionInfo( caconnection::NEVER_CONNECTED, caconnection::LINK_DOWN );
+    emit connectionChanged( connectionInfo );
 
-  // Generate a user message
-  if( userMessage )
+    // Generate a user message
+    if( userMessage && !channelExpiredMessage )
     {
         QString msg( recordName );
-        userMessage->sendWarningMessage( msg.append( " Channel expired" ), "QCaObject::setChannelExpired()"  );
+        userMessage->sendMessage( msg.append( " Channel expired, will keep retrying" ), "QCaObject::setChannelExpired()", MESSAGE_TYPE_WARNING );
+        channelExpiredMessage = true;
     }
 
     // Update the current state
     connectionMachine->expired = true;
     connectionMachine->process( qcastatemachine::CONNECTION_EXPIRED );
+
+    // Attempt a re-connection
+    connectionMachine->process( qcastatemachine::CONNECTED );
+    subscribe();
 }
 
 /*!
@@ -914,23 +996,34 @@ void QCaObject::setUserMessage( UserMessage* userMessageIn )
 
 /*!
   Re-emit the last data emited, if any
+  This can be used after a property of a widget using this QCaObject has changed to
+  force an update of the data and a re-presentation of the data in the widget to reflect the new property
   */
 void QCaObject::resendLastData()
 {
-    emit dataChanged( lastValue, lastAlarmInfo, lastTimeStamp );
+    if( signalsToSend & SIG_VARIANT )
+    {
+        emit dataChanged( lastVariantValue, lastAlarmInfo, lastTimeStamp );
+    }
+    if( signalsToSend & SIG_BYTEARRAY )
+    {
+        // NOTE, the signal/slot connections to this signal must be Qt::DirectConnection as the byte array
+        // refernces the data held in lastNewData directly which may be deleted before a queued connection is completed
+        emit dataChanged( lastByteArrayValue, lastAlarmInfo, lastTimeStamp );
+    }
 }
 
 /*!
  Return the engineering units, if any
 */
-const QString & QCaObject::getEgu() const {
+QString QCaObject::getEgu() {
     return egu;
 }
 
 /*!
  Return the enumerations strings, if any
 */
-const QStringList &  QCaObject::getEnumerations() const {
+QStringList QCaObject::getEnumerations() {
     return enumerations;
 }
 

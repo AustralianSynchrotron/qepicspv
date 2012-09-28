@@ -22,6 +22,7 @@
  *    andrew.rhyder@synchrotron.org.au
  */
 
+#include <math.h>
 #include <QtDebug>
 #include <QCaStringFormatting.h>
 
@@ -92,7 +93,7 @@ QVariant QCaStringFormatting::formatValue( const QString &text ) {
     //??? should know the record type (passed in to QCaStringFormatting::formatValue() )
 
     // Strip unit if present
-    QString unitlessText = text.trimmed();
+    QString unitlessText = text;
     if( addUnits )
     {
         if( dbEgu == unitlessText.right( dbEgu.length() ) )
@@ -200,7 +201,7 @@ QString QCaStringFormatting::formatString( const QVariant &value ) {
 
                     case QVariant::LongLong:
                     case QVariant::Int:
-                        formatFromInteger( value, false );
+                        formatFromInteger( value );
                         break;
 
                     case QVariant::ULongLong:
@@ -233,7 +234,7 @@ QString QCaStringFormatting::formatString( const QVariant &value ) {
                                 case QVariant::LongLong:
                                 case QVariant::Int:
                                     //???!!! ignores arrayAction and arrayIndex See uint and ulonglong below
-                                    formatFromInteger( valueArray[0], false );
+                                    formatFromInteger( valueArray[0] );
                                     break;
 
                                 case QVariant::ULongLong:
@@ -298,7 +299,7 @@ QString QCaStringFormatting::formatString( const QVariant &value ) {
             break;
 
          case FORMAT_INTEGER:
-            formatFromInteger( value, false );
+            formatFromInteger( value );
             break;
 
         case FORMAT_UNSIGNEDINTEGER:
@@ -306,7 +307,7 @@ QString QCaStringFormatting::formatString( const QVariant &value ) {
             break;
 
         case FORMAT_LOCAL_ENUMERATE:
-            formatFromInteger( value, true );
+            formatFromEnumeration( value );
             break;
 
         case FORMAT_TIME:
@@ -324,7 +325,7 @@ QString QCaStringFormatting::formatString( const QVariant &value ) {
 
     // Add units if required, if there are any present, and if the text is not an error message
     int eguLen = dbEgu.length(); // ??? Why cant this be in the 'if' statement? If it is it never adds an egu
-    if( addUnits && !errorMessage && eguLen )
+    if( addUnits && !errorMessage && eguLen && (format != FORMAT_TIME))
         stream << " " << dbEgu;
 
     return outStr;
@@ -385,7 +386,7 @@ void QCaStringFormatting::formatFromFloating( const QVariant &value ) {
     there will be no conversion problems.
     Then format it as a string using the formatting information stored in this class.
 */
-void QCaStringFormatting::formatFromInteger( const QVariant &value, const bool doLocalEnumeration ) {
+void QCaStringFormatting::formatFromInteger( const QVariant &value ) {
     // Extract the value as a long using whatever conversion the QVariant uses.
     //
     // Note, this will not pick up if the QVariant type is not one of the types used to represent CA data.
@@ -404,76 +405,8 @@ void QCaStringFormatting::formatFromInteger( const QVariant &value, const bool d
         return;
     }
 
-
-    // Perform any required local enumeration
-    if( doLocalEnumeration )
-    {
-        // Search for a matching value in the list of local enumerated strings
-        int i;
-        for( i = 0; i < localEnumeration.size(); i++ )
-        {
-            // Determine if the value matches an enumeration
-            bool match = false;
-            switch( localEnumeration[i].op )
-            {
-                case localEnumerationItem::LESS:
-                    if( lValue < localEnumeration[i].value )
-                        match = true;
-                    break;
-
-                case localEnumerationItem::LESS_EQUAL:
-                    if( lValue <= localEnumeration[i].value )
-                        match = true;
-                    break;
-
-                case localEnumerationItem::EQUAL:
-                    if( lValue == localEnumeration[i].value )
-                        match = true;
-                    break;
-
-                case localEnumerationItem::NOT_EQUAL:
-                    if( lValue != localEnumeration[i].value )
-                        match = true;
-                    break;
-
-                case localEnumerationItem::GREATER_EQUAL:
-                    if( lValue >= localEnumeration[i].value )
-                        match = true;
-                    break;
-
-                case localEnumerationItem::GREATER:
-                    if( lValue > localEnumeration[i].value )
-                        match = true;
-                    break;
-
-                case localEnumerationItem::ALWAYS:
-                    match = true;
-                    break;
-
-                default:
-                    match = false;
-                    break;
-
-            }
-
-            // If the value does match, use the enumeration value
-            if( match )
-            {
-                stream << localEnumeration[i].text;
-                break;
-            }
-        }
-
-        // If no match was found, generate the text directly from the value
-        if( i >= localEnumeration.size() )
-            stream << lValue;
-    }
-
-    // No local enumeration required, so generate the text directly from the value
-    else
-    {
-        stream << lValue;
-    }
+    // Generate the text
+    stream << lValue;
 }
 
 /*!
@@ -507,15 +440,158 @@ void QCaStringFormatting::formatFromUnsignedInteger( const QVariant &value ) {
 }
 
 /*!
+    Format a variant value using local enumeration list.
+    If the value is numeric, then the value is compared to the numeric interpretation of the enumeration values,
+    if the value is textual, then the value is compared to the textual enumeration values.
+*/
+void QCaStringFormatting::formatFromEnumeration( const QVariant &value ) {
+
+    bool isDouble;
+    double dValue;
+    QString sValue;
+
+    dValue = 0;
+
+    // If it is a double, use it as a double.
+    // If it is a string, use it as a string.
+    // If it is anything else, try to convert it to a double, else a string.
+    switch( value.type() )
+    {
+        case QVariant::Double:
+            dValue = value.toDouble();
+            isDouble = true;
+            break;
+
+        case QVariant::String:
+            sValue = value.toString();
+            isDouble = false;
+            break;
+
+        default:
+            bool convertOk;
+            dValue = value.toDouble( &convertOk );
+            if( convertOk )
+            {
+                isDouble = true;
+            }
+            else
+            {
+                sValue = value.toString();
+                isDouble = false;
+            }
+            break;
+    }
+
+    // Search for a matching value in the list of local enumerated strings
+    int i;
+    for( i = 0; i < localEnumeration.size(); i++ )
+    {
+        // Determine if the value matches an enumeration
+        bool match = false;
+
+#define LOCAL_ENUM_SEARCH( VALUE )             \
+        switch( localEnumeration[i].op )   \
+        {                                  \
+            case localEnumerationItem::LESS:          if( VALUE <  localEnumeration[i].VALUE ) match = true;  break; \
+            case localEnumerationItem::LESS_EQUAL:    if( VALUE <= localEnumeration[i].VALUE ) match = true;  break; \
+            case localEnumerationItem::EQUAL:         if( VALUE == localEnumeration[i].VALUE ) match = true;  break; \
+            case localEnumerationItem::NOT_EQUAL:     if( VALUE != localEnumeration[i].VALUE ) match = true;  break; \
+            case localEnumerationItem::GREATER_EQUAL: if( VALUE >= localEnumeration[i].VALUE ) match = true;  break; \
+            case localEnumerationItem::GREATER:       if( VALUE >  localEnumeration[i].VALUE ) match = true;  break; \
+            case localEnumerationItem::ALWAYS:                                                 match = true;  break; \
+            default:                                                                           match = false; break; \
+        }
+
+        if( isDouble )
+        {
+            LOCAL_ENUM_SEARCH( dValue );
+        }
+        else
+        {
+            LOCAL_ENUM_SEARCH( sValue );
+        }
+
+        // If the value does match, use the enumeration value
+        if( match )
+        {
+            stream << localEnumeration[i].text;
+            break;
+        }
+    }
+
+    // If no match was found, generate the text directly from the value
+    if( i >= localEnumeration.size() )
+    {
+        if( sValue.isEmpty() )
+            stream << dValue;
+        else
+            stream << sValue;
+    }
+}
+
+/*!
     Format a variant value as a string representation of time.
     This method was written to convert a QVariant of type ??? (the type used to represent times in CA),
     but should cope with a variant of any type.
 */
 void QCaStringFormatting::formatFromTime( const QVariant &value ) {
+    bool okay;
+    double seconds;
+    double time;
+    QString sign;
+    int days;
+    int hours;
+    int mins;
+    int secs;
+    int nanoSecs;
+    QString image;
+    int effectivePrecision;
+    QString fraction;
+
+
     if( value.type() == QVariant::String )
         stream << value.toString();
-    else
-        stream << QString( "formatFromTime not implemented yet" ); //??? to do
+    else {
+        seconds = value.toDouble(&okay);
+        if (okay) {
+           if (seconds >= 0.0) {
+              time = seconds;
+              sign= "";
+           } else {
+              time = -seconds;
+              sign= "-";
+           }
+
+           #define EXTRACT(item, spi) { item = int (floor (time / spi)); time = time - (spi * item); }
+
+           EXTRACT (days, 86400.0);
+           EXTRACT (hours, 3600.0);
+           EXTRACT (mins, 60.0);
+           EXTRACT (secs, 1.0);
+           EXTRACT (nanoSecs, 1.0E-9);
+
+           #undef EXTRACT
+
+           image.sprintf ("%d %02d:%02d:%02d", days, hours, mins, secs);
+
+           // Select data base or user precision as appropriate.
+           //
+           effectivePrecision = useDbPrecision ? dbPrecision : precision;
+           if (effectivePrecision > 9) effectivePrecision = 9;
+
+           if (effectivePrecision > 0) {
+              fraction.sprintf (".%09d", nanoSecs);
+              fraction.truncate( effectivePrecision + 1 );
+           } else {
+              fraction = "";
+           }
+
+           stream << sign << image << fraction;
+
+        } else {
+            stream << QString( "not a valid numeric" );
+        }
+    }
 }
 
 /*!
@@ -540,8 +616,12 @@ void QCaStringFormatting::formatFailure( QString message ) {
     Relevent when formatting the string as a floating point number.
     Note, this will only be used if 'useDbPrecision' is false.
 */
-void QCaStringFormatting::setPrecision( unsigned int precisionIn ) {
+void QCaStringFormatting::setPrecision( int precisionIn ) {
     precision = precisionIn;
+    // Ensure rangeis sensible.
+    //
+    if (precision < 0) precision = 0;
+    if (precision > 18) precision = 18;
 }
 
 /*!
@@ -636,7 +716,6 @@ void QCaStringFormatting::setLocalEnumeration( QString/*localEnumerationList*/ l
     // This is returned when the enumeration is requested as a property.
     localEnumerationString = localEnumerationIn;
 
-
     // Parse the local enumeration string.
     //
     // Format is:
@@ -651,7 +730,10 @@ void QCaStringFormatting::setLocalEnumeration( QString/*localEnumerationList*/ l
     //   >  Greater than
     //   *  Always match (used to specify default text)
     //
+    // Values may be numeric or textual
     // Values do not have to be in any order, but first match wins
+    // Values may be quoted
+    // Strings may be quoted
     // Consecutive values do not have to be present.
     // Operator is assumed to be equality if not present.
     // White space is ignored except within quoted strings.
@@ -664,6 +746,7 @@ void QCaStringFormatting::setLocalEnumeration( QString/*localEnumerationList*/ l
     // 0:"", 1:"Warning!\nAlarm"
     // <2:"Value is less than two", =2:"Value is equal to two", >2:"Value is grater than 2"
     // 3:"Beamline Available", *:""
+    // "Pump Off":"OH NO!, the pump is OFF!","Pump On":"It's OK, the pump is on"
     //
     // The data value is converted to a string if no enumeration for that value is available.
     // For example, if the local enumeration is '0:off,1:on', and a value of 10 is processed, the text generated is '10'.
@@ -673,7 +756,25 @@ void QCaStringFormatting::setLocalEnumeration( QString/*localEnumerationList*/ l
 
     localEnumerationItem item;
 
-    enum states { STATE_START, STATE_OPERATOR, STATE_VALUE, STATE_DELIMITER, STATE_START_QUOTE, STATE_UNQUOTED_TEXT, STATE_QUOTED_TEXT, STATE_END_QUOTE, STATE_COMMA, STATE_END };
+    enum states { STATE_START,
+
+                  STATE_OPERATOR,
+
+                  STATE_START_VALUE_QUOTE,
+                  STATE_UNQUOTED_VALUE,
+                  STATE_QUOTED_VALUE,
+                  STATE_END_VALUE_QUOTE,
+
+                  STATE_DELIMITER,
+
+                  STATE_START_TEXT_QUOTE,
+                  STATE_UNQUOTED_TEXT,
+                  STATE_QUOTED_TEXT,
+                  STATE_END_TEXT_QUOTE,
+
+                  STATE_COMMA,
+
+                  STATE_END };
 
     int start = 0;                          // Index into enumeration text of current item of interest.
     int len = 0;                            // Length of current item of interest
@@ -758,17 +859,71 @@ void QCaStringFormatting::setLocalEnumeration( QString/*localEnumerationList*/ l
                     if( item.op == localEnumerationItem::ALWAYS )
                         state = STATE_DELIMITER;
                     else
-                        state = STATE_VALUE;
+                        state = STATE_START_VALUE_QUOTE;
                     break;
                 }
 
                 // No operator - assume equality
                 item.op = localEnumerationItem::EQUAL;
-                state = STATE_VALUE;
+                state = STATE_START_VALUE_QUOTE;
                 break;
 
-                // Reading a value. For example, the '0' in '0=on,1=off'
-            case STATE_VALUE:
+            // Where an enumerations value is quoted, handle the opening quotation mark.
+            // For example, the first quote in "Pump Off"=off,"Pump On"="on"
+            case STATE_START_VALUE_QUOTE:
+                // If nothing left, finish
+                if( start >= size )
+                {
+                    state = STATE_END;
+                    break;
+                }
+
+                // If haven't started yet, skip white space
+                if( localEnumerationIn[start] == ' ' )
+                {
+                    start++;
+                    break;
+                }
+
+                // If found '"' use it
+                if( localEnumerationIn[start] == '"' )
+                {
+                    start++;
+                    len = 0;
+                    state = STATE_QUOTED_VALUE;
+                    break;
+                }
+
+                // No quote found, assume unquoted text instead
+                state = STATE_UNQUOTED_VALUE;
+                break;
+
+                // Reading a value. For example, the '0' in '0:on,1:off'
+            case STATE_QUOTED_VALUE:
+                // If nothing left, finish
+                if( start+len >= size )
+                {
+                    state = STATE_END;
+                    break;
+                }
+
+                // If have all value, note it
+                if( localEnumerationIn[start+len] == '"' )
+                {
+                    item.sValue = localEnumerationIn.mid( start, len );
+                    start += len;
+                    len = 0;
+                    item.dValue = item.sValue.toDouble();
+                    state = STATE_END_VALUE_QUOTE;
+                    break;
+                }
+
+                // Extend the text
+                len++;
+                break;
+
+                // Reading a value. For example, the '0' in '0:on,1:off'
+            case STATE_UNQUOTED_VALUE:
                 // If nothing left, finish
                 if( start+len >= size )
                 {
@@ -783,8 +938,8 @@ void QCaStringFormatting::setLocalEnumeration( QString/*localEnumerationList*/ l
                     break;
                 }
 
-                // If more numeric characters, continue
-                if( localEnumerationIn[start+len] >= '0' && localEnumerationIn[start+len] <= '9' )
+                // If more characters, continue
+                if( localEnumerationIn[start+len] != ' ' && localEnumerationIn[start+len] != ':' )
                 {
                     len++;
                     break;
@@ -793,8 +948,32 @@ void QCaStringFormatting::setLocalEnumeration( QString/*localEnumerationList*/ l
                 // If have a value, save it
                 if( len )
                 {
-                    item.value = localEnumerationIn.mid( start, len ).toInt();
+                    item.sValue = localEnumerationIn.mid( start, len );
+                    item.dValue = item.sValue.toDouble();
                     start += len;
+                    len = 0;
+                    state = STATE_DELIMITER;
+                    break;
+                }
+
+                // Error do no more
+                state = STATE_END;
+                break;
+
+            // Where an enumerations value is quoted, handle the closing quotation mark.
+            // For example, the second quote in "Pump Off"=off,"Pump On"="on"
+            case STATE_END_VALUE_QUOTE:
+                // If nothing left, finish
+                if( start >= size )
+                {
+                    state = STATE_END;
+                    break;
+                }
+
+                // If found '"' use it
+                if( localEnumerationIn[start] == '"' )
+                {
+                    start++;
                     len = 0;
                     state = STATE_DELIMITER;
                     break;
@@ -825,7 +1004,7 @@ void QCaStringFormatting::setLocalEnumeration( QString/*localEnumerationList*/ l
                 {
                     start++;
                     len = 0;
-                    state = STATE_START_QUOTE;
+                    state = STATE_START_TEXT_QUOTE;
                     break;
                 }
 
@@ -835,7 +1014,7 @@ void QCaStringFormatting::setLocalEnumeration( QString/*localEnumerationList*/ l
 
             // Where an enumerations string is quoted, handle the opening quotation mark.
             // For example, the first quote in 0=off,1="pump on"
-            case STATE_START_QUOTE:
+            case STATE_START_TEXT_QUOTE:
                 // If nothing left, finish
                 if( start >= size )
                 {
@@ -864,7 +1043,7 @@ void QCaStringFormatting::setLocalEnumeration( QString/*localEnumerationList*/ l
                 break;
 
             // Where an enumerations string is quoted, extract the string within quotation marks.
-            // For example, the string 'pump on' in in 0=off,1="pump on"
+            // For example, the string 'pump on' in in 0:off,1:"pump on"
             case STATE_QUOTED_TEXT:
                 // If nothing left, finish
                 if( start+len >= size )
@@ -880,10 +1059,11 @@ void QCaStringFormatting::setLocalEnumeration( QString/*localEnumerationList*/ l
                     start += len;
                     len = 0;
                     localEnumeration.append( item );
-                    item.value = 0;
+                    item.dValue = 0.0;
+                    item.sValue.clear();
                     item.op = localEnumerationItem::UNKNOWN;
                     item.text.clear();
-                    state = STATE_END_QUOTE;
+                    state = STATE_END_TEXT_QUOTE;
                     break;
                 }
 
@@ -921,7 +1101,8 @@ void QCaStringFormatting::setLocalEnumeration( QString/*localEnumerationList*/ l
                     start += len;
                     len = 0;
                     localEnumeration.append( item );
-                    item.value = 0;
+                    item.dValue = 0.0;
+                    item.sValue.clear();
                     item.text.clear();
                     state = STATE_COMMA;
                     break;
@@ -933,7 +1114,7 @@ void QCaStringFormatting::setLocalEnumeration( QString/*localEnumerationList*/ l
 
             // Where an enumerations string is quoted, handle the closing quotation mark.
             // For example, the second quote in 0=off,1="pump on"
-            case STATE_END_QUOTE:
+            case STATE_END_TEXT_QUOTE:
                 // If nothing left, finish
                 if( start >= size )
                 {
@@ -1006,7 +1187,7 @@ void QCaStringFormatting::setLocalEnumeration( QString/*localEnumerationList*/ l
 /*!
     Get the precision. See setPrecision() for the use of 'precision'.
 */
-unsigned int QCaStringFormatting::getPrecision() {
+int QCaStringFormatting::getPrecision() {
     return precision;
 }
 

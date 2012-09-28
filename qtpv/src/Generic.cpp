@@ -1,10 +1,3 @@
-/*! 
-  \class Generic
-  \version $Revision: #4 $
-  \date $DateTime: 2010/08/30 16:37:08 $
-  \author anthony.owen
-  \brief Provides a generic holder for different types.
- */
 /*
  *  This file is part of the EPICS QT Framework, initially developed at the Australian Synchrotron.
  *
@@ -28,6 +21,8 @@
  *  Contact details:
  *    anthony.owen@gmail.com
  */
+
+// Provides a generic holder for different types.
 
 #include <Generic.h>
 #include <stdlib.h>
@@ -323,6 +318,21 @@ std::string Generic::getString() {
         return *(std::string*)value;
     }
     return "";
+}
+
+/*!
+    Returns type string array (char array) or invalid
+*/
+void Generic::getString( char** valueArray, unsigned long* arrayCountOut ){
+    if( getType() == STRING ) {
+        *valueArray = (char*)value;
+        if( arrayCountOut )
+            *arrayCountOut = arrayCount;
+        return;
+    }
+    *valueArray = NULL;
+    if( arrayCountOut )
+        *arrayCountOut = 0;
 }
 
 /*!

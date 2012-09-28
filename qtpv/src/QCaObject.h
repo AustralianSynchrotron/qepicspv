@@ -1,10 +1,3 @@
-/*!
-  \class QCaObject
-  \version $Revision: #10 $
-  \date $DateTime: 2010/09/06 13:16:04 $
-  \author anthony.owen
-  \brief Provides channel access to QT.
- */
 /*
  *  This file is part of the EPICS QT Framework, initially developed at the Australian Synchrotron.
  *
@@ -51,13 +44,17 @@
 
 namespace qcaobject {
 
+#define SIG_VARIANT   1
+#define SIG_BYTEARRAY 2
+
   class QCAPLUGINLIBRARYSHARED_EXPORT QCaObject : public QObject, caobject::CaObject {
       Q_OBJECT
 
     public:
-      QCaObject( const QString& recordName, QObject *eventObject );
-      QCaObject( const QString& recordName, QObject *eventObject, UserMessage* userMessageIn );
-      ~QCaObject();
+      QCaObject( const QString& recordName, QObject *eventObject, unsigned char signalsToSendIn=SIG_VARIANT );
+      QCaObject( const QString& recordName, QObject *eventObject, UserMessage* userMessageIn, unsigned char signalsToSendIn=SIG_VARIANT );
+      virtual ~QCaObject();
+
 
       bool subscribe();
       bool singleShotRead();
@@ -83,8 +80,8 @@ namespace qcaobject {
       bool isWriteCallbacksEnabled();
 
       // Get database information relating to the variable
-      const QString & getEgu() const;
-      const QStringList & getEnumerations() const;
+      QString getEgu();
+      QStringList getEnumerations();
       unsigned int getPrecision();
       double getDisplayLimitUpper();
       double getDisplayLimitLower();
@@ -94,20 +91,19 @@ namespace qcaobject {
       double getWarningLimitLower();
       double getControlLimitUpper();
       double getControlLimitLower();
+      generic::generic_types getDataType();
 
     signals:
       void dataChanged( const QVariant& value, QCaAlarmInfo& alarmInfo, QCaDateTime& timeStamp );
+      void dataChanged( const QByteArray& value, unsigned long dataSize, QCaAlarmInfo& alarmInfo, QCaDateTime& timeStamp );
       void connectionChanged( QCaConnectionInfo& connectionInfo );
 
     public slots:
       bool writeData( const QVariant& value );
       void resendLastData();
 
-    protected:
-      generic::generic_types getDataType();
-
     private:
-      void initialise( const QString& newRecordName, QObject *newEventHandler, UserMessage* userMessageIn );
+      void initialise( const QString& newRecordName, QObject *newEventHandler, UserMessage* userMessageIn, unsigned char signalsToSendIn );
 
       long lastEventChannelState; /// Channel state from most recent update event. This is actually of type caconnection::channel_states
       long lastEventLinkState;    /// Link state from most recent update event. This is actually of type aconnection::link_states
@@ -135,10 +131,15 @@ namespace qcaobject {
 
       UserMessage* userMessage;
 
+      // Current data
+      QByteArray   byteArrayValue;
+
       // Last data emited
       QCaDateTime  lastTimeStamp;
       QCaAlarmInfo lastAlarmInfo;
-      QVariant     lastValue;
+      QVariant     lastVariantValue;
+      QByteArray   lastByteArrayValue;
+      void*        lastNewData; // Record containing data directly refernced by lastByteArrayValue (actually of type carecord::CaRecord*)
 
       // Database information relating to the variable
       QString egu;
@@ -159,6 +160,8 @@ namespace qcaobject {
       QStringList enumerations;
       bool isStatField;
 
+      unsigned char signalsToSend;
+      bool channelExpiredMessage;
 
     private slots:
       void setChannelExpired();

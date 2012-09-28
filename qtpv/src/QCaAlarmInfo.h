@@ -1,10 +1,3 @@
-/*!
-  \class QCaEventFilter
-  \version $Revision: #5 $
-  \date $DateTime: 2010/06/23 07:49:40 $
-  \author andrew.rhyder
-  \brief Manage CA alarm and severity information
- */
 /*
  *  This file is part of the EPICS QT Framework, initially developed at the Australian Synchrotron.
  *
@@ -29,6 +22,8 @@
  *    andrew.rhyder@synchrotron.org.au
  */
 
+// Manage CA alarm and severity information
+
 #ifndef QCAALARMINFO_H
 #define QCAALARMINFO_H
 
@@ -49,6 +44,9 @@ public:
     bool isMajor();             // Return true if there is a major alarm
     bool isInvalid();           // Return true if there is an invalid alarm
     QString style();            // Return a style string to update the widget's look to reflect the current alarm state
+    QString getColorName();     // Return 'standard' colour for the alarm state.
+
+
     static QCAALARMINFO_SEVERITY getInvalidSeverity(); // Return a severity that will not match any valid severity
     QCAALARMINFO_SEVERITY getSeverity(); // Return the current severity
 

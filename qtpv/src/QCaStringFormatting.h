@@ -1,10 +1,3 @@
-/*! 
-  \class QCaStringFormatting
-  \version $Revision: #9 $
-  \date $DateTime: 2010/06/23 07:49:40 $
-  \author andrew.rhyder
-  \brief Formats the string for QCaString data.
- */
 /*
  *  This file is part of the EPICS QT Framework, initially developed at the Australian Synchrotron.
  *
@@ -29,6 +22,8 @@
  *    andrew.rhyder@synchrotron.org.au
  */
 
+// Formats the string for QCaString data.
+
 #ifndef QCASTRINGFORMATTING_H
 #define QCASTRINGFORMATTING_H
 
@@ -36,6 +31,7 @@
 #include <QString>
 #include <QStringList>
 #include <QDataStream>
+#include <QTextStream>
 #include <QCaPluginLibrary_global.h>
 
 
@@ -43,7 +39,8 @@
 class localEnumerationItem {
     public:
     enum operations { LESS, LESS_EQUAL, EQUAL, NOT_EQUAL, GREATER_EQUAL, GREATER, ALWAYS, UNKNOWN };
-    int value;                  // Value data is compared to
+    double dValue;              // Numeric value that numeric data is compared to (derived from sValue if possible)
+    QString sValue;             // Text value that textual data is compared with
     operations op;              // Operator used for comparison used between data and value (=,<,>)
     QString text;               // Text used if the data value matches
 };
@@ -77,7 +74,7 @@ class QCAPLUGINLIBRARYSHARED_EXPORT QCaStringFormatting {
     void setDbVariableIsStatField( bool isStatField );
 
     // Functions to configure the formatting
-    void setPrecision( unsigned int precision );
+    void setPrecision( int precision );
     void setUseDbPrecision( bool useDbPrecision );
     void setLeadingZero( bool leadingZero );
     void setTrailingZeros( bool trailingZeros );
@@ -90,7 +87,7 @@ class QCAPLUGINLIBRARYSHARED_EXPORT QCaStringFormatting {
     void setLocalEnumeration( QString/*localEnumerationList*/ localEnumerationIn );
 
     // Functions to read the formatting configuration
-    unsigned int getPrecision();
+    int          getPrecision();
     bool         getUseDbPrecision();
     bool         getLeadingZero();
     bool         getTrailingZeros();
@@ -105,9 +102,10 @@ class QCAPLUGINLIBRARYSHARED_EXPORT QCaStringFormatting {
   private:
     // Type specific conversion functions
     void formatFromFloating( const QVariant& value );
-    void formatFromInteger( const QVariant& value, const bool doLocalEnumeration );
+    void formatFromInteger( const QVariant& value );
     void formatFromUnsignedInteger( const QVariant& value );
     void formatFromTime( const QVariant& value );
+    void formatFromEnumeration( const QVariant& value );
 
     // Error reporting
     void formatFailure( QString message );
@@ -128,7 +126,7 @@ class QCAPLUGINLIBRARYSHARED_EXPORT QCaStringFormatting {
     bool trailingZeros;              /// Add trailing zeros when required (up to the precision).
     formats format;                  /// Presentation required (Floating, integer, etc).
     bool addUnits;                   /// Flag use engineering units from database
-    unsigned int precision;          /// Floating point precision. Used if 'useDbPrecision' is false.
+    int precision;                   /// Floating point precision. Used if 'useDbPrecision' is false.
     QList<localEnumerationItem> localEnumeration; /// Local enumerations (example: 0="Not referencing",1=Referencing)
     QString localEnumerationString; /// Original local enumerations string
     arrayActions arrayAction;       /// Action to take when processing array or waveform data

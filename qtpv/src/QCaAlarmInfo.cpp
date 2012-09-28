@@ -1,10 +1,3 @@
-/*!
-  \class QCaDatetime
-  \version $Revision: #6 $
-  \date $DateTime: 2010/06/23 07:49:40 $
-  \author andrew.rhyder
-  \brief CA alarm info manager
- */
 /*
  *  This file is part of the EPICS QT Framework, initially developed at the Australian Synchrotron.
  *
@@ -28,6 +21,8 @@
  *  Contact details:
  *    andrew.rhyder@synchrotron.org.au
  */
+
+// CA alarm info manager
 
 #include <alarm.h>
 #include <QCaAlarmInfo.h>
@@ -108,12 +103,28 @@ QString QCaAlarmInfo::style()
     switch( severity )
     {
         case NO_ALARM:      return "";
-        case MINOR_ALARM:   return "QWidget { background-color: #ffff80; }";
-        case MAJOR_ALARM:   return "QWidget { background-color: #ff8080; }";
-        case INVALID_ALARM: return "QWidget { background-color: #ffffff; }";
+        case MINOR_ALARM:   return "QWidget { background-color: #ffff80; }"; // yellow
+        case MAJOR_ALARM:   return "QWidget { background-color: #ff8080; }"; // red
+        case INVALID_ALARM: return "QWidget { background-color: #ffffff; }"; // white
         default:            return "";
     }
 }
+
+/*!
+  Return the color name for the alarm state
+ */
+QString QCaAlarmInfo::getColorName()
+{
+    switch( severity )
+    {
+        case NO_ALARM:      return "#00ff00"; // green
+        case MINOR_ALARM:   return "#ffff00"; // yellow
+        case MAJOR_ALARM:   return "#ff0000"; // red
+        default:
+        case INVALID_ALARM: return "#ffffff"; // white
+    }
+}
+
 
 /*!
   Return a severity that will not match any valid severity
