@@ -243,7 +243,7 @@ QVariant QEpicsPv::get(const QString & _pvName, int delay_msec) {
   return tpv.getConnected(delay_msec);
 }
 
-const QVariant & QEpicsPv::set(QVariant value, int delay_msec) {
+const QVariant & QEpicsPv::set(const QVariant & value, int delay_msec) {
 
   emit valueUpdated(get());
 
@@ -258,6 +258,7 @@ const QVariant & QEpicsPv::set(QVariant value, int delay_msec) {
     needUpdated();
 
   if ( getEnum().size() ) {
+
     if ( ! getEnum().contains(value.toString()) ) {
       bool ok;
       qlonglong val = value.toLongLong(&ok);
@@ -274,15 +275,20 @@ const QVariant & QEpicsPv::set(QVariant value, int delay_msec) {
             << getEnum() << ".";
         return badData;
       }
-      value = val;
+      qCaField->writeData(val);
     }
-  } else if ( get().type() != value.type()  && ! value.convert(get().type()) ) {
+
+  } else if ( get().type() != value.type()  && ! value.canConvert(get().type()) ) {
+
     qDebug() << "ERROR in QEpicsPv! Could not convert type QVariant from \"" << value.typeName()
              << "\" to \"" << get().typeName() << "\" to set the PV" << pv();
     return badData;
-  }
 
-  qCaField->writeData(value);
+  } else {
+
+    qCaField->writeData(value);
+
+  }
 
   return delay_msec >= 0  ?  getUpdated(delay_msec)  :  get();
 
@@ -342,6 +348,6 @@ void QEpicsPv::updateConnection() {
 
 }
 
-const QStringList & QEpicsPv::getEnum() const {
+const QStringList QEpicsPv::getEnum() const {
   return qCaField->getEnumerations();
 }

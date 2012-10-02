@@ -139,7 +139,7 @@ public:
 
   /// PV's enumeration.
   /// @return The enumeration of the PV field, or the empty list if the PV is not an enumeration.
-  const QStringList & getEnum() const;
+  const QStringList getEnum() const;
 
   /// PV name.
   /// @return PV name.
@@ -221,7 +221,7 @@ public slots:
   /// @return Last updated value or invalid object if could not confirm the update within
   /// the specified delay time.
   ///
-  const QVariant & set(QVariant value, int delay = -1);
+  const QVariant & set(const QVariant & value, int delay = -1);
 
   /// \brief Sets new PV.
   ///
