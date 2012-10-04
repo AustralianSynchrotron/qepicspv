@@ -182,11 +182,6 @@ caconnection::ca_responses CaObjectPrivate::writeChannel( generic::Generic *newV
         dbrStructType = DBR_ENUM;
         break;
       }
-    case generic::CHAR :
-      {
-        dbrStructType = DBR_CHAR;
-        break;
-      }
     case generic::UNSIGNED_CHAR :
       {
         dbrStructType = DBR_CHAR;
