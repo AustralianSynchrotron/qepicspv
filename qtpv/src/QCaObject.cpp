@@ -382,21 +382,24 @@ bool QCaObject::putChannel() {
     // Generate the output data based on the type
     Generic outputData;
     switch( writingData.type() ) {
-        case QVariant::Double :
-            outputData.setDouble( writingData.toDouble() );
+      case QVariant::Double :
+        outputData.setDouble( writingData.toDouble() );
         break;
-        case QVariant::LongLong :
-            outputData.setUnsignedLong( writingData.toLongLong() );
+      case QVariant::LongLong :
+        outputData.setUnsignedLong( writingData.toLongLong() );
         break;
-        case QVariant::UInt :
-        case QVariant::ULongLong :
-            outputData.setUnsignedLong( writingData.toULongLong() );
+      case QVariant::UInt :
+      case QVariant::ULongLong :
+        outputData.setUnsignedLong( writingData.toULongLong() );
         break;
-        case QVariant::String :
-            outputData.setString( writingData.toString().toStdString() );
+      case QVariant::String :
+        outputData.setString( writingData.toString().toStdString() );
         break;
-        default:
-            return false;
+      case QVariant::ByteArray :
+        outputData.setUnsignedChar( (unsigned char*) writingData.toByteArray().data(), writingData.toByteArray().size() );
+        break;
+      default:
+        return false;
         break;
     }
 

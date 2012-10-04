@@ -225,12 +225,17 @@ ca_responses CaConnection::readChannel( void (*readHandler)(struct event_handler
 /*!
     Write to channel once and register a write handler.
 */
-ca_responses CaConnection::writeChannel( void (*writeHandler)(struct event_handler_args), void* args, short dbrStructType, const void* newDbrValue ) {
+ca_responses CaConnection::writeChannel( void (*writeHandler)(struct event_handler_args), void* args, short dbrStructType, const void* newDbrValue,
+                                         unsigned long count ) {
     if( channel.activated == true ) {
-        if( channel.writeWithCallback )
-            channel.writeResponse = ca_put_callback( dbrStructType, channel.id, newDbrValue, writeHandler, args);
-        else
-            channel.writeResponse = ca_put( dbrStructType, channel.id, newDbrValue);
+      if( channel.writeWithCallback )
+        channel.writeResponse = count > 1 ?
+              ca_array_put_callback( dbrStructType, count, channel.id, newDbrValue, writeHandler, args) :
+              ca_put_callback( dbrStructType, channel.id, newDbrValue, writeHandler, args);
+      else
+        channel.writeResponse = count > 1 ?
+              ca_array_put( dbrStructType, count, channel.id, newDbrValue) :
+              ca_put( dbrStructType, channel.id, newDbrValue);
 
         ca_pend_io( link.readTimeout );
         switch( channel.writeResponse ) {
@@ -304,7 +309,7 @@ channel_states CaConnection::getChannelState() {
             return CONNECTED;
         break;
         case cs_closed :
-            return CLOSED; 
+            return CLOSED;
         break;
         default:
             return CHANNEL_UNKNOWN;

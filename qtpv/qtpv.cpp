@@ -278,6 +278,9 @@ const QVariant & QEpicsPv::set(const QVariant & value, int delay_msec) {
       qCaField->writeData(val);
     }
 
+//  } else if ( get().type() == QVariant::List )
+
+
   } else if ( get().type() != value.type()  && ! value.canConvert(get().type()) ) {
 
     qDebug() << "ERROR in QEpicsPv! Could not convert type QVariant from \"" << value.typeName()

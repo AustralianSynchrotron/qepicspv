@@ -33,7 +33,7 @@ using namespace generic;
 /*!
     Creates unknown type
 */
-Generic::Generic() { 
+Generic::Generic() {
     value = NULL;
     arrayCount = 0;
     type = UNKNOWN;
@@ -187,7 +187,7 @@ void Generic::setString( std::string newValue ) {
 /*!
     Creates and records new type short
 */
-void Generic::setShort( short newValue ) { 
+void Generic::setShort( short newValue ) {
     setShort( &newValue, 1 );
 }
 
@@ -338,7 +338,7 @@ void Generic::getString( char** valueArray, unsigned long* arrayCountOut ){
 /*!
     Returns type short or invalid
 */
-short Generic::getShort() { 
+short Generic::getShort() {
     if( getType() == SHORT ) {
         return *(short*)value;
     }
@@ -438,7 +438,7 @@ void Generic::getLong( long** valueArray, unsigned long* arrayCountOut ) {
 /*!
     Returns type unsigned long or invalid
 */
-unsigned long Generic::getUnsignedLong() { 
+unsigned long Generic::getUnsignedLong() {
     if( getType() == UNSIGNED_LONG ) {
         return *(unsigned long*)value;
     }
@@ -488,7 +488,7 @@ void Generic::getFloat( float** valueArray, unsigned long* arrayCountOut ) {
 /*!
     Returns type double or invalid
 */
-double Generic::getDouble() { 
+double Generic::getDouble() {
     if( getType() == DOUBLE ) {
         return *(double*)value;
     }
@@ -534,7 +534,7 @@ void Generic::setType( generic_types newType ) {
 }
 
 /*!
-    Deletes stored value 
+    Deletes stored value
 */
 void Generic::deleteValue() {
     if( value == NULL ) {

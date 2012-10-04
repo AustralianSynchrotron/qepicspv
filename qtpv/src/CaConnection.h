@@ -70,7 +70,7 @@ namespace caconnection {
   };
 
   class CaConnection {
-    public:      
+    public:
       CaConnection( void* newParent = 0 );
       ~CaConnection();
 
@@ -82,7 +82,7 @@ namespace caconnection {
       void removeSubscription(); //< NOT IMPLEMENTED
 
       ca_responses readChannel( void (*readHandler)(struct event_handler_args), void* args, short dbrStructType );
-      ca_responses writeChannel( void (*writeHandler)(struct event_handler_args), void* args, short dbrStructType, const void* dbrValue );
+      ca_responses writeChannel( void (*writeHandler)(struct event_handler_args), void* args, short dbrStructType, const void* dbrValue, unsigned long count=1 );
 
       void setLinkState( link_states newLinkState );
       link_states getLinkState();

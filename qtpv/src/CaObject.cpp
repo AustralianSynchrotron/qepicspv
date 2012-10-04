@@ -164,55 +164,58 @@ caconnection::ca_responses CaObjectPrivate::readChannel() {
 */
 caconnection::ca_responses CaObjectPrivate::writeChannel( generic::Generic *newValue ) {
 
-    switch( newValue->getType() ) {
-        case generic::STRING :
-        {
-            std::string outValue = newValue->getString();
-            return caConnection->writeChannel( writeHandler, owner, DBR_STRING, outValue.c_str() );
-            break;
-        }
-        case generic::SHORT :
-        {
-            short outValue = newValue->getShort();
-            return caConnection->writeChannel( writeHandler, owner, DBR_SHORT, &outValue );
-            break;
-        }
-        case generic::UNSIGNED_SHORT :
-        {
-            unsigned short outValue = newValue->getUnsignedShort();
-            return caConnection->writeChannel( writeHandler, owner, DBR_ENUM, &outValue );
-            break;
-        }
-        case generic::UNSIGNED_CHAR :
-        {
-            char outValue = newValue->getUnsignedChar();
-            return caConnection->writeChannel( writeHandler, owner, DBR_CHAR, &outValue );
-            break;
-        }
-        case generic::UNSIGNED_LONG :
-        {
-            unsigned long outValue = newValue->getUnsignedLong();
-            return caConnection->writeChannel( writeHandler, owner, DBR_LONG, &outValue );
-            break;
-        }
-        case generic::FLOAT :
-        {
-            float outValue = newValue->getFloat();
-            return caConnection->writeChannel( writeHandler, owner, DBR_FLOAT, &outValue );
-            break;
-        }
-        case generic::DOUBLE :
-        {
-            double outValue = newValue->getDouble();
-            return caConnection->writeChannel( writeHandler, owner, DBR_DOUBLE, &outValue );
-            break;
-        }
-        default :
-        {
-            return caconnection::REQUEST_FAILED;
-        }
-    }
-    return caconnection::REQUEST_FAILED;
+  short dbrStructType;
+
+  switch( newValue->getType() ) {
+    case generic::STRING :
+      {
+        std::string outValue = newValue->getString();
+        return caConnection->writeChannel( writeHandler, owner, DBR_STRING, outValue.c_str() );
+      }
+    case generic::SHORT :
+      {
+        dbrStructType = DBR_SHORT;
+        break;
+      }
+    case generic::UNSIGNED_SHORT :
+      {
+        dbrStructType = DBR_ENUM;
+        break;
+      }
+    case generic::CHAR :
+      {
+        dbrStructType = DBR_CHAR;
+        break;
+      }
+    case generic::UNSIGNED_CHAR :
+      {
+        dbrStructType = DBR_CHAR;
+        break;
+      }
+    case generic::UNSIGNED_LONG :
+      {
+        dbrStructType = DBR_LONG;
+        break;
+      }
+    case generic::FLOAT :
+      {
+        dbrStructType = DBR_FLOAT;
+        break;
+      }
+    case generic::DOUBLE :
+      {
+        dbrStructType = DBR_DOUBLE;
+        break;
+      }
+    default :
+      {
+        return caconnection::REQUEST_FAILED;
+      }
+  }
+
+  return caConnection->writeChannel( writeHandler, owner, dbrStructType,
+                                     newValue->getValue(), newValue->getArrayCount() );
+
 }
 
 //===============================================================================
@@ -803,7 +806,7 @@ void CaObjectPrivate::connectionHandler( struct connection_handler_args args ) {
             parent->setLinkState( caconnection::LINK_UNKNOWN );
             grandParent->signalCallback( CONNECTION_UNKNOWN );
         break;
-    }   
+    }
     epicsMutexUnlock( accessMutex );
 }
 

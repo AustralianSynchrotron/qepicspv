@@ -88,6 +88,7 @@ namespace generic {
       double getDouble();
       void   getDouble( double** valueArray, unsigned long* countOut = NULL );
 
+      const void * getValue() const {return value;}
       unsigned long getArrayCount();
 
       generic_types getType();
