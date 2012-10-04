@@ -73,6 +73,8 @@ const QVariant QEpicsPv::badData = QVariant();
 
 const bool QEpicsPv::inited = QEpicsPv::init();
 
+static const QString emptystring = QString();
+
 unsigned QEpicsPv::debugLevel = 0;
 
 bool QEpicsPv::init() {
@@ -197,6 +199,13 @@ bool QEpicsPv::isConnected() const {
 
 const QVariant & QEpicsPv::get() const {
   return lastData;
+}
+
+const QString & QEpicsPv::getEnumString() const {
+  bool ok;
+  const int idx = get().toInt(&ok);
+  return ok && idx < getEnum().size()
+      ?  getEnum().at(idx) : emptystring ;
 }
 
 void QEpicsPv::needUpdated() const {
@@ -324,6 +333,7 @@ void QEpicsPv::updateValue(const QVariant & data){
   lastData = data;
 
   if (firstRead) {
+    enumeration = qCaField->getEnumerations();
     emit connected();
     emit connectionChanged(true);
   }
@@ -346,12 +356,13 @@ void QEpicsPv::updateConnection() {
   } else {
     updated=false;
     lastData = badData;
+    enumeration.clear();
     emit disconnected();
   }
   emit connectionChanged(con);
 
 }
 
-const QStringList QEpicsPv::getEnum() const {
-  return qCaField->getEnumerations();
+const QStringList & QEpicsPv::getEnum() const {
+  return enumeration;
 }

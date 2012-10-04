@@ -45,6 +45,8 @@ private:
   /// Is invalid if the pv is not connected or before first update.
   QVariant lastData;
 
+  QStringList enumeration;
+
   /// Invalid QVariant object to be returned by ::get(), ::getUpdated(),
   /// ::set(), etc.
   static const QVariant badData;
@@ -103,6 +105,8 @@ public:
   ///
   const QVariant & get() const;
 
+  const QString & getEnumString() const;
+
   /// \brief Starts monitoring for the updates.
   ///
   /// Makes sence only in combination with further call to ::getUpdated().
@@ -139,7 +143,7 @@ public:
 
   /// PV's enumeration.
   /// @return The enumeration of the PV field, or the empty list if the PV is not an enumeration.
-  const QStringList getEnum() const;
+  const QStringList & getEnum() const;
 
   /// PV name.
   /// @return PV name.
