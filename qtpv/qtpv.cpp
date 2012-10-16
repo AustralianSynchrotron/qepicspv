@@ -298,7 +298,7 @@ const QVariant & QEpicsPv::set(const QVariant & value, int delay_msec) {
   } else if ( value.canConvert(get().type()) ) {
 
     QVariant nval=value;
-    nval.convert(get.type());
+    nval.convert(get().type());
     qCaField->writeData(nval);
 
   } else {
