@@ -291,15 +291,21 @@ const QVariant & QEpicsPv::set(const QVariant & value, int delay_msec) {
 
     qCaField->writeData(value);
 
-  } else if ( get().type() != value.type()  && ! value.canConvert(get().type()) ) {
+  } else if ( get().type() == value.type() ) {
+
+    qCaField->writeData(value);
+
+  } else if ( value.canConvert(get().type()) ) {
+
+    QVariant nval=value;
+    nval.convert(get.type());
+    qCaField->writeData(nval);
+
+  } else {
 
     qDebug() << "ERROR in QEpicsPv! Could not convert type QVariant from \"" << value.typeName()
              << "\" to \"" << get().typeName() << "\" to set the PV" << pv();
     return badData;
-
-  } else {
-
-    qCaField->writeData(value);
 
   }
 
