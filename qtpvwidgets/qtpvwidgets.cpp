@@ -42,7 +42,7 @@ QMDoubleSpinBox::QMDoubleSpinBox(QWidget * parent) :
   setKeyboardTracking(false);
   connect(this, SIGNAL(valueChanged(double)), SLOT(recalculateStep(double)));
   connect(this, SIGNAL(escaped()), SLOT(restore()));
-  connect(this->lineEdit(), SIGNAL(cursorPositionChanged(int,int)),
+  connect(lineEdit(), SIGNAL(cursorPositionChanged(int,int)),
           SLOT(correctPosition(int,int)));
   recalculateStep(value());
 }
