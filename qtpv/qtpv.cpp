@@ -10,6 +10,9 @@
 
 bool qtWait(const QList<ObjSig> & osS, int delay_msec) {
 
+  if ( ! delay_msec )
+    return true;
+
   QEventLoop q;
   foreach(ObjSig os, osS)
     QObject::connect(os.sender, os.signal, &q, SLOT(quit()));
@@ -39,7 +42,7 @@ bool qtWait(const QObject * sender, const char * signal, int delay_msec) {
   return qtWait(osS,delay_msec);
 }
 
-bool qtWait(int delay_msec){
+bool qtWait(int delay_msec) {
 
   if (delay_msec <= 0)
     return true;

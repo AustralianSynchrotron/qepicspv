@@ -13,8 +13,8 @@ struct ObjSig {
     sender(_sender), signal(_signal) {};
 };
 
-bool qtWait(const QList<ObjSig> & osS, int delay_msec=0);
-bool qtWait(const QObject * sender, const char * signal, int delay_msec=0);
+bool qtWait(const QList<ObjSig> & osS, int delay_msec=-1);
+bool qtWait(const QObject * sender, const char * signal, int delay_msec=-1);
 bool qtWait(int delay_msec);
 
 
