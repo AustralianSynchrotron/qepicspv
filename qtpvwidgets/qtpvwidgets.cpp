@@ -279,6 +279,7 @@ void QVariantLabel::retext() {
       break;
   }
   QLabel::setText(nText);
+  emit somethingChanged(text());
 }
 
 void QVariantLabel::setDecimals(int prec) {
@@ -302,6 +303,7 @@ void QVariantLabel::setFormat(char f){
 void QVariantLabel::setText(const QString & s) {
   variable=s;
   QLabel::setText(s);
+  emit somethingChanged(text());
 }
 
 void QVariantLabel::setValue(double n) {

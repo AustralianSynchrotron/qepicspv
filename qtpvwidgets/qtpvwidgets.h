@@ -337,6 +337,9 @@ public slots:
   void setPrefix(const QString &prefix);
   void setSuffix(const QString &suffix);
 
+signals:
+  void somethingChanged(const QString &);
+
 };
 
 
