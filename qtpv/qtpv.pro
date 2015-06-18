@@ -27,7 +27,8 @@ SOURCES += qtpv.cpp \
 
 INCLUDEPATH += . src \
     ${EPICS_BASE}/include \
-    ${EPICS_BASE}/include/os/Linux
+    ${EPICS_BASE}/include/os/Linux \
+    ${EPICS_BASE}/include/compiler/gcc
 
 HEADERS += qtpv.h \
     src/CaConnection.h \

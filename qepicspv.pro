@@ -3,6 +3,6 @@ CONFIG += ordered
 SUBDIRS = qtpv \
 	  qtpvwidgets \
           qtpvgui \
-    qpvcontrol
+          qpvcontrol
 
 TEMPLATE = subdirs
