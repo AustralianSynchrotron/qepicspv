@@ -316,7 +316,6 @@ public:
   QVariantLabel( const QString & text, QWidget * parent=0, Qt::WindowFlags f=0) :
     QLabel(text, parent, f), m_param(10), m_format('g') {}
 
-  void  setDecimals(int prec);
   void  setBase(int base);
   void  setFormat(char f);
 
@@ -334,6 +333,7 @@ public slots:
   void setValue(uint n) {setValue(qulonglong(n));}
   void setVariant(QVariant v);
 
+  void setDecimals(int prec);
   void setPrefix(const QString &prefix);
   void setSuffix(const QString &suffix);
 
