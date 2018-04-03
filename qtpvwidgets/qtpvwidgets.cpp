@@ -52,6 +52,7 @@ void QMDoubleSpinBox::focusInEvent(QFocusEvent * event){
   QDoubleSpinBox::focusInEvent(event);
   selectAll();
   oldvalue = value();
+  emit entered();
 }
 
 
@@ -147,6 +148,7 @@ void QMSpinBox::focusInEvent(QFocusEvent * event){
   QSpinBox::focusInEvent(event);
   selectAll();
   oldvalue = value();
+  emit entered();
 }
 
 void QMSpinBox::focusOutEvent(QFocusEvent * event){

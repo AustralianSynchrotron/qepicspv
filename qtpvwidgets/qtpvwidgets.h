@@ -108,6 +108,9 @@ signals:
   /// @param double new value
   void valueEdited(double);
 
+  /// Emitted when the focus is acquired.
+  void entered();
+
   /// Emitted when the focus is lost or Escape pressed.
   void escaped();
 
@@ -195,6 +198,9 @@ signals:
   /// Emitted on the confirmed value change.
   /// @param double new value
   void valueEdited(int);
+
+  /// Emitted when the focus is acquired.
+  void entered();
 
   /// Emitted when the focus is lost or Escape pressed.
   void escaped();
