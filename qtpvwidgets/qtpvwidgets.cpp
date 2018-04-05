@@ -40,11 +40,16 @@ QMDoubleSpinBox::QMDoubleSpinBox(QWidget * parent) :
   validateMe(true)
 {
   setKeyboardTracking(false);
+  setConfirmationRequired();
   connect(this, SIGNAL(valueChanged(double)), SLOT(recalculateStep(double)));
-  connect(this, SIGNAL(escaped()), SLOT(restore()));
   connect(lineEdit(), SIGNAL(cursorPositionChanged(int,int)),
           SLOT(correctPosition(int,int)));
   recalculateStep(value());
+}
+
+void QMDoubleSpinBox::setConfirmationRequired(bool req) {
+  disconnect(this, SIGNAL(escaped()), this, 0);
+  connect(this, SIGNAL(escaped()), req ? SLOT(restore()) : SLOT(store()) );
 }
 
 void QMDoubleSpinBox::focusInEvent(QFocusEvent * event){
@@ -66,15 +71,18 @@ void QMDoubleSpinBox::focusOutEvent(QFocusEvent * event){
 void QMDoubleSpinBox::keyPressEvent( QKeyEvent * event ){
   int key = event->key();
   if ( key == Qt::Key_Enter || key == Qt::Key_Return ) {
-    validateMe = true;
-    interpretText();
-    validateMe = false;
-    emit valueEdited(oldvalue=value());
+    store();
   } else if ( key == Qt::Key_Escape )
     emit escaped();
   QDoubleSpinBox::keyPressEvent(event);
 }
 
+void QMDoubleSpinBox::store() {
+  validateMe = true;
+  interpretText();
+  validateMe = false;
+  emit valueEdited(oldvalue=value());
+}
 
 
 
@@ -138,9 +146,14 @@ QMSpinBox::QMSpinBox(QWidget * parent)  :
   validateMe(true)
 {
   setKeyboardTracking(false);
-  connect(this, SIGNAL(escaped()), SLOT(restore()));
+  setConfirmationRequired();
   connect(this->lineEdit(), SIGNAL(cursorPositionChanged(int,int)),
           SLOT(correctPosition(int,int)));
+}
+
+void QMSpinBox::setConfirmationRequired(bool req) {
+  disconnect(this, SIGNAL(escaped()), this, 0);
+  connect(this, SIGNAL(escaped()), req ? SLOT(restore()) : SLOT(store()) );
 }
 
 void QMSpinBox::focusInEvent(QFocusEvent * event){
@@ -160,14 +173,20 @@ void QMSpinBox::focusOutEvent(QFocusEvent * event){
 void QMSpinBox::keyPressEvent( QKeyEvent * event ){
   int key = event->key();
   if ( key == Qt::Key_Enter || key == Qt::Key_Return ) {
-    validateMe = true;
-    interpretText();
-    validateMe = false;
-    emit valueEdited(oldvalue=value());
+    store();
   } else if ( key == Qt::Key_Escape )
     emit escaped();
   QSpinBox::keyPressEvent(event);
 }
+
+
+void QMSpinBox::store() {
+  validateMe = true;
+  interpretText();
+  validateMe = false;
+  emit valueEdited(oldvalue=value());
+}
+
 
 void QMSpinBox::correctPosition(int , int newPos) {
   QLineEdit * ledt = lineEdit();

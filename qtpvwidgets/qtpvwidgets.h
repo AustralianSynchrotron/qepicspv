@@ -102,6 +102,8 @@ public:
 
   virtual QValidator::State	validate ( QString & text, int & pos ) const;
 
+  void setConfirmationRequired(bool req=true);
+
 signals:
 
   /// Emitted on the confirmed value change.
@@ -139,6 +141,9 @@ private slots:
 
   /// Restores the ::oldvalue (on escape).
   inline void restore() { setValue(oldvalue); }
+
+  /// Stores the new value.
+  void store();
 
   void correctPosition(int , int newPos);
 
@@ -193,6 +198,8 @@ public:
 
   virtual QValidator::State	validate ( QString & text, int & pos ) const;
 
+  void setConfirmationRequired(bool req=true);
+
 signals:
 
   /// Emitted on the confirmed value change.
@@ -204,6 +211,7 @@ signals:
 
   /// Emitted when the focus is lost or Escape pressed.
   void escaped();
+
 
 public slots:
 
@@ -221,6 +229,9 @@ private slots:
 
   /// Restores the ::oldvalue (on escape).
   inline void restore() {setValue(oldvalue);}
+
+  /// Stores the new value.
+  void store();
 
   void correctPosition(int , int newPos);
 
@@ -279,6 +290,7 @@ signals:
 
   /// Emitted when the focus is lost or Escape pressed.
   void escaped();
+
 
 public slots:
 
