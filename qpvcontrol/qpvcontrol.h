@@ -4,7 +4,7 @@
 #include "qtpvgui.h"
 #include "qtpvwidgets.h"
 
-#include <QtGui/QMainWindow>
+#include <QMainWindow>
 #include <QFile>
 
 namespace Ui {

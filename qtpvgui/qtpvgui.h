@@ -3,7 +3,7 @@
 
 #include "qtpv.h"
 
-#include <QWidget>
+//#include <QWidget>
 
 
 namespace Ui {

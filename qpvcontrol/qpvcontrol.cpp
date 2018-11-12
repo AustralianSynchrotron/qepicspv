@@ -18,10 +18,17 @@ QEpicsPvApp::QEpicsPvApp(QWidget *parent) :
 
   ui->setupUi(this);
 
+#if QT_VERSION >= 0x050000
+  ui->table->verticalHeader()->setSectionsMovable(true);
+  ui->table->verticalHeader()->setSectionsClickable(true);
+  ui->table->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
+  ui->table->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+#else
   ui->table->verticalHeader()->setMovable(true);
   ui->table->verticalHeader()->setClickable(true);
   ui->table->verticalHeader()->setResizeMode(QHeaderView::Fixed);
   ui->table->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
+#endif
 
   connect(ui->add, SIGNAL(clicked()), SLOT(addPv()));
   connect(ui->clear, SIGNAL(clicked()), SLOT(clear()));
@@ -162,7 +169,11 @@ void QEpicsPvApp::updatePvsFile() {
   pvsFile.reset();
   pvsFile.resize(0);
   foreach (QEpicsPvGUI * pv, pvsList() )
+    #if QT_VERSION >= 0x050000
+    pvsFile.write( ( pv->pv() + "\n" ).toLatin1());
+    #else
     pvsFile.write( ( pv->pv() + "\n" ).toAscii());
+    #endif
   pvsFile.flush();
 }
 
@@ -178,7 +189,11 @@ void QEpicsPvApp::saveConfiguration(const QString & fileName) {
   if ( file.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate) &&
        file.isWritable() )
     foreach (QEpicsPvGUI * pv, pvsList() )
+      #if QT_VERSION >= 0x050000
+      file.write( ( pv->pv() + "\n" ).toLatin1());
+      #else
       file.write( ( pv->pv() + "\n" ).toAscii());
+      #endif
   file.close();
 }
 

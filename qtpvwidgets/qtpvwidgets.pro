@@ -1,3 +1,6 @@
+
+QT += widgets gui
+
 TARGET = qtpvwidgets
 TEMPLATE = lib
 HEADERS += qtpvwidgets.h

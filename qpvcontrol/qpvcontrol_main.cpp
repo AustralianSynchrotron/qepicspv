@@ -1,4 +1,4 @@
-#include <QtGui/QApplication>
+#include <QApplication>
 #include "qpvcontrol.h"
 
 int main(int argc, char *argv[])

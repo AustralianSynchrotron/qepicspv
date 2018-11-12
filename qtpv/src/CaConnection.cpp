@@ -237,18 +237,18 @@ ca_responses CaConnection::writeChannel( void (*writeHandler)(struct event_handl
               ca_array_put( dbrStructType, count, channel.id, newDbrValue) :
               ca_put( dbrStructType, channel.id, newDbrValue);
 
-        ca_pend_io( link.readTimeout );
-        switch( channel.writeResponse ) {
-            case ECA_NORMAL :
-                return REQUEST_SUCCESSFUL;
-            break;
-            case ECA_DISCONN :
-                return CHANNEL_DISCONNECTED;
-            break;
-            default :
-                return REQUEST_FAILED;
-            break;
-        }
+      ca_pend_io( link.readTimeout );
+      switch( channel.writeResponse ) {
+          case ECA_NORMAL :
+              return REQUEST_SUCCESSFUL;
+          break;
+          case ECA_DISCONN :
+              return CHANNEL_DISCONNECTED;
+          break;
+          default :
+              return REQUEST_FAILED;
+          break;
+      }
     } else {
         return CHANNEL_DISCONNECTED;
     }
