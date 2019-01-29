@@ -2831,79 +2831,6 @@ static PyObject *meth_QMDoubleSpinBox_setConfirmationRequired(PyObject *sipSelf,
 }
 
 
-extern "C" {static PyObject *meth_QMDoubleSpinBox_valueEdited(PyObject *, PyObject *);}
-static PyObject *meth_QMDoubleSpinBox_valueEdited(PyObject *sipSelf, PyObject *sipArgs)
-{
-    PyObject *sipParseErr = NULL;
-
-    {
-        double a0;
-         ::QMDoubleSpinBox *sipCpp;
-
-        if (sipParseArgs(&sipParseErr, sipArgs, "Bd", &sipSelf, sipType_QMDoubleSpinBox, &sipCpp, &a0))
-        {
-            sipCpp->valueEdited(a0);
-
-            Py_INCREF(Py_None);
-            return Py_None;
-        }
-    }
-
-    /* Raise an exception if the arguments couldn't be parsed. */
-    sipNoMethod(sipParseErr, sipName_QMDoubleSpinBox, sipName_valueEdited, NULL);
-
-    return NULL;
-}
-
-
-extern "C" {static PyObject *meth_QMDoubleSpinBox_entered(PyObject *, PyObject *);}
-static PyObject *meth_QMDoubleSpinBox_entered(PyObject *sipSelf, PyObject *sipArgs)
-{
-    PyObject *sipParseErr = NULL;
-
-    {
-         ::QMDoubleSpinBox *sipCpp;
-
-        if (sipParseArgs(&sipParseErr, sipArgs, "B", &sipSelf, sipType_QMDoubleSpinBox, &sipCpp))
-        {
-            sipCpp->entered();
-
-            Py_INCREF(Py_None);
-            return Py_None;
-        }
-    }
-
-    /* Raise an exception if the arguments couldn't be parsed. */
-    sipNoMethod(sipParseErr, sipName_QMDoubleSpinBox, sipName_entered, NULL);
-
-    return NULL;
-}
-
-
-extern "C" {static PyObject *meth_QMDoubleSpinBox_escaped(PyObject *, PyObject *);}
-static PyObject *meth_QMDoubleSpinBox_escaped(PyObject *sipSelf, PyObject *sipArgs)
-{
-    PyObject *sipParseErr = NULL;
-
-    {
-         ::QMDoubleSpinBox *sipCpp;
-
-        if (sipParseArgs(&sipParseErr, sipArgs, "B", &sipSelf, sipType_QMDoubleSpinBox, &sipCpp))
-        {
-            sipCpp->escaped();
-
-            Py_INCREF(Py_None);
-            return Py_None;
-        }
-    }
-
-    /* Raise an exception if the arguments couldn't be parsed. */
-    sipNoMethod(sipParseErr, sipName_QMDoubleSpinBox, sipName_escaped, NULL);
-
-    return NULL;
-}
-
-
 extern "C" {static PyObject *meth_QMDoubleSpinBox_setMin(PyObject *, PyObject *);}
 static PyObject *meth_QMDoubleSpinBox_setMin(PyObject *sipSelf, PyObject *sipArgs)
 {
@@ -3130,8 +3057,6 @@ static PyMethodDef methods_QMDoubleSpinBox[] = {
     {SIP_MLNAME_CAST(sipName_dragMoveEvent), (PyCFunction)meth_QMDoubleSpinBox_dragMoveEvent, METH_VARARGS|METH_KEYWORDS, NULL},
     {SIP_MLNAME_CAST(sipName_dropEvent), (PyCFunction)meth_QMDoubleSpinBox_dropEvent, METH_VARARGS|METH_KEYWORDS, NULL},
     {SIP_MLNAME_CAST(sipName_enterEvent), (PyCFunction)meth_QMDoubleSpinBox_enterEvent, METH_VARARGS|METH_KEYWORDS, NULL},
-    {SIP_MLNAME_CAST(sipName_entered), meth_QMDoubleSpinBox_entered, METH_VARARGS, NULL},
-    {SIP_MLNAME_CAST(sipName_escaped), meth_QMDoubleSpinBox_escaped, METH_VARARGS, NULL},
     {SIP_MLNAME_CAST(sipName_focusInEvent), meth_QMDoubleSpinBox_focusInEvent, METH_VARARGS, NULL},
     {SIP_MLNAME_CAST(sipName_focusNextChild), (PyCFunction)meth_QMDoubleSpinBox_focusNextChild, METH_VARARGS|METH_KEYWORDS, NULL},
     {SIP_MLNAME_CAST(sipName_focusNextPrevChild), (PyCFunction)meth_QMDoubleSpinBox_focusNextPrevChild, METH_VARARGS|METH_KEYWORDS, NULL},
@@ -3172,15 +3097,23 @@ static PyMethodDef methods_QMDoubleSpinBox[] = {
     {SIP_MLNAME_CAST(sipName_timerEvent), (PyCFunction)meth_QMDoubleSpinBox_timerEvent, METH_VARARGS|METH_KEYWORDS, NULL},
     {SIP_MLNAME_CAST(sipName_updateMicroFocus), (PyCFunction)meth_QMDoubleSpinBox_updateMicroFocus, METH_VARARGS|METH_KEYWORDS, NULL},
     {SIP_MLNAME_CAST(sipName_validate), meth_QMDoubleSpinBox_validate, METH_VARARGS, NULL},
-    {SIP_MLNAME_CAST(sipName_valueEdited), meth_QMDoubleSpinBox_valueEdited, METH_VARARGS, NULL},
     {SIP_MLNAME_CAST(sipName_wheelEvent), (PyCFunction)meth_QMDoubleSpinBox_wheelEvent, METH_VARARGS|METH_KEYWORDS, NULL}
+};
+
+
+/* Define this type's signals. */
+static const pyqt5QtSignal signals_QMDoubleSpinBox[] = {
+    {"escaped()", 0, 0, 0},
+    {"entered()", 0, 0, 0},
+    {"valueEdited(double)", 0, 0, 0},
+    {0, 0, 0, 0}
 };
 
 
 static pyqt5ClassPluginDef plugin_QMDoubleSpinBox = {
     & ::QMDoubleSpinBox::staticMetaObject,
     0,
-    0,
+    signals_QMDoubleSpinBox,
     0
 };
 
@@ -3198,7 +3131,7 @@ sipClassTypeDef sipTypeDef_qtpvwidgets_QMDoubleSpinBox = {
     {
         sipNameNr_QMDoubleSpinBox,
         {0, 0, 1},
-        59, methods_QMDoubleSpinBox,
+        56, methods_QMDoubleSpinBox,
         0, 0,
         0, 0,
         {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},

@@ -6,7 +6,7 @@
 
 #include "sipAPIqtpvwidgets.h"
 
-#line 121 "qtpvwidgets.sip"
+#line 117 "qtpvwidgets.sip"
   #include "qtpvwidgets.h"
 #line 12 "./sipqtpvwidgetsQVariantLabel.cpp"
 
@@ -3066,33 +3066,6 @@ static PyObject *meth_QVariantLabel_setSuffix(PyObject *sipSelf, PyObject *sipAr
 }
 
 
-extern "C" {static PyObject *meth_QVariantLabel_somethingChanged(PyObject *, PyObject *);}
-static PyObject *meth_QVariantLabel_somethingChanged(PyObject *sipSelf, PyObject *sipArgs)
-{
-    PyObject *sipParseErr = NULL;
-
-    {
-        const  ::QString* a0;
-        int a0State = 0;
-         ::QVariantLabel *sipCpp;
-
-        if (sipParseArgs(&sipParseErr, sipArgs, "BJ1", &sipSelf, sipType_QVariantLabel, &sipCpp, sipType_QString,&a0, &a0State))
-        {
-            sipCpp->somethingChanged(*a0);
-            sipReleaseType(const_cast< ::QString *>(a0),sipType_QString,a0State);
-
-            Py_INCREF(Py_None);
-            return Py_None;
-        }
-    }
-
-    /* Raise an exception if the arguments couldn't be parsed. */
-    sipNoMethod(sipParseErr, sipName_QVariantLabel, sipName_somethingChanged, NULL);
-
-    return NULL;
-}
-
-
 /* Cast a pointer to a type somewhere in its inheritance hierarchy. */
 extern "C" {static void *cast_QVariantLabel(void *, const sipTypeDef *);}
 static void *cast_QVariantLabel(void *sipCppV, const sipTypeDef *targetType)
@@ -3249,7 +3222,6 @@ static PyMethodDef methods_QVariantLabel[] = {
     {SIP_MLNAME_CAST(sipName_setVariant), meth_QVariantLabel_setVariant, METH_VARARGS, NULL},
     {SIP_MLNAME_CAST(sipName_sharedPainter), (PyCFunction)meth_QVariantLabel_sharedPainter, METH_VARARGS|METH_KEYWORDS, NULL},
     {SIP_MLNAME_CAST(sipName_showEvent), (PyCFunction)meth_QVariantLabel_showEvent, METH_VARARGS|METH_KEYWORDS, NULL},
-    {SIP_MLNAME_CAST(sipName_somethingChanged), meth_QVariantLabel_somethingChanged, METH_VARARGS, NULL},
     {SIP_MLNAME_CAST(sipName_suffix), meth_QVariantLabel_suffix, METH_VARARGS, NULL},
     {SIP_MLNAME_CAST(sipName_tabletEvent), (PyCFunction)meth_QVariantLabel_tabletEvent, METH_VARARGS|METH_KEYWORDS, NULL},
     {SIP_MLNAME_CAST(sipName_timerEvent), (PyCFunction)meth_QVariantLabel_timerEvent, METH_VARARGS|METH_KEYWORDS, NULL},
@@ -3258,10 +3230,17 @@ static PyMethodDef methods_QVariantLabel[] = {
 };
 
 
+/* Define this type's signals. */
+static const pyqt5QtSignal signals_QVariantLabel[] = {
+    {"somethingChanged(QString)", 0, 0, 0},
+    {0, 0, 0, 0}
+};
+
+
 static pyqt5ClassPluginDef plugin_QVariantLabel = {
     & ::QVariantLabel::staticMetaObject,
     0,
-    0,
+    signals_QVariantLabel,
     0
 };
 
@@ -3279,7 +3258,7 @@ sipClassTypeDef sipTypeDef_qtpvwidgets_QVariantLabel = {
     {
         sipNameNr_QVariantLabel,
         {0, 0, 1},
-        60, methods_QVariantLabel,
+        59, methods_QVariantLabel,
         0, 0,
         0, 0,
         {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},

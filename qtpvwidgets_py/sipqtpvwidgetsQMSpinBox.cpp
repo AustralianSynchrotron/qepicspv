@@ -6,7 +6,7 @@
 
 #include "sipAPIqtpvwidgets.h"
 
-#line 64 "qtpvwidgets.sip"
+#line 63 "qtpvwidgets.sip"
   #include "qtpvwidgets.h"
 #line 12 "./sipqtpvwidgetsQMSpinBox.cpp"
 
@@ -2942,79 +2942,6 @@ static PyObject *meth_QMSpinBox_setConfirmationRequired(PyObject *sipSelf, PyObj
 }
 
 
-extern "C" {static PyObject *meth_QMSpinBox_valueEdited(PyObject *, PyObject *);}
-static PyObject *meth_QMSpinBox_valueEdited(PyObject *sipSelf, PyObject *sipArgs)
-{
-    PyObject *sipParseErr = NULL;
-
-    {
-        int a0;
-         ::QMSpinBox *sipCpp;
-
-        if (sipParseArgs(&sipParseErr, sipArgs, "Bi", &sipSelf, sipType_QMSpinBox, &sipCpp, &a0))
-        {
-            sipCpp->valueEdited(a0);
-
-            Py_INCREF(Py_None);
-            return Py_None;
-        }
-    }
-
-    /* Raise an exception if the arguments couldn't be parsed. */
-    sipNoMethod(sipParseErr, sipName_QMSpinBox, sipName_valueEdited, NULL);
-
-    return NULL;
-}
-
-
-extern "C" {static PyObject *meth_QMSpinBox_entered(PyObject *, PyObject *);}
-static PyObject *meth_QMSpinBox_entered(PyObject *sipSelf, PyObject *sipArgs)
-{
-    PyObject *sipParseErr = NULL;
-
-    {
-         ::QMSpinBox *sipCpp;
-
-        if (sipParseArgs(&sipParseErr, sipArgs, "B", &sipSelf, sipType_QMSpinBox, &sipCpp))
-        {
-            sipCpp->entered();
-
-            Py_INCREF(Py_None);
-            return Py_None;
-        }
-    }
-
-    /* Raise an exception if the arguments couldn't be parsed. */
-    sipNoMethod(sipParseErr, sipName_QMSpinBox, sipName_entered, NULL);
-
-    return NULL;
-}
-
-
-extern "C" {static PyObject *meth_QMSpinBox_escaped(PyObject *, PyObject *);}
-static PyObject *meth_QMSpinBox_escaped(PyObject *sipSelf, PyObject *sipArgs)
-{
-    PyObject *sipParseErr = NULL;
-
-    {
-         ::QMSpinBox *sipCpp;
-
-        if (sipParseArgs(&sipParseErr, sipArgs, "B", &sipSelf, sipType_QMSpinBox, &sipCpp))
-        {
-            sipCpp->escaped();
-
-            Py_INCREF(Py_None);
-            return Py_None;
-        }
-    }
-
-    /* Raise an exception if the arguments couldn't be parsed. */
-    sipNoMethod(sipParseErr, sipName_QMSpinBox, sipName_escaped, NULL);
-
-    return NULL;
-}
-
-
 extern "C" {static PyObject *meth_QMSpinBox_setMin(PyObject *, PyObject *);}
 static PyObject *meth_QMSpinBox_setMin(PyObject *sipSelf, PyObject *sipArgs)
 {
@@ -3216,8 +3143,6 @@ static PyMethodDef methods_QMSpinBox[] = {
     {SIP_MLNAME_CAST(sipName_dragMoveEvent), (PyCFunction)meth_QMSpinBox_dragMoveEvent, METH_VARARGS|METH_KEYWORDS, NULL},
     {SIP_MLNAME_CAST(sipName_dropEvent), (PyCFunction)meth_QMSpinBox_dropEvent, METH_VARARGS|METH_KEYWORDS, NULL},
     {SIP_MLNAME_CAST(sipName_enterEvent), (PyCFunction)meth_QMSpinBox_enterEvent, METH_VARARGS|METH_KEYWORDS, NULL},
-    {SIP_MLNAME_CAST(sipName_entered), meth_QMSpinBox_entered, METH_VARARGS, NULL},
-    {SIP_MLNAME_CAST(sipName_escaped), meth_QMSpinBox_escaped, METH_VARARGS, NULL},
     {SIP_MLNAME_CAST(sipName_event), (PyCFunction)meth_QMSpinBox_event, METH_VARARGS|METH_KEYWORDS, NULL},
     {SIP_MLNAME_CAST(sipName_fixup), (PyCFunction)meth_QMSpinBox_fixup, METH_VARARGS|METH_KEYWORDS, NULL},
     {SIP_MLNAME_CAST(sipName_focusInEvent), meth_QMSpinBox_focusInEvent, METH_VARARGS, NULL},
@@ -3259,16 +3184,24 @@ static PyMethodDef methods_QMSpinBox[] = {
     {SIP_MLNAME_CAST(sipName_timerEvent), (PyCFunction)meth_QMSpinBox_timerEvent, METH_VARARGS|METH_KEYWORDS, NULL},
     {SIP_MLNAME_CAST(sipName_updateMicroFocus), (PyCFunction)meth_QMSpinBox_updateMicroFocus, METH_VARARGS|METH_KEYWORDS, NULL},
     {SIP_MLNAME_CAST(sipName_validate), meth_QMSpinBox_validate, METH_VARARGS, NULL},
-    {SIP_MLNAME_CAST(sipName_valueEdited), meth_QMSpinBox_valueEdited, METH_VARARGS, NULL},
     {SIP_MLNAME_CAST(sipName_valueFromText), (PyCFunction)meth_QMSpinBox_valueFromText, METH_VARARGS|METH_KEYWORDS, NULL},
     {SIP_MLNAME_CAST(sipName_wheelEvent), (PyCFunction)meth_QMSpinBox_wheelEvent, METH_VARARGS|METH_KEYWORDS, NULL}
+};
+
+
+/* Define this type's signals. */
+static const pyqt5QtSignal signals_QMSpinBox[] = {
+    {"escaped()", 0, 0, 0},
+    {"entered()", 0, 0, 0},
+    {"valueEdited(int)", 0, 0, 0},
+    {0, 0, 0, 0}
 };
 
 
 static pyqt5ClassPluginDef plugin_QMSpinBox = {
     & ::QMSpinBox::staticMetaObject,
     0,
-    0,
+    signals_QMSpinBox,
     0
 };
 
@@ -3286,7 +3219,7 @@ sipClassTypeDef sipTypeDef_qtpvwidgets_QMSpinBox = {
     {
         sipNameNr_QMSpinBox,
         {0, 0, 1},
-        61, methods_QMSpinBox,
+        58, methods_QMSpinBox,
         0, 0,
         0, 0,
         {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},

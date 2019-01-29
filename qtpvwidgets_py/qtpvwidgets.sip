@@ -11,13 +11,13 @@ class QMLineEdit : public QLineEdit {
   %End
 
 public:
-
   QMLineEdit(QWidget * parent = 0);
 
-// signals
+signals:
   void escaped();
   void editingFinished(const QString & text);
-// slots
+
+public slots:
   void setText (const QString & text);
 
 private:
@@ -34,18 +34,17 @@ class QMDoubleSpinBox : public QDoubleSpinBox {
   %End
 
 public:
-
   QMDoubleSpinBox(QWidget * parent = 0);
   QString textFromValue (double value) const ;
   virtual QValidator::State validate (QString & text, int & pos) const;
   void setConfirmationRequired(bool req=true);
 
-// signals
+signals:
   void valueEdited(double);
   void entered();
   void escaped();
 
-// slots
+public slots:
   void setMin(double min);
   void setMax(double max);
   void setPrec(int prec);
@@ -65,19 +64,16 @@ class QMSpinBox : public QSpinBox {
   %End
 
 public:
-
   QMSpinBox(QWidget * parent = 0);
-
-  virtual QValidator::State	validate ( QString & text, int & pos ) const;
-
+  virtual QValidator::State validate ( QString & text, int & pos ) const;
   void setConfirmationRequired(bool req=true);
 
-// signals:
+signals:
   void valueEdited(int);
   void entered();
   void escaped();
 
-// slots:
+public slots:
   void setMin(int min);
   void setMax(int max);
   void setValue(int val);
@@ -100,12 +96,12 @@ public:
 
   QMComboBox(QWidget * parent = 0);
 
-// signals:
+signals:
   void textEdited(QString);
   void indexEdited(int);
   void escaped();
 
-// slots:
+public slots:
   void setIndexFromText(const QString & text);
 
 private:
@@ -124,16 +120,13 @@ class QVariantLabel : public QLabel {
 public:
   QVariantLabel( QWidget * parent /TransferThis/ =0, Qt::WindowFlags f=0);
   QVariantLabel( const QString & text, QWidget * parent /TransferThis/ =0, Qt::WindowFlags f=0);
-
   void  setBase(int base);
   void  setFormat(char f);
-
   const QString & suffix() const;
   const QString & prefix() const;
   char format() const;
 
-// slots:
-
+public slots:
   void setText(const QString & s);
   void setValue(double n);
   void setValue(qlonglong n);
@@ -143,7 +136,7 @@ public:
   void setPrefix(const QString &prefix);
   void setSuffix(const QString &suffix);
 
-// signals:
+signals:
   void somethingChanged(const QString &);
 
 };

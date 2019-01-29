@@ -6,7 +6,7 @@
 
 #include "sipAPIqtpvwidgets.h"
 
-#line 96 "qtpvwidgets.sip"
+#line 92 "qtpvwidgets.sip"
   #include "qtpvwidgets.h"
 #line 12 "./sipqtpvwidgetsQMComboBox.cpp"
 
@@ -2587,82 +2587,6 @@ static PyObject *meth_QMComboBox_inputMethodEvent(PyObject *sipSelf, PyObject *s
 }
 
 
-extern "C" {static PyObject *meth_QMComboBox_textEdited(PyObject *, PyObject *);}
-static PyObject *meth_QMComboBox_textEdited(PyObject *sipSelf, PyObject *sipArgs)
-{
-    PyObject *sipParseErr = NULL;
-
-    {
-         ::QString* a0;
-        int a0State = 0;
-         ::QMComboBox *sipCpp;
-
-        if (sipParseArgs(&sipParseErr, sipArgs, "BJ1", &sipSelf, sipType_QMComboBox, &sipCpp, sipType_QString,&a0, &a0State))
-        {
-            sipCpp->textEdited(*a0);
-            sipReleaseType(a0,sipType_QString,a0State);
-
-            Py_INCREF(Py_None);
-            return Py_None;
-        }
-    }
-
-    /* Raise an exception if the arguments couldn't be parsed. */
-    sipNoMethod(sipParseErr, sipName_QMComboBox, sipName_textEdited, NULL);
-
-    return NULL;
-}
-
-
-extern "C" {static PyObject *meth_QMComboBox_indexEdited(PyObject *, PyObject *);}
-static PyObject *meth_QMComboBox_indexEdited(PyObject *sipSelf, PyObject *sipArgs)
-{
-    PyObject *sipParseErr = NULL;
-
-    {
-        int a0;
-         ::QMComboBox *sipCpp;
-
-        if (sipParseArgs(&sipParseErr, sipArgs, "Bi", &sipSelf, sipType_QMComboBox, &sipCpp, &a0))
-        {
-            sipCpp->indexEdited(a0);
-
-            Py_INCREF(Py_None);
-            return Py_None;
-        }
-    }
-
-    /* Raise an exception if the arguments couldn't be parsed. */
-    sipNoMethod(sipParseErr, sipName_QMComboBox, sipName_indexEdited, NULL);
-
-    return NULL;
-}
-
-
-extern "C" {static PyObject *meth_QMComboBox_escaped(PyObject *, PyObject *);}
-static PyObject *meth_QMComboBox_escaped(PyObject *sipSelf, PyObject *sipArgs)
-{
-    PyObject *sipParseErr = NULL;
-
-    {
-         ::QMComboBox *sipCpp;
-
-        if (sipParseArgs(&sipParseErr, sipArgs, "B", &sipSelf, sipType_QMComboBox, &sipCpp))
-        {
-            sipCpp->escaped();
-
-            Py_INCREF(Py_None);
-            return Py_None;
-        }
-    }
-
-    /* Raise an exception if the arguments couldn't be parsed. */
-    sipNoMethod(sipParseErr, sipName_QMComboBox, sipName_escaped, NULL);
-
-    return NULL;
-}
-
-
 extern "C" {static PyObject *meth_QMComboBox_setIndexFromText(PyObject *, PyObject *);}
 static PyObject *meth_QMComboBox_setIndexFromText(PyObject *sipSelf, PyObject *sipArgs)
 {
@@ -2813,14 +2737,12 @@ static PyMethodDef methods_QMComboBox[] = {
     {SIP_MLNAME_CAST(sipName_dragMoveEvent), (PyCFunction)meth_QMComboBox_dragMoveEvent, METH_VARARGS|METH_KEYWORDS, NULL},
     {SIP_MLNAME_CAST(sipName_dropEvent), (PyCFunction)meth_QMComboBox_dropEvent, METH_VARARGS|METH_KEYWORDS, NULL},
     {SIP_MLNAME_CAST(sipName_enterEvent), (PyCFunction)meth_QMComboBox_enterEvent, METH_VARARGS|METH_KEYWORDS, NULL},
-    {SIP_MLNAME_CAST(sipName_escaped), meth_QMComboBox_escaped, METH_VARARGS, NULL},
     {SIP_MLNAME_CAST(sipName_focusInEvent), meth_QMComboBox_focusInEvent, METH_VARARGS, NULL},
     {SIP_MLNAME_CAST(sipName_focusNextChild), (PyCFunction)meth_QMComboBox_focusNextChild, METH_VARARGS|METH_KEYWORDS, NULL},
     {SIP_MLNAME_CAST(sipName_focusNextPrevChild), (PyCFunction)meth_QMComboBox_focusNextPrevChild, METH_VARARGS|METH_KEYWORDS, NULL},
     {SIP_MLNAME_CAST(sipName_focusOutEvent), meth_QMComboBox_focusOutEvent, METH_VARARGS, NULL},
     {SIP_MLNAME_CAST(sipName_focusPreviousChild), (PyCFunction)meth_QMComboBox_focusPreviousChild, METH_VARARGS|METH_KEYWORDS, NULL},
     {SIP_MLNAME_CAST(sipName_hideEvent), (PyCFunction)meth_QMComboBox_hideEvent, METH_VARARGS|METH_KEYWORDS, NULL},
-    {SIP_MLNAME_CAST(sipName_indexEdited), meth_QMComboBox_indexEdited, METH_VARARGS, NULL},
     {SIP_MLNAME_CAST(sipName_initPainter), (PyCFunction)meth_QMComboBox_initPainter, METH_VARARGS|METH_KEYWORDS, NULL},
     {SIP_MLNAME_CAST(sipName_initStyleOption), (PyCFunction)meth_QMComboBox_initStyleOption, METH_VARARGS|METH_KEYWORDS, NULL},
     {SIP_MLNAME_CAST(sipName_inputMethodEvent), (PyCFunction)meth_QMComboBox_inputMethodEvent, METH_VARARGS|METH_KEYWORDS, NULL},
@@ -2844,17 +2766,25 @@ static PyMethodDef methods_QMComboBox[] = {
     {SIP_MLNAME_CAST(sipName_sharedPainter), (PyCFunction)meth_QMComboBox_sharedPainter, METH_VARARGS|METH_KEYWORDS, NULL},
     {SIP_MLNAME_CAST(sipName_showEvent), (PyCFunction)meth_QMComboBox_showEvent, METH_VARARGS|METH_KEYWORDS, NULL},
     {SIP_MLNAME_CAST(sipName_tabletEvent), (PyCFunction)meth_QMComboBox_tabletEvent, METH_VARARGS|METH_KEYWORDS, NULL},
-    {SIP_MLNAME_CAST(sipName_textEdited), meth_QMComboBox_textEdited, METH_VARARGS, NULL},
     {SIP_MLNAME_CAST(sipName_timerEvent), (PyCFunction)meth_QMComboBox_timerEvent, METH_VARARGS|METH_KEYWORDS, NULL},
     {SIP_MLNAME_CAST(sipName_updateMicroFocus), (PyCFunction)meth_QMComboBox_updateMicroFocus, METH_VARARGS|METH_KEYWORDS, NULL},
     {SIP_MLNAME_CAST(sipName_wheelEvent), (PyCFunction)meth_QMComboBox_wheelEvent, METH_VARARGS|METH_KEYWORDS, NULL}
 };
 
 
+/* Define this type's signals. */
+static const pyqt5QtSignal signals_QMComboBox[] = {
+    {"escaped()", 0, 0, 0},
+    {"indexEdited(int)", 0, 0, 0},
+    {"textEdited(QString)", 0, 0, 0},
+    {0, 0, 0, 0}
+};
+
+
 static pyqt5ClassPluginDef plugin_QMComboBox = {
     & ::QMComboBox::staticMetaObject,
     0,
-    0,
+    signals_QMComboBox,
     0
 };
 
@@ -2872,7 +2802,7 @@ sipClassTypeDef sipTypeDef_qtpvwidgets_QMComboBox = {
     {
         sipNameNr_QMComboBox,
         {0, 0, 1},
-        50, methods_QMComboBox,
+        47, methods_QMComboBox,
         0, 0,
         0, 0,
         {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},

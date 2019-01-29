@@ -2565,57 +2565,6 @@ static PyObject *meth_QMLineEdit_cursorRect(PyObject *sipSelf, PyObject *sipArgs
 }
 
 
-extern "C" {static PyObject *meth_QMLineEdit_escaped(PyObject *, PyObject *);}
-static PyObject *meth_QMLineEdit_escaped(PyObject *sipSelf, PyObject *sipArgs)
-{
-    PyObject *sipParseErr = NULL;
-
-    {
-         ::QMLineEdit *sipCpp;
-
-        if (sipParseArgs(&sipParseErr, sipArgs, "B", &sipSelf, sipType_QMLineEdit, &sipCpp))
-        {
-            sipCpp->escaped();
-
-            Py_INCREF(Py_None);
-            return Py_None;
-        }
-    }
-
-    /* Raise an exception if the arguments couldn't be parsed. */
-    sipNoMethod(sipParseErr, sipName_QMLineEdit, sipName_escaped, NULL);
-
-    return NULL;
-}
-
-
-extern "C" {static PyObject *meth_QMLineEdit_editingFinished(PyObject *, PyObject *);}
-static PyObject *meth_QMLineEdit_editingFinished(PyObject *sipSelf, PyObject *sipArgs)
-{
-    PyObject *sipParseErr = NULL;
-
-    {
-        const  ::QString* a0;
-        int a0State = 0;
-         ::QMLineEdit *sipCpp;
-
-        if (sipParseArgs(&sipParseErr, sipArgs, "BJ1", &sipSelf, sipType_QMLineEdit, &sipCpp, sipType_QString,&a0, &a0State))
-        {
-            sipCpp->editingFinished(*a0);
-            sipReleaseType(const_cast< ::QString *>(a0),sipType_QString,a0State);
-
-            Py_INCREF(Py_None);
-            return Py_None;
-        }
-    }
-
-    /* Raise an exception if the arguments couldn't be parsed. */
-    sipNoMethod(sipParseErr, sipName_QMLineEdit, sipName_editingFinished, NULL);
-
-    return NULL;
-}
-
-
 extern "C" {static PyObject *meth_QMLineEdit_setText(PyObject *, PyObject *);}
 static PyObject *meth_QMLineEdit_setText(PyObject *sipSelf, PyObject *sipArgs)
 {
@@ -2766,9 +2715,7 @@ static PyMethodDef methods_QMLineEdit[] = {
     {SIP_MLNAME_CAST(sipName_dragLeaveEvent), (PyCFunction)meth_QMLineEdit_dragLeaveEvent, METH_VARARGS|METH_KEYWORDS, NULL},
     {SIP_MLNAME_CAST(sipName_dragMoveEvent), (PyCFunction)meth_QMLineEdit_dragMoveEvent, METH_VARARGS|METH_KEYWORDS, NULL},
     {SIP_MLNAME_CAST(sipName_dropEvent), (PyCFunction)meth_QMLineEdit_dropEvent, METH_VARARGS|METH_KEYWORDS, NULL},
-    {SIP_MLNAME_CAST(sipName_editingFinished), meth_QMLineEdit_editingFinished, METH_VARARGS, NULL},
     {SIP_MLNAME_CAST(sipName_enterEvent), (PyCFunction)meth_QMLineEdit_enterEvent, METH_VARARGS|METH_KEYWORDS, NULL},
-    {SIP_MLNAME_CAST(sipName_escaped), meth_QMLineEdit_escaped, METH_VARARGS, NULL},
     {SIP_MLNAME_CAST(sipName_focusInEvent), meth_QMLineEdit_focusInEvent, METH_VARARGS, NULL},
     {SIP_MLNAME_CAST(sipName_focusNextChild), (PyCFunction)meth_QMLineEdit_focusNextChild, METH_VARARGS|METH_KEYWORDS, NULL},
     {SIP_MLNAME_CAST(sipName_focusNextPrevChild), (PyCFunction)meth_QMLineEdit_focusNextPrevChild, METH_VARARGS|METH_KEYWORDS, NULL},
@@ -2804,10 +2751,18 @@ static PyMethodDef methods_QMLineEdit[] = {
 };
 
 
+/* Define this type's signals. */
+static const pyqt5QtSignal signals_QMLineEdit[] = {
+    {"editingFinished(QString)", 0, 0, 0},
+    {"escaped()", 0, 0, 0},
+    {0, 0, 0, 0}
+};
+
+
 static pyqt5ClassPluginDef plugin_QMLineEdit = {
     & ::QMLineEdit::staticMetaObject,
     0,
-    0,
+    signals_QMLineEdit,
     0
 };
 
@@ -2825,7 +2780,7 @@ sipClassTypeDef sipTypeDef_qtpvwidgets_QMLineEdit = {
     {
         sipNameNr_QMLineEdit,
         {0, 0, 1},
-        50, methods_QMLineEdit,
+        48, methods_QMLineEdit,
         0, 0,
         0, 0,
         {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
