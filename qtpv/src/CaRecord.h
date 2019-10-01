@@ -30,7 +30,7 @@
 #include <vector>
 #include <string>
 #include <cadef.h>
-#include <Generic.h>
+#include "Generic.h"
 
 
 namespace carecord {
@@ -46,7 +46,7 @@ namespace carecord {
       double upper;
       double lower;
   };
-    
+
   class CaRecord : public generic::Generic {
     public:
       CaRecord();
@@ -120,7 +120,7 @@ namespace carecord {
 
       void reset();
   };
-  
+
   //! Translation matrix for EPICS basic to EPICS status type
   const short statusTranslationMatrix[TYPE_COUNT][2] = {
       { DBR_STRING, DBR_STS_STRING },

@@ -24,8 +24,8 @@
 
 // Statemachine architecture.
 
-#include <QCaStateMachine.h>
-#include <QCaObject.h>
+#include "QCaStateMachine.h"
+#include "QCaObject.h"
 
 using namespace qcastatemachine;
 
@@ -84,7 +84,7 @@ bool ConnectionQCaStateMachine::process( int requestedState) {
                     }
                     break;
                 }
-            } 
+            }
             break;
         }
         case CONNECTED :

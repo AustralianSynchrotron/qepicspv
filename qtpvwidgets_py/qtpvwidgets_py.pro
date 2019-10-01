@@ -3,8 +3,8 @@
 # -------------------------------------------------
 
 TEMPLATE = lib
-QT = widgets 
-TARGET = qtpvwidgets
+QT = widgets
+TARGET = pyqtpvwidgets
 CONFIG += plugin no_plugin_name_prefix
 QMAKE_EXTENSION_SHLIB = so
 

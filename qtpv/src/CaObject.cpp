@@ -26,7 +26,7 @@
 
 #define epicsAlarmGLOBAL
 
-#include <CaObjectPrivate.h>
+#include "CaObjectPrivate.h"
 #include <epicsEvent.h>
 #include <epicsMutex.h>
 #include <alarm.h>

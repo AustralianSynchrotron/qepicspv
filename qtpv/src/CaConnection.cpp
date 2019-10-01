@@ -22,7 +22,7 @@
  *    anthony.owen@gmail.com
  */
 
-#include <CaConnection.h>
+#include "CaConnection.h"
 #include <QDebug>
 
 using namespace caconnection;

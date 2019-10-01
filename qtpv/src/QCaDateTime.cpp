@@ -24,8 +24,8 @@
 
 #include <QString>
 #include <QTextStream>
-#include <QCaDateTime.h>
 #include <QDebug>
+#include "QCaDateTime.h"
 
 /*!
   Construct an empty QCa date time

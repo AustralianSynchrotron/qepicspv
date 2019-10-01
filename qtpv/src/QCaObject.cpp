@@ -26,12 +26,12 @@
 #include <QtDebug>
 #include <QByteArray>
 
-#include <CaObjectPrivate.h>
-#include <CaObject.h>
-#include <QCaObject.h>
-#include <QCaEventUpdate.h>
-#include <CaRecord.h>
-#include <CaConnection.h>
+#include "CaObjectPrivate.h"
+#include "CaObject.h"
+#include "QCaObject.h"
+#include "QCaEventUpdate.h"
+#include "CaRecord.h"
+#include "CaConnection.h"
 
 
 using namespace qcaobject;

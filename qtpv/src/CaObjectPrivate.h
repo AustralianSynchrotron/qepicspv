@@ -28,10 +28,10 @@
 #define CAOBJECTPRIVATE_H_
 
 #include <cadef.h>
-#include <CaConnection.h>
-#include <CaRecord.h>
-#include <CaObject.h>
-#include <Generic.h>
+#include "CaConnection.h"
+#include "CaRecord.h"
+#include "CaObject.h"
+#include "Generic.h"
 
 using namespace caobject;
 using namespace generic;

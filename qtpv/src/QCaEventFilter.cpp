@@ -60,9 +60,9 @@
  * This class is thread safe
  */
 
-#include <QCaEventFilter.h>
-#include <QCaEventUpdate.h>
-#include <QCaObject.h>
+#include "QCaEventFilter.h"
+#include "QCaEventUpdate.h"
+#include "QCaObject.h"
 
 /*!
     Add the event filter to an object.

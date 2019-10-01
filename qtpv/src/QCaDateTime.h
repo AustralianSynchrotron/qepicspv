@@ -28,7 +28,7 @@
 #define QCADATETIME_H
 
 #include <QDateTime>
-#include <QCaPluginLibrary_global.h>
+#include "QCaPluginLibrary_global.h"
 
 class QCAPLUGINLIBRARYSHARED_EXPORT QCaDateTime : public QDateTime
 {

@@ -31,9 +31,9 @@
  * This class defines the event used to carry the data and QCaObject reference.
  */
 
-#include <CaConnection.h>
-#include <CaObject.h>
-#include <QCaEventUpdate.h>
+#include "CaConnection.h"
+#include "CaObject.h"
+#include "QCaEventUpdate.h"
 
 //! The Qt event type for update events. This is allocated by Qt once at application startup.
 #if QT_VERSION >= 0x040400

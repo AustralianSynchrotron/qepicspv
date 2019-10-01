@@ -24,7 +24,7 @@
 
 // Provides a generic holder for different types.
 
-#include <Generic.h>
+#include "Generic.h"
 #include <stdlib.h>
 #include <string.h>
 

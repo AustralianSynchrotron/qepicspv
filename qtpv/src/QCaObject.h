@@ -32,15 +32,15 @@
 #include <QString>
 #include <QStringList>
 
-#include <CaObject.h>
-#include <QCaStateMachine.h>
-#include <QCaEventFilter.h>
-#include <QCaEventUpdate.h>
-#include <UserMessage.h>
-#include <QCaAlarmInfo.h>
-#include <QCaDateTime.h>
-#include <QCaConnectionInfo.h>
-#include <QCaPluginLibrary_global.h>
+#include "CaObject.h"
+#include "QCaStateMachine.h"
+#include "QCaEventFilter.h"
+#include "QCaEventUpdate.h"
+#include "UserMessage.h"
+#include "QCaAlarmInfo.h"
+#include "QCaDateTime.h"
+#include "QCaConnectionInfo.h"
+#include "QCaPluginLibrary_global.h"
 
 namespace qcaobject {
 

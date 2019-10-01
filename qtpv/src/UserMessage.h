@@ -26,7 +26,7 @@
 #define UserMessage_H
 
 #include <QObject>
-#include <QCaPluginLibrary_global.h>
+#include "QCaPluginLibrary_global.h"
 #include <QtDebug>
 
 enum message_types {MESSAGE_TYPE_INFO, MESSAGE_TYPE_WARNING, MESSAGE_TYPE_ERROR };

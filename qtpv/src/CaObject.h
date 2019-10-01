@@ -26,7 +26,7 @@
 #define CAOBJECT_H_
 
 #include <string>
-#include <Generic.h>
+#include "Generic.h"
 using namespace generic;
 
 namespace caobject {

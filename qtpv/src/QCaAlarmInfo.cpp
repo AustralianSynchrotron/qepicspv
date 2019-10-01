@@ -25,7 +25,7 @@
 // CA alarm info manager
 
 #include <alarm.h>
-#include <QCaAlarmInfo.h>
+#include "QCaAlarmInfo.h"
 
 /*!
   Construct an empty instance.

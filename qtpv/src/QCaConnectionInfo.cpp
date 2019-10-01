@@ -12,7 +12,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with the EPICS QT Framework.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with the EPICS QT Framework.  If not, see "http://www.gnu.org/licenses/".
  *
  *  Copyright (c) 2009, 2010
  *
@@ -24,8 +24,8 @@
 
 // CA connection info manager
 
-#include <CaConnection.h>
-#include <QCaConnectionInfo.h>
+#include "CaConnection.h"
+#include "QCaConnectionInfo.h"
 
 /*!
   Construct an empty instance.

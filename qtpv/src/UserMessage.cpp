@@ -69,7 +69,7 @@
  *   logging widget) then the nested QEForm could be set up not to filter and resend any messages.
  */
 
-#include <UserMessage.h>
+#include "UserMessage.h"
 
 // Static variables used to manage message signals and slots.
 UserMessageSignal UserMessage::userMessageSignal;
