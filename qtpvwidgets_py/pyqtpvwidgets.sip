@@ -1,4 +1,4 @@
-%Module qtpvwidgets
+%Module pyqtpvwidgets
 
 %Import QtCore/QtCoremod.sip
 %Import QtWidgets/QtWidgetsmod.sip
