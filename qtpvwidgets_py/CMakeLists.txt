@@ -1,10 +1,5 @@
 
-find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
-find_package(PyQt5 REQUIRED)
-find_package(SIP REQUIRED)
-cmake_policy(SET CMP0071 OLD)
-
-if (SIP_FOUND)
+if (SIP_EXECUTABLE)
 
   set(SIP_INCLUDE_DIRS ${PYQT5_SIP_DIR})
   separate_arguments(PYQT5_SIP_FLAGS)
@@ -32,7 +27,6 @@ else()
   target_link_libraries(pyqtpvwidgets
     PRIVATE qtpvwidgets
   )
-
 
   install(TARGETS pyqtpvwidgets
       DESTINATION ${Python3_SITEARCH}
