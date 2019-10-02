@@ -1,0 +1,498 @@
+12687  2019-09-26_16:21:28 gcc -x c -E -I/usr/local/epics/base/include/ ../cmake/Templates/EPICSVersion.cmake.in EPICSVersion.cmake
+12687  2019-09-26_16:22:22 cmake ..
+12679  2019-09-26_16:22:49 vim ../CMakeLists.txt 
+12680  2019-09-26_16:23:15 vim ../cmake/Modules/FindEPICS.cmake 
+12680  2019-09-26_16:23:15 vim ../cmake/Modules/FindEPICS.cmake 
+12680  2019-09-26_16:23:15 vim ../cmake/Modules/FindEPICS.cmake 
+12680  2019-09-26_16:23:15 vim ../cmake/Modules/FindEPICS.cmake 
+12681  2019-09-26_16:25:42 gcc -x c -E -I/usr/local/epics/base/include/ ../cmake/Templates/EPICSVersion.cmake.in > EPICSVersion.cmake
+12682  2019-09-26_16:25:45 caty EPICSVersion.cmake 
+12682  2019-09-26_16:25:48 cat EPICSVersion.cmake 
+12683  2019-09-26_16:26:33 c++ -x c -E -I/usr/local/epics/base/include/ ../cmake/Templates/EPICSVersion.cmake.in > EPICSVersion.cmake
+12683  2019-09-26_16:26:35 cat EPICSVersion.cmake 
+12683  2019-09-26_16:26:35 cat EPICSVersion.cmake 
+12683  2019-09-26_16:26:35 cat EPICSVersion.cmake 
+12683  2019-09-26_16:26:40 rm EPICSVersion.cmake 
+12683  2019-09-26_16:26:45 c++ -x c -E -I/usr/local/epics/base/include/ ../cmake/Templates/EPICSVersion.cmake.in > EPICSVersion.cmake
+12683  2019-09-26_16:26:47 cat EPICSVersion.cmake 
+12683  2019-09-26_16:26:47 cat EPICSVersion.cmake 
+12683  2019-09-26_16:26:47 cat EPICSVersion.cmake 
+12683  2019-09-26_16:26:47 cat EPICSVersion.cmake 
+12683  2019-09-26_16:27:00 vim ../cmake/Modules/FindEPICS.cmake 
+12683  2019-09-26_16:28:15 cmake ..
+12683  2019-09-26_16:28:23 rm EPICSVersion.cmake 
+12683  2019-09-26_16:28:24 cmake ..
+12683  2019-09-26_16:28:51 rm EPICSVersion.cmake 
+12683  2019-09-26_16:28:53 vim ../cmake/Modules/FindEPICS.cmake 
+12683  2019-09-26_16:29:08 cmake ..
+12683  2019-09-26_16:29:13 cat EPICSVersion.cmake 
+12684  2019-09-26_16:29:33 /usr/bin/c++ -x c -E -I/usr/local/epics/base/include /home/imbl/Work/projects/qepicspv/cmake/Modules/../Templates/EPICSVersion.cmake.in
+12684  2019-09-26_16:30:42 vim ../cmake/Modules/FindEPICS.cmake 
+12685  2019-09-26_16:31:15 vim /usr/local/epics/base/include/epicsVersion.h 
+12685  2019-09-26_16:31:15 vim /usr/local/epics/base/include/epicsVersion.h 
+12685  2019-09-26_16:31:15 vim /usr/local/epics/base/include/epicsVersion.h 
+12685  2019-09-26_16:31:15 vim /usr/local/epics/base/include/epicsVersion.h 
+12685  2019-09-26_16:32:28 /usr/bin/c++ -x c -E -I/usr/local/epics/base/include /home/imbl/Work/projects/qepicspv/cmake/Modules/../Templates/EPICSVersion.cmake.in
+12686  2019-09-26_16:32:33 man gcc
+12686  2019-09-26_16:32:33 man gcc
+12686  2019-09-26_16:32:33 man gcc
+12686  2019-09-26_16:32:33 man gcc
+12686  2019-09-26_16:33:37 /usr/bin/c++ -x c -E -I/usr/local/epics/base/include /home/imbl/Work/projects/qepicspv/cmake/Modules/../Templates/EPICSVersion.cmake.in
+12686  2019-09-26_16:33:37 /usr/bin/c++ -x c -E -I/usr/local/epics/base/include /home/imbl/Work/projects/qepicspv/cmake/Modules/../Templates/EPICSVersion.cmake.in
+12686  2019-09-26_16:33:37 /usr/bin/c++ -x c -E -I/usr/local/epics/base/include /home/imbl/Work/projects/qepicspv/cmake/Modules/../Templates/EPICSVersion.cmake.in
+12687  2019-09-26_16:34:02 gcc-4.9 -x c -E -I/usr/local/epics/base/include /home/imbl/Work/projects/qepicspv/cmake/Modules/../Templates/EPICSVersion.cmake.in
+12688  2019-09-26_16:34:44 gcc-8 -x c -E -I/usr/local/epics/base/include /home/imbl/Work/projects/qepicspv/cmake/Modules/../Templates/EPICSVersion.cmake.in
+12689  2019-09-26_16:34:48 gcc-7 -x c -E -I/usr/local/epics/base/include /home/imbl/Work/projects/qepicspv/cmake/Modules/../Templates/EPICSVersion.cmake.in
+12690  2019-09-26_16:34:51 gcc-6 -x c -E -I/usr/local/epics/base/include /home/imbl/Work/projects/qepicspv/cmake/Modules/../Templates/EPICSVersion.cmake.in
+12691  2019-09-26_16:34:54 gcc-5 -x c -E -I/usr/local/epics/base/include /home/imbl/Work/projects/qepicspv/cmake/Modules/../Templates/EPICSVersion.cmake.in
+12692  2019-09-26_16:34:56 gcc-4 -x c -E -I/usr/local/epics/base/include /home/imbl/Work/projects/qepicspv/cmake/Modules/../Templates/EPICSVersion.cmake.in
+12692  2019-09-26_16:35:01 gcc-4.9 -x c -E -I/usr/local/epics/base/include /home/imbl/Work/projects/qepicspv/cmake/Modules/../Templates/EPICSVersion.cmake.in
+12692  2019-09-26_16:35:13 man gcc
+12692  2019-09-26_16:35:13 man gcc
+12692  2019-09-26_16:35:13 man gcc
+12692  2019-09-26_16:36:29 vim /usr/local/epics/base/include/epicsVersion.h 
+12692  2019-09-26_16:37:11 vim ../cmake/Modules/FindEPICS.cmake 
+12693  2019-09-26_16:37:36 gcc -x c -E -I/usr/local/epics/base/include /home/imbl/Work/projects/qepicspv/cmake/Modules/../Templates/EPICSVersion.cmake.in
+12694  2019-09-26_16:37:56 gcc -std=c++14 -x c -E -I/usr/local/epics/base/include /home/imbl/Work/projects/qepicspv/cmake/Modules/../Templates/EPICSVersion.cmake.in
+12694  2019-09-26_16:38:03 man gcc
+12694  2019-09-26_16:38:03 man gcc
+12694  2019-09-26_16:41:04 gcc -std=c++14 -x c -E -I/usr/local/epics/base/include /home/imbl/Work/projects/qepicspv/cmake/Modules/../Templates/EPICSVersion.cmake.in
+12695  2019-09-26_16:41:09 gcc -std=c++11 -x c -E -I/usr/local/epics/base/include /home/imbl/Work/projects/qepicspv/cmake/Modules/../Templates/EPICSVersion.cmake.in
+12695  2019-09-26_16:41:13 gcc -x c -E -I/usr/local/epics/base/include /home/imbl/Work/projects/qepicspv/cmake/Modules/../Templates/EPICSVersion.cmake.in
+12696  2019-09-26_16:41:26 gcc -x c -E -I/usr/local/epics/base/include /home/imbl/Work/projects/qepicspv/cmake/Modules/../Templates/EPICSVersion.cmake.in 2> /dev/null
+12697  2019-09-26_16:41:31 gcc -x c -E -I/usr/local/epics/base/include /home/imbl/Work/projects/qepicspv/cmake/Modules/../Templates/EPICSVersion.cmake.in 1> /dev/null
+12697  2019-09-26_16:41:31 gcc -x c -E -I/usr/local/epics/base/include /home/imbl/Work/projects/qepicspv/cmake/Modules/../Templates/EPICSVersion.cmake.in 1> /dev/null
+12698  2019-09-26_16:42:20 gcc -x c -E -I/usr/local/epics/base/include /home/imbl/Work/projects/qepicspv/cmake/Modules/../Templates/EPICSVersion.cmake.in | grep -v #
+12699  2019-09-26_16:42:25 gcc -x c -E -I/usr/local/epics/base/include /home/imbl/Work/projects/qepicspv/cmake/Modules/../Templates/EPICSVersion.cmake.in | grep -v '#'
+12700  2019-09-26_16:43:07 gcc -x c -E -I/usr/local/epics/base/include /home/imbl/Work/projects/qepicspv/cmake/Modules/../Templates/EPICSVersion.cmake.in | grep -v '#' > tmp
+12701  2019-09-26_16:43:10 vim tmp 
+12702  2019-09-26_16:45:01 gcc -fpreprocessed -x c -E -I/usr/local/epics/base/include /home/imbl/Work/projects/qepicspv/cmake/Modules/../Templates/EPICSVersion.cmake.in | grep -v '#' > tmp
+12703  2019-09-26_16:45:05 gcc -fpreprocessed -x c -E -I/usr/local/epics/base/include /home/imbl/Work/projects/qepicspv/cmake/Modules/../Templates/EPICSVersion.cmake.in 
+12704  2019-09-26_16:45:32 gcc -x c++ -E -I/usr/local/epics/base/include /home/imbl/Work/projects/qepicspv/cmake/Modules/../Templates/EPICSVersion.cmake.in 
+12705  2019-09-26_16:46:09 gcc -x c++ -E -I/usr/local/epics/base/include /home/imbl/Work/projects/qepicspv/cmake/Modules/../Templates/EPICSVersion.cmake.in -fdirectives-only
+12705  2019-09-26_16:46:09 gcc -x c++ -E -I/usr/local/epics/base/include /home/imbl/Work/projects/qepicspv/cmake/Modules/../Templates/EPICSVersion.cmake.in -fdirectives-only
+12705  2019-09-26_16:46:09 gcc -x c++ -E -I/usr/local/epics/base/include /home/imbl/Work/projects/qepicspv/cmake/Modules/../Templates/EPICSVersion.cmake.in -fdirectives-only
+12705  2019-09-26_16:46:09 gcc -x c++ -E -I/usr/local/epics/base/include /home/imbl/Work/projects/qepicspv/cmake/Modules/../Templates/EPICSVersion.cmake.in -fdirectives-only
+12705  2019-09-26_16:46:09 gcc -x c++ -E -I/usr/local/epics/base/include /home/imbl/Work/projects/qepicspv/cmake/Modules/../Templates/EPICSVersion.cmake.in -fdirectives-only
+12705  2019-09-26_16:46:09 gcc -x c++ -E -I/usr/local/epics/base/include /home/imbl/Work/projects/qepicspv/cmake/Modules/../Templates/EPICSVersion.cmake.in -fdirectives-only
+12705  2019-09-26_16:46:09 gcc -x c++ -E -I/usr/local/epics/base/include /home/imbl/Work/projects/qepicspv/cmake/Modules/../Templates/EPICSVersion.cmake.in -fdirectives-only
+12705  2019-09-26_16:46:09 gcc -x c++ -E -I/usr/local/epics/base/include /home/imbl/Work/projects/qepicspv/cmake/Modules/../Templates/EPICSVersion.cmake.in -fdirectives-only
+12706  2019-09-26_16:46:25 gcc -x c++ -E -I/usr/local/epics/base/include /home/imbl/Work/projects/qepicspv/cmake/Modules/../Templates/EPICSVersion.cmake.in -fdirectives-only > tmp 
+12707  2019-09-26_16:46:28 cat tmp 
+12707  2019-09-26_16:46:34 vim tmp 
+12707  2019-09-26_16:46:34 vim tmp 
+12707  2019-09-26_16:46:34 vim tmp 
+12707  2019-09-26_16:47:03 gcc -x c++ -E -I/usr/local/epics/base/include /home/imbl/Work/projects/qepicspv/cmake/Modules/../Templates/EPICSVersion.cmake.in 
+12708  2019-09-26_16:48:05 gcc -x c++ -E -I/usr/local/epics/base/include /home/imbl/Work/projects/qepicspv/cmake/Modules/../Templates/EPICSVersion.cmake.in -fdirectives-only 
+12709  2019-09-26_16:48:08 gcc -x c++ -E -I/usr/local/epics/base/include /home/imbl/Work/projects/qepicspv/cmake/Modules/../Templates/EPICSVersion.cmake.in -fdirectives-only -fpreprocessed
+12709  2019-09-26_16:48:18 gcc -x c++ -E -I/usr/local/epics/base/include /home/imbl/Work/projects/qepicspv/cmake/Modules/../Templates/EPICSVersion.cmake.in 
+12709  2019-09-26_16:50:15 cmake ..
+12709  2019-09-26_16:50:15 cmake ..
+12709  2019-09-26_16:50:24 cat EPICSVersion.cmake 
+12710  2019-09-26_16:51:09 cat ../cmake/Templates/EPICSMain.cpp 
+12710  2019-09-26_16:51:13 q
+12711  2019-09-26_16:51:20 cat ../cmake/Templates/EPICSVersion.cmake.in 
+12711  2019-09-26_16:51:48 vim /usr/local/epics/base/include/epicsVersion.h 
+12712  2019-09-26_16:52:14 cat /usr/local/epics/base/include/epicsVersion.h 
+12713  2019-09-26_16:53:31 gcc -P -x c++ -E -I/usr/local/epics/base/include /home/imbl/Work/projects/qepicspv/cmake/Modules/../Templates/EPICSVersion.cmake.in 
+12713  2019-09-26_16:53:42 cat ../cmake/Templates/EPICSVersion.cmake.in 
+12713  2019-09-26_16:53:52 vim ../CMakeLists.txt 
+12713  2019-09-26_16:54:23 vim ../cmake/Modules/FindEPICS.cmake 
+12713  2019-09-26_16:54:48 cmake ..
+12713  2019-09-26_16:54:51 rm EPICSVersion.cmake 
+12713  2019-09-26_16:54:52 cmake ..
+12713  2019-09-26_16:54:57 cat EPICSVersion.cmake 
+12714  2019-09-26_16:55:17 gcc-4.9 -x c++ -E -I/usr/local/epics/base/include /home/imbl/Work/projects/qepicspv/cmake/Modules/../Templates/EPICSVersion.cmake.in 
+12715  2019-09-26_16:55:22 gcc-4.9 -x c -E -I/usr/local/epics/base/include /home/imbl/Work/projects/qepicspv/cmake/Modules/../Templates/EPICSVersion.cmake.in 
+12715  2019-09-26_16:55:22 gcc-4.9 -x c -E -I/usr/local/epics/base/include /home/imbl/Work/projects/qepicspv/cmake/Modules/../Templates/EPICSVersion.cmake.in 
+12716  2019-09-26_16:55:28 gcc-4.9 -P -x c -E -I/usr/local/epics/base/include /home/imbl/Work/projects/qepicspv/cmake/Modules/../Templates/EPICSVersion.cmake.in 
+12716  2019-09-26_16:55:35 vim ../cmake/Modules/FindEPICS.cmake 
+12716  2019-09-26_16:56:09 cmake ..
+12716  2019-09-26_16:56:09 cmake ..
+12716  2019-09-26_16:56:09 cmake ..
+12716  2019-09-26_16:56:09 cmake ..
+12716  2019-09-26_16:56:09 cmake ..
+12434  2019-09-26_17:18:47 make
+12434  2019-09-26_17:19:56 make -VERBOSE=1
+12432  2019-09-26_17:20:00 make VERBOSE=1
+12432  2019-09-26_17:25:31 cmake ..
+12432  2019-09-26_17:25:33 make VERBOSE=1
+12432  2019-09-26_17:25:33 make VERBOSE=1
+12432  2019-09-26_17:27:22 cmake ..
+12432  2019-09-26_17:27:23 make VERBOSE=1
+12432  2019-09-26_17:27:23 make VERBOSE=1
+12433  2019-09-26_17:28:01 vim /home/imbl/Work/projects/qepicspv/qtpv/src/QCaObject.h 
+12433  2019-09-26_17:28:29 make VERBOSE=1
+12433  2019-09-26_17:28:29 make VERBOSE=1
+12433  2019-09-26_17:28:29 make VERBOSE=1
+12433  2019-09-26_17:28:29 make VERBOSE=1
+12433  2019-09-26_17:28:29 make VERBOSE=1
+12433  2019-09-26_17:28:29 make VERBOSE=1
+12433  2019-09-26_17:28:29 make VERBOSE=1
+12433  2019-09-26_17:28:29 make VERBOSE=1
+12433  2019-09-26_17:28:29 make VERBOSE=1
+12433  2019-09-26_17:28:29 make VERBOSE=1
+12433  2019-09-26_17:28:29 make VERBOSE=1
+12433  2019-09-26_17:28:29 make VERBOSE=1
+12434  2019-09-26_17:51:09 cmake
+12434  2019-09-26_17:51:09 cmake
+12434  2019-09-26_17:51:21 cmake ..
+12434  2019-09-26_17:51:21 cmake ..
+12434  2019-09-26_17:51:21 cmake ..
+12434  2019-09-26_17:51:21 cmake ..
+12434  2019-09-26_17:51:21 cmake ..
+12434  2019-09-26_17:51:21 cmake ..
+12435  2019-10-01_10:27:14 python3-config  --includes
+12436  2019-10-01_10:27:26 python3-config  
+12437  2019-10-01_10:27:37 python3-config  --libs
+12438  2019-10-01_10:27:50 python3-config  --help
+12439  2019-10-01_10:27:58 man python3-config  
+12439  2019-10-01_10:28:27 python3-config  --libs
+12439  2019-10-01_10:28:30 python3-config  --includes
+12440  2019-10-01_10:28:39 python3-config  --cflags
+12440  2019-10-01_10:28:49 man python3-config  
+12441  2019-10-01_10:29:31 python3-config  --extension-suffix
+12442  2019-10-01_10:50:34 python3 -c \"from distutils.sysconfig import get_python_lib; print\(get_python_lib\(\)\)\"
+12443  2019-10-01_10:50:42 python3 -c "from distutils.sysconfig import get_python_lib; print\(get_python_lib\(\)\)"
+12444  2019-10-01_10:50:52 python3 -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())"
+12444  2019-10-01_10:53:21 cmake ..
+12444  2019-10-01_10:53:21 cmake ..
+12444  2019-10-01_10:53:21 cmake ..
+12444  2019-10-01_10:53:21 cmake ..
+12444  2019-10-01_10:53:21 cmake ..
+12444  2019-10-01_10:55:30 python3 -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())"
+12444  2019-10-01_10:55:30 python3 -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())"
+12444  2019-10-01_10:58:23 cmake ..
+12444  2019-10-01_10:58:23 cmake ..
+12444  2019-10-01_10:58:23 cmake ..
+12444  2019-10-01_10:58:23 cmake ..
+12444  2019-10-01_11:08:18 make
+12444  2019-10-01_11:08:18 make
+12391  2019-10-01_11:10:14 make
+12371  2019-10-01_11:11:27 make install
+12371  2019-10-01_11:11:27 make install
+12371  2019-10-01_11:11:27 make install
+12371  2019-10-01_11:11:27 make install
+12371  2019-10-01_11:11:27 make install
+12372  2019-10-01_11:13:00 sudo make install INSTALL_ROOT=../inst DESTDIR=../inst
+12373  2019-10-01_11:13:06 make install INSTALL_ROOT=../inst DESTDIR=../inst
+12373  2019-10-01_11:13:06 make install INSTALL_ROOT=../inst DESTDIR=../inst
+12373  2019-10-01_11:13:06 make install INSTALL_ROOT=../inst DESTDIR=../inst
+12373  2019-10-01_11:13:55 cmake
+12373  2019-10-01_11:13:59 cmake ..
+12373  2019-10-01_11:14:01 make
+12373  2019-10-01_11:14:01 make
+12373  2019-10-01_11:15:17 make install INSTALL_ROOT=../inst DESTDIR=../inst
+12374  2019-10-01_11:15:44 make install INSTALL_ROOT=../inst 
+12375  2019-10-01_11:15:56 make install DESTDIR=../inst
+12375  2019-10-01_11:28:47 cmake ..
+12375  2019-10-01_11:28:47 cmake ..
+12375  2019-10-01_11:28:47 cmake ..
+12375  2019-10-01_11:28:47 cmake ..
+12375  2019-10-01_11:33:01 make install DESTDIR=../inst
+12375  2019-10-01_11:33:01 make install DESTDIR=../inst
+12375  2019-10-01_11:33:01 make install DESTDIR=../inst
+12375  2019-10-01_11:33:01 make install DESTDIR=../inst
+12375  2019-10-01_12:25:53 cmake ..
+12375  2019-10-01_12:25:56 make
+12376  2019-10-01_12:26:02 make install
+12376  2019-10-01_12:26:14 make install INSTALL_ROOT=../inst 
+12344  2019-10-01_12:26:33 pwd
+12345  2019-10-01_12:26:48 make install INSTALL_ROOT=/home/imbl/Work/projects/qepicspv/inst/
+12346  2019-10-01_12:27:20 make install DESTDIR=/home/imbl/Work/projects/qepicspv/inst/
+12346  2019-10-01_12:27:41 make install INSTALL_ROOT=/home/imbl/Work/projects/qepicspv/inst/
+12346  2019-10-01_12:27:41 make install INSTALL_ROOT=/home/imbl/Work/projects/qepicspv/inst/
+12346  2019-10-01_12:29:07 make install DESTDIR=/home/imbl/Work/projects/qepicspv/inst/
+12346  2019-10-01_12:29:39 make install INSTALL_ROOT=/home/imbl/Work/projects/qepicspv/inst/
+12347  2019-10-01_12:29:56 make install INSTALL_ROOT=/usr
+12347  2019-10-01_12:30:05 make install
+12348  2019-10-01_12:30:16 make INSTALL_ROOT=/home/imbl/Work/projects/qepicspv/inst/ install
+12349  2019-10-01_12:30:33 make -DCMAKE_INSTALL_PREFIX=/home/imbl/Work/projects/qepicspv/inst/ install
+12350  2019-10-01_12:30:40 cmake -DCMAKE_INSTALL_PREFIX=/home/imbl/Work/projects/qepicspv/inst/ 
+12351  2019-10-01_12:30:44 cmake -DCMAKE_INSTALL_PREFIX=/home/imbl/Work/projects/qepicspv/inst/  ..
+12351  2019-10-01_12:30:49 make
+12351  2019-10-01_12:30:53 make install
+12351  2019-10-01_12:30:53 make install
+12351  2019-10-01_12:32:25 cmake -DCMAKE_INSTALL_PREFIX=/home/imbl/Work/projects/qepicspv/inst/  ..
+12351  2019-10-01_12:32:25 cmake -DCMAKE_INSTALL_PREFIX=/home/imbl/Work/projects/qepicspv/inst/  ..
+12351  2019-10-01_12:33:36 make
+12290  2019-10-01_12:33:50 make distclean
+12290  2019-10-01_12:33:50 make distclean
+12290  2019-10-01_12:33:50 make distclean
+12290  2019-10-01_12:33:50 make distclean
+12290  2019-10-01_12:34:19 rm -rf *
+12290  2019-10-01_12:34:21 ls
+12168  2019-10-01_12:34:37 cd ..
+12163  2019-10-01_12:39:06 cmake ..
+12163  2019-10-01_12:39:13 make
+12163  2019-10-01_12:40:18 cmake ..
+12163  2019-10-01_12:40:20 make
+12129  2019-10-01_12:42:25 sudo make install
+12130  2019-10-01_12:44:18 rm -rf /home/imbl/Work/projects/motorcontrol/build/*
+12130  2019-10-01_12:44:18 rm -rf /home/imbl/Work/projects/motorcontrol/build/*
+12130  2019-10-01_14:52:15 make distclean
+12100  2019-10-01_14:52:18 make clean
+12100  2019-10-01_14:52:25 rm -rf *
+12100  2019-10-01_14:52:28 cmake ..
+12100  2019-10-01_14:52:34 make
+12100  2019-10-01_14:52:34 make
+12100  2019-10-01_14:52:34 make
+12100  2019-10-01_14:52:34 make
+12100  2019-10-01_14:52:34 make
+12100  2019-10-01_14:58:20 rm -rf *
+12100  2019-10-01_14:58:42 make
+12100  2019-10-01_14:58:45 cmake ..
+12100  2019-10-01_14:58:52 make
+12100  2019-10-01_14:58:52 make
+12100  2019-10-01_15:23:41 make install
+12100  2019-10-01_15:23:48 sudo make install
+12100  2019-10-01_15:23:48 sudo make install
+12100  2019-10-01_15:24:15 cmake ..
+12100  2019-10-01_15:24:54 rm -rf *
+12100  2019-10-01_15:24:56 cmake ..
+12100  2019-10-01_15:24:56 cmake ..
+12090  2019-10-01_15:28:12 make -j 48
+12090  2019-10-01_15:28:23 sudo make install
+12090  2019-10-01_15:28:23 sudo make install
+12090  2019-10-01_15:35:04 make
+12090  2019-10-01_15:35:58 make clean
+12090  2019-10-01_15:36:03 rm -rf *
+12090  2019-10-01_15:36:09 cmake ..
+12090  2019-10-01_15:36:15 make
+12090  2019-10-01_15:36:15 make
+12090  2019-10-01_15:37:17 cmake ..
+12090  2019-10-01_15:37:17 cmake ..
+12090  2019-10-01_15:37:17 cmake ..
+12090  2019-10-01_15:38:09 make
+12090  2019-10-01_15:38:22 cmake ..
+12090  2019-10-01_15:38:23 make
+12090  2019-10-01_15:39:28 rm -rf *
+12090  2019-10-01_15:39:31 cmake ..
+12091  2019-10-01_15:39:43 make -j 48
+12091  2019-10-01_15:39:43 make -j 48
+12091  2019-10-01_15:39:43 make -j 48
+12091  2019-10-01_15:39:43 make -j 48
+12091  2019-10-01_15:39:43 make -j 48
+12091  2019-10-01_15:39:43 make -j 48
+12074  2019-10-01_15:39:49 make 
+12074  2019-10-01_15:40:26 cmake ..
+12074  2019-10-01_15:40:28 make 
+12074  2019-10-01_15:41:20 rm -rf *
+12074  2019-10-01_15:41:22 cmake ..
+12074  2019-10-01_15:41:30 make -j 48
+12075  2019-10-01_15:41:56 sudo rm /usr/local/include/qtpv*
+12075  2019-10-01_15:41:56 sudo rm /usr/local/include/qtpv*
+12075  2019-10-01_15:41:56 sudo rm /usr/local/include/qtpv*
+12075  2019-10-01_15:42:00 rm -rf *
+12075  2019-10-01_15:42:02 cmake ..
+12075  2019-10-01_15:42:08 make
+12075  2019-10-01_15:57:14 make clean
+12075  2019-10-01_15:57:18 rm -rf *
+12075  2019-10-01_15:57:18 rm -rf *
+12075  2019-10-01_15:57:18 rm -rf *
+12075  2019-10-01_15:57:21 cmake ..
+12075  2019-10-01_15:57:28 make
+12075  2019-10-01_15:59:40 rm -rf *
+12075  2019-10-01_15:59:42 cmake ..
+12075  2019-10-01_15:59:54 sudo rm /usr/local/include/qtpv*
+12076  2019-10-01_16:00:00 cmake .. 
+12076  2019-10-01_16:00:06 make -j 48
+12076  2019-10-01_16:00:17 sudo make install
+12076  2019-10-01_16:00:17 sudo make install
+12071  2019-10-01_16:21:11 make 
+12071  2019-10-01_17:07:23 make clean
+12071  2019-10-01_17:07:31 cmake ..
+12071  2019-10-01_17:07:33 make
+12071  2019-10-01_17:07:33 make
+12076  2019-10-01_17:26:14 make VERBOSE=1
+12076  2019-10-01_18:14:51 make -j 48
+12076  2019-10-01_18:18:00 cmake ..
+12076  2019-10-01_18:18:03 make
+12076  2019-10-01_18:18:16 sudo make install
+12076  2019-10-01_18:18:16 sudo make install
+11520  2019-10-02_11:46:13 ./imblSlits
+11530  2019-10-02_12:08:13 git rm -rf cmake/Templates/
+11530  2019-10-02_12:15:52 rm -rf *
+11530  2019-10-02_12:15:57 cmake ..
+11530  2019-10-02_12:15:57 cmake ..
+11530  2019-10-02_12:16:49 make
+11530  2019-10-02_12:16:49 make
+11530  2019-10-02_12:16:49 make
+11531  2019-10-02_12:24:53 rm -rf qtpvwidgets_py/
+11531  2019-10-02_12:25:03 cmake ..
+11531  2019-10-02_12:25:03 cmake ..
+11531  2019-10-02_12:25:03 cmake ..
+11531  2019-10-02_12:25:03 cmake ..
+11531  2019-10-02_12:25:03 cmake ..
+11532  2019-10-02_12:37:44 cmake --help-policy CMP0071
+11532  2019-10-02_12:37:44 cmake --help-policy CMP0071
+11532  2019-10-02_12:37:44 cmake --help-policy CMP0071
+11532  2019-10-02_12:38:58 cmake ..
+11532  2019-10-02_12:38:58 cmake ..
+11532  2019-10-02_12:38:58 cmake ..
+11532  2019-10-02_12:38:58 cmake ..
+11532  2019-10-02_12:38:58 cmake ..
+11532  2019-10-02_12:38:58 cmake ..
+11532  2019-10-02_12:38:58 cmake ..
+11532  2019-10-02_12:38:58 cmake ..
+11532  2019-10-02_12:38:58 cmake ..
+11532  2019-10-02_12:47:07 cmake --help-policy CMP0071
+11532  2019-10-02_12:47:07 cmake --help-policy CMP0071
+11532  2019-10-02_12:50:44 cmake ..
+11532  2019-10-02_12:50:44 cmake ..
+11532  2019-10-02_12:50:44 cmake ..
+11532  2019-10-02_12:50:44 cmake ..
+11532  2019-10-02_12:50:44 cmake ..
+11532  2019-10-02_12:50:44 cmake ..
+11532  2019-10-02_12:50:44 cmake ..
+11532  2019-10-02_12:50:44 cmake ..
+11532  2019-10-02_12:50:44 cmake ..
+11532  2019-10-02_12:50:44 cmake ..
+11533  2019-10-02_13:00:51 ls qtpvwidgets_py/
+11533  2019-10-02_13:01:21 cmake ..
+11533  2019-10-02_13:01:21 cmake ..
+11533  2019-10-02_13:01:21 cmake ..
+11533  2019-10-02_13:05:17 make
+11533  2019-10-02_13:07:29 make VERBOSE=1
+11533  2019-10-02_13:07:29 make VERBOSE=1
+11533  2019-10-02_13:09:06 make 
+11534  2019-10-02_13:09:42 ls /usr/share/sip/PyQt5 
+11534  2019-10-02_13:09:42 ls /usr/share/sip/PyQt5 
+11535  2019-10-02_13:09:56 whereis sip
+11535  2019-10-02_13:09:56 whereis sip
+11535  2019-10-02_13:10:41 make 
+11535  2019-10-02_13:10:41 make 
+11535  2019-10-02_13:10:41 make 
+11535  2019-10-02_13:14:13 make VERBOSE=1
+11535  2019-10-02_13:14:13 make VERBOSE=1
+11535  2019-10-02_13:14:13 make VERBOSE=1
+11535  2019-10-02_13:14:13 make VERBOSE=1
+11535  2019-10-02_13:14:13 make VERBOSE=1
+11535  2019-10-02_13:14:13 make VERBOSE=1
+11541  2019-10-02_13:23:01 make
+11541  2019-10-02_13:23:23 man sip
+11541  2019-10-02_13:23:45 make
+11541  2019-10-02_13:24:09 make VERBOSE=1
+11541  2019-10-02_13:24:18 rm -rf qtpvwidgets_py/
+11541  2019-10-02_13:24:20 make VERBOSE=1
+11541  2019-10-02_13:24:20 make VERBOSE=1
+11541  2019-10-02_13:24:20 make VERBOSE=1
+11541  2019-10-02_13:24:20 make VERBOSE=1
+11541  2019-10-02_13:24:20 make VERBOSE=1
+11541  2019-10-02_13:24:20 make VERBOSE=1
+11541  2019-10-02_13:24:20 make VERBOSE=1
+11541  2019-10-02_13:26:35 cmake ..
+11542  2019-10-02_13:30:23 ls /usr/include/python3.7m
+11542  2019-10-02_13:31:35 cmake ..
+11542  2019-10-02_13:31:35 cmake ..
+11542  2019-10-02_13:32:55 make
+11542  2019-10-02_13:33:05 make -j 8
+11542  2019-10-02_13:33:22 make install
+11542  2019-10-02_13:33:22 make install
+11542  2019-10-02_13:33:22 make install
+11522  2019-10-02_13:49:01 git mv cmake/Templates/* cmake/
+11522  2019-10-02_13:52:04 rm -rf *
+11522  2019-10-02_13:52:07 cmake ..
+11522  2019-10-02_13:52:07 cmake ..
+11522  2019-10-02_13:52:07 cmake ..
+11522  2019-10-02_13:52:07 cmake ..
+11522  2019-10-02_13:52:07 cmake ..
+11522  2019-10-02_13:52:07 cmake ..
+11522  2019-10-02_13:59:31 rm -rf *
+11522  2019-10-02_13:59:33 cmake ..
+11523  2019-10-02_14:01:51 cd ../cmake/
+11501  2019-10-02_14:02:28 cmake ..
+11501  2019-10-02_14:02:52 rm -rf qtpvwidgets_py/
+11501  2019-10-02_14:02:54 cmake ..
+11501  2019-10-02_14:03:02 rm -rf *
+11501  2019-10-02_14:03:03 cmake ..
+11501  2019-10-02_14:03:03 cmake ..
+11502  2019-10-02_14:05:15 locate PyQt5
+11503  2019-10-02_14:05:29 locate PyQt5 | grep sip
+11504  2019-10-02_14:05:39 man locate
+11505  2019-10-02_14:05:59 locate -i PyQt5 | grep sip
+11506  2019-10-02_14:06:07 locate -i PyQt5 
+11507  2019-10-02_14:06:28 manm locate
+11507  2019-10-02_14:06:31 man locate
+11508  2019-10-02_14:07:23 find /usr -iname "*PyQt5*sip"
+11509  2019-10-02_14:07:45 find /usr -iname "*PyQt5*" | grep sip
+11510  2019-10-02_14:08:13 find /usr -iname "*PyQt5*" | grep cmake
+11511  2019-10-02_14:08:35 find /usr -iname "*PyQt5*.*" 
+11511  2019-10-02_14:09:20 cmake ..
+11511  2019-10-02_14:09:20 cmake ..
+11511  2019-10-02_14:09:20 cmake ..
+11512  2019-10-02_14:12:14 cmake VERBOSE=1 ..
+11512  2019-10-02_14:12:22 man cmake
+11512  2019-10-02_14:14:03 cmake ..
+11512  2019-10-02_14:14:03 cmake ..
+11512  2019-10-02_14:14:03 cmake ..
+11512  2019-10-02_14:14:03 cmake ..
+11512  2019-10-02_14:14:03 cmake ..
+11512  2019-10-02_14:14:03 cmake ..
+11512  2019-10-02_14:14:03 cmake ..
+11512  2019-10-02_14:14:03 cmake ..
+11512  2019-10-02_14:14:03 cmake ..
+11512  2019-10-02_14:14:03 cmake ..
+11512  2019-10-02_14:14:03 cmake ..
+11512  2019-10-02_14:14:03 cmake ..
+11512  2019-10-02_14:14:03 cmake ..
+11512  2019-10-02_14:14:03 cmake ..
+11512  2019-10-02_14:14:03 cmake ..
+11512  2019-10-02_14:14:03 cmake ..
+11512  2019-10-02_14:14:03 cmake ..
+11512  2019-10-02_14:14:03 cmake ..
+11512  2019-10-02_14:14:03 cmake ..
+11512  2019-10-02_14:34:05 make
+11512  2019-10-02_14:34:48 rm -rf *
+11512  2019-10-02_14:34:51 cmake ..
+11512  2019-10-02_14:35:08 make -j 48
+11513  2019-10-02_14:35:24 make VERBOSE=1 
+11513  2019-10-02_14:35:24 make VERBOSE=1 
+11513  2019-10-02_14:35:24 make VERBOSE=1 
+11513  2019-10-02_14:35:42 cd ..
+11513  2019-10-02_14:36:28 make
+11513  2019-10-02_14:36:28 make
+11513  2019-10-02_14:36:28 make
+11513  2019-10-02_14:37:46 rm -rf *
+11513  2019-10-02_14:38:09 make
+11513  2019-10-02_14:38:13 cmake ..
+11513  2019-10-02_14:38:20 make -j 48
+11513  2019-10-02_14:38:31 make VERBOSE=1 
+11513  2019-10-02_14:40:16 cmake ..
+11514  2019-10-02_14:40:39 ls /usr/share/sip/PyQt5
+11515  2019-10-02_14:40:44 ls /usr/share/sip/PyQt5/QtCore/
+11515  2019-10-02_14:40:44 ls /usr/share/sip/PyQt5/QtCore/
+11515  2019-10-02_14:40:44 ls /usr/share/sip/PyQt5/QtCore/
+11515  2019-10-02_14:41:11 cmake ..
+11515  2019-10-02_14:41:21 make -j 48
+11515  2019-10-02_14:41:28 make VERBOSE=1 
+11515  2019-10-02_14:41:28 make VERBOSE=1 
+11515  2019-10-02_14:41:28 make VERBOSE=1 
+11515  2019-10-02_14:41:28 make VERBOSE=1 
+11515  2019-10-02_14:45:59 cmake ..
+11515  2019-10-02_14:46:05 make VERBOSE=1 
+11515  2019-10-02_14:46:05 make VERBOSE=1 
+11515  2019-10-02_14:46:05 make VERBOSE=1 
+11515  2019-10-02_14:46:05 make VERBOSE=1 
+11515  2019-10-02_14:46:05 make VERBOSE=1 
+11515  2019-10-02_14:57:41 cmake ..
+11515  2019-10-02_14:57:41 cmake ..
+11515  2019-10-02_14:58:46 make VERBOSE=1 
+11515  2019-10-02_14:58:46 make VERBOSE=1 
+11515  2019-10-02_14:58:46 make VERBOSE=1 
+11515  2019-10-02_14:58:46 make VERBOSE=1 
+11515  2019-10-02_15:45:12 cmake ..
+11515  2019-10-02_15:45:23 make VERBOSE=1 
+11515  2019-10-02_15:45:48 rm -rf qtpvwidgets_py/
+11515  2019-10-02_15:45:50 make VERBOSE=1 
+11515  2019-10-02_15:45:50 make VERBOSE=1 
+11515  2019-10-02_15:47:20 rm -rf qtpvwidgets_py/
+11515  2019-10-02_15:47:22 make VERBOSE=1 
+11515  2019-10-02_15:47:59 man sip
+11515  2019-10-02_15:47:59 man sip
+11515  2019-10-02_15:47:59 man sip
+11515  2019-10-02_15:47:59 man sip
+11515  2019-10-02_15:49:56 sudo make install
+11515  2019-10-02_15:49:56 sudo make install
+11515  2019-10-02_15:49:56 sudo make install
+11515  2019-10-02_15:51:11 cd ..

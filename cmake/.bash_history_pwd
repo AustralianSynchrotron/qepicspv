@@ -15,3 +15,20 @@
 12130  2019-10-01_12:44:18 rm -rf /home/imbl/Work/projects/motorcontrol/build/*
 12130  2019-10-01_12:44:18 rm -rf /home/imbl/Work/projects/motorcontrol/build/*
 12130  2019-10-01_12:44:18 rm -rf /home/imbl/Work/projects/motorcontrol/build/*
+11521  2019-10-02_13:46:58 wget https://raw.githubusercontent.com/KDE/pykde5/master/cmake/FindPyQt5.cmake
+11521  2019-10-02_13:47:05 wget https://raw.githubusercontent.com/Ultimaker/libArcus/master/cmake/SIPMacros.cmake
+11521  2019-10-02_13:47:15 wget https://raw.githubusercontent.com/Ultimaker/libArcus/master/cmake/FindSIP.cmake
+11521  2019-10-02_13:47:15 wget https://raw.githubusercontent.com/Ultimaker/libArcus/master/cmake/FindSIP.cmake
+11521  2019-10-02_13:47:26 ls
+11521  2019-10-02_13:47:26 ls
+11521  2019-10-02_13:47:26 ls
+11522  2019-10-02_13:49:01 git mv cmake/Templates/* cmake/
+11522  2019-10-02_13:49:01 git mv cmake/Templates/* cmake/
+11522  2019-10-02_13:49:01 git mv cmake/Templates/* cmake/
+11522  2019-10-02_13:49:01 git mv cmake/Templates/* cmake/
+11522  2019-10-02_13:49:01 git mv cmake/Templates/* cmake/
+11522  2019-10-02_13:49:01 git mv cmake/Templates/* cmake/
+11522  2019-10-02_13:52:07 cmake ..
+11524  2019-10-02_14:02:17 wget https://github.com/KDE/pykde5/raw/master/cmake/FindPyQt5.py
+11501  2019-10-02_14:02:25 cd $OLDPWD
+11515  2019-10-02_15:47:59 man sip

@@ -9,7 +9,7 @@ CONFIG += plugin no_plugin_name_prefix
 QMAKE_EXTENSION_SHLIB = so
 
 INCLUDEPATH += ../qtpvwidgets
-OTHER_FILES += qtpvwidgets.sip
+OTHER_FILES += pyqtpvwidgets.sip
 
 # files were generated with following command:
 # sip -c .  -I /usr/share/sip/PyQt5 -n sip -t WS_X11 -t Qt_5 qtpvwidgets.sip

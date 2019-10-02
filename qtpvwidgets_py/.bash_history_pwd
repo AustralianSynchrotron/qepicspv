@@ -1,0 +1,26 @@
+12391  2019-10-01_11:10:14 make
+12391  2019-10-01_11:10:14 make
+12391  2019-10-01_11:10:14 make
+12391  2019-10-01_11:10:14 make
+12391  2019-10-01_11:10:14 make
+12130  2019-10-01_12:44:18 rm -rf /home/imbl/Work/projects/motorcontrol/build/*
+11521  2019-10-02_12:00:00 git 
+11521  2019-10-02_12:00:00 git 
+11535  2019-10-02_13:14:13 make VERBOSE=1
+11535  2019-10-02_13:14:13 make VERBOSE=1
+11536  2019-10-02_13:16:30 sip -c .  -I /usr/share/sip/PyQt5 -n sip -t WS_X11 -t Qt_5 pyqtpvwidgets.sip 
+11536  2019-10-02_13:16:30 sip -c .  -I /usr/share/sip/PyQt5 -n sip -t WS_X11 -t Qt_5 pyqtpvwidgets.sip 
+11536  2019-10-02_13:16:30 sip -c .  -I /usr/share/sip/PyQt5 -n sip -t WS_X11 -t Qt_5 pyqtpvwidgets.sip 
+11537  2019-10-02_13:17:53 sip -c .   -n sip -t WS_X11 -t Qt_5 pyqtpvwidgets.sip 
+11537  2019-10-02_13:17:56 sip -c .  -I /usr/share/sip/PyQt5 -n sip -t WS_X11 -t Qt_5 pyqtpvwidgets.sip 
+11538  2019-10-02_13:18:14 man sip
+11539  2019-10-02_13:19:00 sip -c .  -n sip -t WS_X11 -t Qt_5 pyqtpvwidgets.sip 
+11539  2019-10-02_13:19:04 sip -c .  -I /usr/share/sip/PyQt5 -n sip -t WS_X11 -t Qt_5 pyqtpvwidgets.sip 
+11539  2019-10-02_13:19:15 man sip
+11540  2019-10-02_13:19:37 sip -c .  -I /usr/share/sip/PyQt5 -n sip -t WS_X11  pyqtpvwidgets.sip 
+11541  2019-10-02_13:19:50 sip -c .  -I /usr/share/sip/PyQt5 -n sip   pyqtpvwidgets.sip 
+11542  2019-10-02_13:20:10 sip -c .  -I /usr/share/sip/PyQt5 -n sip  -t Qt_5 pyqtpvwidgets.sip 
+11542  2019-10-02_13:20:10 sip -c .  -I /usr/share/sip/PyQt5 -n sip  -t Qt_5 pyqtpvwidgets.sip 
+11542  2019-10-02_13:22:17 sip -c .  -I /usr/share/sip/PyQt5 -n sip -t WS_X11 -t Qt_5 pyqtpvwidgets.sip 
+11543  2019-10-02_13:22:30 sip -c .  -I /usr/share/sip/PyQt5  -t WS_X11 -t Qt_5 pyqtpvwidgets.sip 
+11541  2019-10-02_13:22:59 cd ../build/
