@@ -19,4 +19,9 @@ include_directories(${Qt5Widgets_INCLUDE_DIRS})
 
 add_subdirectory(qtpv)
 add_subdirectory(qtpvwidgets)
-add_subdirectory(qtpvwidgets_py)
+
+find_package(Python3 COMPONENTS Interpreter Development)
+find_package(PyQt5)
+if (Python3_FOUND AND PYQT5_FOUND)
+  add_subdirectory(qtpvwidgets_py)
+endif()
