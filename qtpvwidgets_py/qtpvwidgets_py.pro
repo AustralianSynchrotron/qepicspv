@@ -13,13 +13,13 @@ OTHER_FILES += pyqtpvwidgets.sip
 
 # files were generated with following command:
 # sip -c .  -I /usr/share/sip/PyQt5 -n sip -t WS_X11 -t Qt_5 qtpvwidgets.sip
-SOURCES += sipqtpvwidgetscmodule.cpp \
-           sipqtpvwidgetsQMComboBox.cpp \
-           sipqtpvwidgetsQMLineEdit.cpp \
-	   sipqtpvwidgetsQVariantLabel.cpp \
-	   sipqtpvwidgetsQMDoubleSpinBox.cpp \
-	   sipqtpvwidgetsQMSpinBox.cpp
-HEADERS += sipAPIqtpvwidgets.h
+SOURCES += sippyqtpvwidgetscmodule.cpp \
+           sippyqtpvwidgetsQMComboBox.cpp \
+           sippyqtpvwidgetsQMLineEdit.cpp \
+	   sippyqtpvwidgetsQVariantLabel.cpp \
+	   sippyqtpvwidgetsQMDoubleSpinBox.cpp \
+	   sippyqtpvwidgetsQMSpinBox.cpp
+HEADERS += sipAPIpyqtpvwidgets.h
 
 LIBS += -L../qtpvwidgets -lqtpvwidgets
 
