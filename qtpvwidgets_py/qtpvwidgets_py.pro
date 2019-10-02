@@ -16,9 +16,9 @@ OTHER_FILES += pyqtpvwidgets.sip
 SOURCES += sippyqtpvwidgetscmodule.cpp \
            sippyqtpvwidgetsQMComboBox.cpp \
            sippyqtpvwidgetsQMLineEdit.cpp \
-	   sippyqtpvwidgetsQVariantLabel.cpp \
-	   sippyqtpvwidgetsQMDoubleSpinBox.cpp \
-	   sippyqtpvwidgetsQMSpinBox.cpp
+           sippyqtpvwidgetsQVariantLabel.cpp \
+           sippyqtpvwidgetsQMDoubleSpinBox.cpp \
+           sippyqtpvwidgetsQMSpinBox.cpp
 HEADERS += sipAPIpyqtpvwidgets.h
 
 LIBS += -L../qtpvwidgets -lqtpvwidgets
