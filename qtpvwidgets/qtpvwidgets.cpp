@@ -1,5 +1,61 @@
 
 #include "qtpvwidgets.h"
+#include "qtpvwidgets_private.h"
+#include <QToolTip>
+
+
+Protector::Protector(QWidget * parent)
+  : QWidget(parent)
+{
+  if (!parent) {
+    qDebug() << "Warning. Protector with nothing to protect.";
+    hide();
+    deleteLater();
+    return;
+  }
+  setToolTip("This is a protected operation. Double click to proceed.");
+  setStyleSheet("border: 1px solid black;"
+                "border-radius: 3px;"
+                "background-image: url(:/mesh.svg);");
+  resize(parent->size());
+  parent->setFocusProxy(this);
+  parent->installEventFilter(this);
+}
+
+
+void Protector::mouseDoubleClickEvent(QMouseEvent*) {
+  hide();
+  dynamic_cast<QWidget*>(parent())->setFocusProxy(0);
+  dynamic_cast<QWidget*>(parent())->setFocus();
+}
+
+void Protector::mousePressEvent(QMouseEvent*) {
+  QToolTip::showText(mapToGlobal(QPoint(0,0)), toolTip());
+}
+
+
+bool Protector::eventFilter(QObject *obj, QEvent *event) {
+  bool ret = QObject::eventFilter(obj, event);
+  if (event->type() == QEvent::Resize)
+    resize(dynamic_cast<QWidget*>(parent())->size());
+  if (event->type() == QEvent::FocusOut) {
+    show();
+    dynamic_cast<QWidget*>(parent())->setFocusProxy(this);
+  }
+  return ret;
+}
+
+
+void protect(QWidget * wdg) {
+  new Protector(wdg);
+}
+
+void unprotect(QWidget * wdg) {
+  foreach (QWidget * protector , wdg->findChildren<Protector*>(QString(), Qt::FindDirectChildrenOnly))
+    protector->deleteLater();
+}
+
+
 
 
 void QMLineEdit::focusInEvent(QFocusEvent * event){
@@ -26,7 +82,6 @@ QMLineEdit::QMLineEdit(QWidget * parent) :
 {
   connect(this, SIGNAL(escaped()), SLOT(restore()));
 }
-
 
 
 

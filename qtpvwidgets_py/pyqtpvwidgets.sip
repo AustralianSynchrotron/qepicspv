@@ -4,7 +4,6 @@
 %Import QtWidgets/QtWidgetsmod.sip
 
 
-
 class QMLineEdit : public QLineEdit {
   %TypeHeaderCode
   #include "qtpvwidgets.h"
@@ -140,8 +139,6 @@ signals:
   void somethingChanged(const QString &);
 
 };
-
-
 
 
 

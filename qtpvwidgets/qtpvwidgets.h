@@ -14,8 +14,11 @@
 #include <QToolButton>
 #include <QLabel>
 #include <QVariant>
-
 #include <math.h>
+
+
+void protect(QWidget * wdg);
+void unprotect(QWidget * wdg);
 
 
 class QMLineEdit : public QLineEdit {
