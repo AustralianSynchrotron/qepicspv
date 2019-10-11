@@ -9,10 +9,10 @@
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    id="svg8"
    version="1.1"
-   viewBox="0 0 10.000001 4.4705875"
-   height="4.4705873mm"
-   width="10.000001mm"
-   sodipodi:docname="mesh_bg.svg"
+   viewBox="0 0 5.0000001 2.2000002"
+   height="2.2mm"
+   width="5mm"
+   sodipodi:docname="mesh_sm.svg"
    inkscape:version="0.92.4 (5da689c313, 2019-01-14)">
   <sodipodi:namedview
      pagecolor="#ffffff"
@@ -23,17 +23,17 @@
      guidetolerance="10"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:window-width="3840"
-     inkscape:window-height="2106"
+     inkscape:window-width="3181"
+     inkscape:window-height="1778"
      id="namedview7"
      showgrid="false"
-     inkscape:zoom="34.130347"
+     inkscape:zoom="63.685208"
      inkscape:cx="18.897638"
-     inkscape:cy="8.4502863"
-     inkscape:window-x="0"
+     inkscape:cy="10.076908"
+     inkscape:window-x="-10"
      inkscape:window-y="0"
-     inkscape:window-maximized="1"
-     inkscape:current-layer="g1046" />
+     inkscape:window-maximized="0"
+     inkscape:current-layer="layer1" />
   <defs
      id="defs2">
     <clipPath
@@ -89,46 +89,45 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
   <g
      style="display:inline"
-     transform="translate(-0.00372898,-291.53209)"
+     transform="translate(-0.00372898,-294.06686)"
      id="layer1">
     <g
        id="g1046"
-       transform="matrix(2.0017073,0,0,2.3247864,-0.00373534,-392.49028)">
+       transform="matrix(1.0008536,0,0,1.022906,-3.1831778e-6,-6.7862819)">
       <path
          clip-path="url(#clipPath1032)"
          sodipodi:nodetypes="cccccccccccccccccccccccccccc"
          inkscape:connector-curvature="0"
          id="path814-7"
-         d="m 2.4592607,296.04852 -1.50430098,0.74259 H 0.00359658 v 0.13229 h 0.81907147 l 1.50430105,-0.74259 h 1.1678872 l 1.5048178,0.74259 v 0.185 l 0.1322917,0.0651 v -0.38241 L 3.627148,296.04852 Z m 2.6727051,1.125 -0.1322917,0.0563 v 0.076 0.30696 l 0.1322917,-0.0563 z m -0.1322917,0.13229 -0.082165,-0.0408 -1.2903608,0.66567 H 2.4592607 l -1.4314372,-0.72613 -0.20515545,0.10129 1.50430105,0.75713 h 1.1678872 z"
-         style="display:inline;opacity:0.25;fill:#fff9f9;fill-opacity:1;stroke-width:0.35531393" />
+         d="m 2.4592607,296.16228 -1.50430098,0.74259 H 0.00359658 v 0.13229 h 0.81907147 l 1.50430105,-0.74259 h 1.1678872 l 1.5048178,0.74259 v 0.185 l 0.1322917,0.0651 v -0.38241 L 3.627148,296.16228 Z m 2.6727051,1.125 -0.1322917,0.0563 v 0.076 0.30696 l 0.1322917,-0.0563 z m -0.1322917,0.13229 -0.082165,-0.0408 -1.2903608,0.55191 H 2.4592607 l -1.4314372,-0.61237 -0.20515545,0.10129 1.50430105,0.64337 h 1.1678872 z"
+         style="display:inline;opacity:0.5;fill:#fff9f9;fill-opacity:1;stroke-width:0.35531393" />
       <path
          clip-path="url(#clipPath1028)"
          sodipodi:nodetypes="cccccccccccccccccccccccccccc"
          inkscape:connector-curvature="0"
          id="path814"
          transform="matrix(0.26458334,0,0,0.26458334,0.00359658,294.11635)"
-         d="M 9.28125,-0.06969314 3.5957031,2.7369475 H 0 v 0.5 H 3.0957031 L 8.78125,0.43030686 h 4.414062 l 5.6875,2.80664064 v 0.2689119 l 0.5,0.2460937 V 2.7369475 l -5.6875,-2.80664064 z m 10.101562,3.82164624 -0.5,0.2128907 v 0.2871093 0.7301903 l 0.5,-0.2128906 z m -0.5,0.5 -0.310546,-0.1542969 -4.876954,2.0859376 H 9.28125 L 3.8710938,3.8691406 3.0957031,4.2519531 8.78125,6.6835938 h 4.414062 z"
-         style="opacity:0.25;fill:#fff9f9;fill-opacity:1;stroke-width:1.34291875" />
+         d="M 9.28125,-0.5 3.5957031,2.3066406 H 0 v 0.5 H 3.0957031 L 8.78125,0 h 4.414062 l 5.6875,2.8066406 v 0.6992188 l 0.5,0.2460937 V 2.3066406 L 13.695312,-0.5 Z m 10.101562,4.2519531 -0.5,0.2128907 v 0.2871093 1.1601563 l 0.5,-0.2128906 z m -0.5,0.5 -0.310546,-0.1542969 -4.876954,2.0859376 H 9.28125 L 3.8710938,3.8691406 3.0957031,4.2519531 8.78125,6.6835938 h 4.414062 z"
+         style="opacity:0.5;fill:#fff9f9;fill-opacity:1;stroke-width:1.34291875" />
       <path
          clip-path="url(#clipPath1024)"
          inkscape:connector-curvature="0"
          id="path814-3"
          transform="matrix(0.26458334,0,0,0.26458334,0.00359658,294.11635)"
-         d="M -9.6015625,-0.06969314 -15.287109,2.3066406 h -3.595703 v 0.5 h 3.095703 l 5.685547,-2.37633374 H -5.6875 L 0,3.2369475 h 0.5 v -0.5 l -5.6875,-2.80664064 z m -5.4101565,3.93883374 -0.77539,0.3828125 5.685547,2.0016747 H -5.6875 L 0,4.2519531 -0.31054688,4.0976562 -5.1875,5.7536278 h -4.4140625 z"
-         style="display:inline;opacity:0.25;fill:#fff9f9;fill-opacity:1;stroke-width:1.34291875"
-         sodipodi:nodetypes="ccccccccccccccccccccc" />
+         d="m -9.6015625,-0.5 -5.6855465,2.8066406 h -3.595703 v 0.5 h 3.095703 L -10.101562,0 H -5.6875 L 0,2.8066406 h 0.5 v -0.5 L -5.1875,-0.5 Z m -5.4101565,4.3691406 -0.77539,0.3828125 5.685547,2.4316407 H -5.6875 L 0,4.2519531 -0.31054688,4.0976562 -5.1875,6.1835938 h -4.4140625 z"
+         style="display:inline;opacity:0.5;fill:#fff9f9;fill-opacity:1;stroke-width:1.34291875" />
       <path
          clip-path="url(#clipPath1020)"
          sodipodi:nodetypes="cccccccccccccccccc"
          inkscape:connector-curvature="0"
-         style="display:inline;opacity:0.25;stroke-width:0.35531393"
-         d="m 2.3270166,294.2302 -1.50453246,0.74255 H 0.00359658 v 0.53785 h 0.81888756 l 1.50453246,0.64261 h 1.1679559 l 1.504532,-0.64261 v -0.26932 l -1.504532,0.64331 H 2.3270166 l -1.50453246,-0.64331 1.50453246,-0.74256 h 1.1679559 l 1.504532,0.74256 9.21e-5,-0.26853 -1.5046241,-0.74255 z"
+         style="display:inline;opacity:0.5;stroke-width:0.35531393"
+         d="M 2.3270166,294.11635 0.82248414,294.8589 H 0.00359658 v 0.76546 h 0.81888756 l 1.50453246,0.64261 h 1.1679559 l 1.504532,-0.64261 v -0.38308 l -1.504532,0.64331 H 2.3270166 l -1.50453246,-0.64331 1.50453246,-0.74256 h 1.1679559 l 1.504532,0.74256 9.21e-5,-0.38238 -1.5046241,-0.74255 z"
          id="rect3745" />
     </g>
   </g>
