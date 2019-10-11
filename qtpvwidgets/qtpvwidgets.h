@@ -17,8 +17,7 @@
 #include <math.h>
 
 
-void protect(QWidget * wdg);
-void unprotect(QWidget * wdg);
+void protect(QWidget * wdg, bool prot=true);
 
 
 class QMLineEdit : public QLineEdit {

@@ -7,8 +7,10 @@
 Protector::Protector(QWidget * parent)
   : QWidget(parent)
 {
-  if (!parent) {
-    qDebug() << "Warning. Protector with nothing to protect.";
+  if ( ! parent ||
+       dynamic_cast<Protector*>(parent) ||
+       parent->findChildren<Protector*>(QString(),Qt::FindDirectChildrenOnly).size() > 1
+  ) {
     hide();
     deleteLater();
     return;
@@ -46,14 +48,19 @@ bool Protector::eventFilter(QObject *obj, QEvent *event) {
 }
 
 
-void protect(QWidget * wdg) {
-  new Protector(wdg);
+void protect(QWidget * wdg, bool prot) {
+  QList<Protector*> prts =
+    wdg->findChildren<Protector*>(QString(), Qt::FindDirectChildrenOnly);
+  if(!prot)
+    foreach (QWidget * protector , prts )
+      protector->deleteLater();
+  else if ( prts.isEmpty() )
+    new Protector(wdg);
 }
 
-void unprotect(QWidget * wdg) {
-  foreach (QWidget * protector , wdg->findChildren<Protector*>(QString(), Qt::FindDirectChildrenOnly))
-    protector->deleteLater();
-}
+
+
+
 
 
 
