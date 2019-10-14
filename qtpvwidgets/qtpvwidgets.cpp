@@ -4,61 +4,71 @@
 #include <QToolTip>
 
 
-Protector::Protector(QWidget * parent)
+class Protector : public QWidget {
+
+public:
+
+  Protector(QWidget * parent)
   : QWidget(parent)
-{
-  if ( ! parent ||
-       dynamic_cast<Protector*>(parent) ||
-       parent->findChildren<Protector*>(QString(),Qt::FindDirectChildrenOnly).size() > 1
-  ) {
+  {
+    const QString protName = "Protector for " + parent->objectName();
+    if ( ! parent || ! Protector::protection(parent).isEmpty() ) {
+      hide();
+      deleteLater();
+      return;
+    }
+
+    setObjectName(protName);
+    setToolTip("This is a protected operation. Double click to proceed.");
+    setStyleSheet("border: 1px solid black;"
+                  "border-radius: 3px;"
+                  "background-image: url(:/mesh.svg);");
+    resize(parent->size());
+    parent->setFocusProxy(this);
+    parent->installEventFilter(this);
+
+  }
+
+  static const QList<Protector*> protection(const QWidget *wdg) {
+    if (! wdg)
+      return QList<Protector*>();
+    return wdg->findChildren<Protector*>("Protector for " + wdg->objectName(),
+                                         Qt::FindDirectChildrenOnly);
+  }
+
+protected:
+
+  bool eventFilter(QObject *obj, QEvent *event) override {
+    bool ret = QObject::eventFilter(obj, event);
+    if (event->type() == QEvent::Resize)
+      resize(dynamic_cast<QWidget*>(parent())->size());
+    if (event->type() == QEvent::FocusOut) {
+      show();
+      dynamic_cast<QWidget*>(parent())->setFocusProxy(this);
+    }
+      return ret;
+  }
+
+  void mouseDoubleClickEvent(QMouseEvent*) override {
     hide();
-    deleteLater();
-    return;
+    dynamic_cast<QWidget*>(parent())->setFocusProxy(0);
+    dynamic_cast<QWidget*>(parent())->setFocus();
   }
-  setToolTip("This is a protected operation. Double click to proceed.");
-  setStyleSheet("border: 1px solid black;"
-                "border-radius: 3px;"
-                "background-image: url(:/mesh.svg);");
-  resize(parent->size());
-  parent->setFocusProxy(this);
-  parent->installEventFilter(this);
-}
 
+    void mousePressEvent(QMouseEvent*) override {
+      QToolTip::showText(mapToGlobal(QPoint(0,0)), toolTip());
+    }
 
-void Protector::mouseDoubleClickEvent(QMouseEvent*) {
-  hide();
-  dynamic_cast<QWidget*>(parent())->setFocusProxy(0);
-  dynamic_cast<QWidget*>(parent())->setFocus();
-}
-
-void Protector::mousePressEvent(QMouseEvent*) {
-  QToolTip::showText(mapToGlobal(QPoint(0,0)), toolTip());
-}
-
-
-bool Protector::eventFilter(QObject *obj, QEvent *event) {
-  bool ret = QObject::eventFilter(obj, event);
-  if (event->type() == QEvent::Resize)
-    resize(dynamic_cast<QWidget*>(parent())->size());
-  if (event->type() == QEvent::FocusOut) {
-    show();
-    dynamic_cast<QWidget*>(parent())->setFocusProxy(this);
-  }
-  return ret;
-}
+};
 
 
 void protect(QWidget * wdg, bool prot) {
-  QList<Protector*> prts =
-    wdg->findChildren<Protector*>(QString(), Qt::FindDirectChildrenOnly);
   if(!prot)
-    foreach (QWidget * protector , prts )
+    foreach (QWidget * protector , Protector::protection(wdg) )
       protector->deleteLater();
-  else if ( prts.isEmpty() )
+  else
     new Protector(wdg);
 }
-
-
 
 
 
