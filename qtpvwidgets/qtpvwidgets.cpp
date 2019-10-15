@@ -1,6 +1,5 @@
 
 #include "qtpvwidgets.h"
-#include "qtpvwidgets_private.h"
 #include <QToolTip>
 
 
@@ -22,7 +21,8 @@ public:
     setToolTip("This is a protected operation. Double click to proceed.");
     setStyleSheet("border: 1px solid black;"
                   "border-radius: 3px;"
-                  "background-image: url(:/mesh.svg);");
+                  "background-image: url(:/mesh.svg);"
+                  "background-color: rgb(0,0,0,0);");
     resize(parent->size());
     parent->setFocusProxy(this);
     parent->installEventFilter(this);

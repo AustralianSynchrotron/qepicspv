@@ -1,7 +1,6 @@
 
 add_library(qtpvwidgets SHARED
   qtpvwidgets.h
-  qtpvwidgets_private.h
   qtpvwidgets.cpp
   qtpvwidgets.qrc
   mesh.svg
