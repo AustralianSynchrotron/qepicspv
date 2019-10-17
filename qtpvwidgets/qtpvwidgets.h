@@ -345,13 +345,16 @@ public:
 
 public slots:
 
-  void setText(const QString & s);
+  void setValue(const QString & s);
   void setValue(double n);
   void setValue(qlonglong n);
   void setValue(int n) {setValue(qlonglong(n));}
   void setValue(qulonglong n);
   void setValue(uint n) {setValue(qulonglong(n));}
-  void setVariant(QVariant v);
+  void setValue(QVariant v);
+
+  void setText(const QString & s) {setValue(s);}
+  void setVariant(QVariant v) {setValue(v);}
 
   void setDecimals(int prec);
   void setPrefix(const QString &prefix);

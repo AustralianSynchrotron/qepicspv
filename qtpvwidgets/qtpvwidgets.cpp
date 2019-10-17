@@ -393,7 +393,8 @@ void QVariantLabel::setFormat(char f){
   retext();
 }
 
-void QVariantLabel::setText(const QString & s) {
+
+void QVariantLabel::setValue(const QString & s) {
   variable=s;
   QLabel::setText(s);
   emit somethingChanged(text());
@@ -414,7 +415,7 @@ void QVariantLabel::setValue(qulonglong n) {
   retext();
 }
 
-void QVariantLabel::setVariant(QVariant v) {
+void QVariantLabel::setValue(QVariant v) {
   variable=v;
   retext();
 }
