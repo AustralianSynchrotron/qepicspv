@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.0)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
-
+set(CMAKE_CXX_STANDARD 11)
 
 project(qepicspv)
 set(VERSION 1.0)
