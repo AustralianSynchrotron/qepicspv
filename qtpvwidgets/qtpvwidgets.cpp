@@ -2,6 +2,9 @@
 #include "qtpvwidgets.h"
 #include <QToolTip>
 
+#ifndef override
+#define override
+#endif
 
 class Protector : public QWidget {
 
