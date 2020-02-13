@@ -19,7 +19,7 @@
 # The behaviour of the ADD_SIP_PYTHON_MODULE macro can be controlled by a
 # number of variables:
 #
-# SIP_INCLUDE_DIRS - List of directories which SIP will scan through when looking
+# SIP_INCLUDES - List of directories which SIP will scan through when looking
 #     for included .sip files. (Corresponds to the -I option for SIP.)
 #
 # SIP_TAGS - List of tags to define when running SIP. (Corresponds to the -t
@@ -35,7 +35,7 @@
 # SIP_EXTRA_OPTIONS - Extra command line options which should be passed on to
 #     SIP.
 
-SET(SIP_INCLUDE_DIRS)
+SET(SIP_INCLUDES)
 SET(SIP_TAGS)
 SET(SIP_CONCAT_PARTS 8)
 SET(SIP_DISABLE_FEATURES)
@@ -50,19 +50,26 @@ MACRO(ADD_SIP_PYTHON_MODULE MODULE_NAME MODULE_SIP)
     GET_FILENAME_COMPONENT(_child_module_name ${_x} NAME)
 
     GET_FILENAME_COMPONENT(_module_path ${MODULE_SIP} PATH)
+
+    if(_module_path STREQUAL "")
+        set(CMAKE_CURRENT_SIP_OUTPUT_DIR "${CMAKE_CURRENT_BINARY_DIR}")
+    else(_module_path STREQUAL "")
+        set(CMAKE_CURRENT_SIP_OUTPUT_DIR "${CMAKE_CURRENT_BINARY_DIR}/${_module_path}")
+    endif(_module_path STREQUAL "")
+
     GET_FILENAME_COMPONENT(_abs_module_sip ${MODULE_SIP} ABSOLUTE)
 
     # We give this target a long logical target name.
     # (This is to avoid having the library name clash with any already
-    # install library names. If that happens then cmake dependency
+    # install library names. If that happens then cmake dependancy
     # tracking get confused.)
     STRING(REPLACE "." "_" _logical_name ${MODULE_NAME})
     SET(_logical_name "python_module_${_logical_name}")
 
-    FILE(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${_module_path})    # Output goes in this dir.
+    FILE(MAKE_DIRECTORY ${CMAKE_CURRENT_SIP_OUTPUT_DIR})    # Output goes in this dir.
 
     SET(_sip_includes)
-    FOREACH (_inc ${SIP_INCLUDE_DIRS})
+    FOREACH (_inc ${SIP_INCLUDES})
         GET_FILENAME_COMPONENT(_abs_inc ${_inc} ABSOLUTE)
         LIST(APPEND _sip_includes -I ${_abs_inc})
     ENDFOREACH (_inc )
@@ -81,49 +88,37 @@ MACRO(ADD_SIP_PYTHON_MODULE MODULE_NAME MODULE_SIP)
     SET(_sip_output_files)
     FOREACH(CONCAT_NUM RANGE 0 ${SIP_CONCAT_PARTS} )
         IF( ${CONCAT_NUM} LESS ${SIP_CONCAT_PARTS} )
-            SET(_sip_output_files ${_sip_output_files} ${CMAKE_CURRENT_BINARY_DIR}/${_module_path}/sip${_child_module_name}part${CONCAT_NUM}.cpp )
+            SET(_sip_output_files ${_sip_output_files} ${CMAKE_CURRENT_SIP_OUTPUT_DIR}/sip${_child_module_name}part${CONCAT_NUM}.cpp )
         ENDIF( ${CONCAT_NUM} LESS ${SIP_CONCAT_PARTS} )
     ENDFOREACH(CONCAT_NUM RANGE 0 ${SIP_CONCAT_PARTS} )
 
-    # Suppress warnings
-    IF(PEDANTIC)
-      IF(MSVC)
-        # 4996 deprecation warnings (bindings re-export deprecated methods)
-        # 4701 potentially uninitialized variable used (sip generated code)
-        # 4702 unreachable code (sip generated code)
-        ADD_DEFINITIONS( /wd4996 /wd4701 /wd4702 )
-      ELSE(MSVC)
-        # disable all warnings
-        ADD_DEFINITIONS( -w )
-      ENDIF(MSVC)
-    ENDIF(PEDANTIC)
-
+    IF(NOT WIN32)
+        SET(TOUCH_COMMAND touch)
+    ELSE(NOT WIN32)
+        SET(TOUCH_COMMAND echo)
+        # instead of a touch command, give out the name and append to the files
+        # this is basically what the touch command does.
+        FOREACH(filename ${_sip_output_files})
+            FILE(APPEND filename "")
+        ENDFOREACH(filename ${_sip_output_files})
+    ENDIF(NOT WIN32)
     ADD_CUSTOM_COMMAND(
         OUTPUT ${_sip_output_files}
         COMMAND ${CMAKE_COMMAND} -E echo ${message}
-        COMMAND ${CMAKE_COMMAND} -E touch ${_sip_output_files}
-        COMMAND ${SIP_EXECUTABLE} ${_sip_tags} ${_sip_x} ${SIP_EXTRA_OPTIONS} -j ${SIP_CONCAT_PARTS} -c ${CMAKE_CURRENT_BINARY_DIR}/${_module_path} ${_sip_includes} ${_abs_module_sip}
+        COMMAND ${TOUCH_COMMAND} ${_sip_output_files}
+        COMMAND ${SIP_EXECUTABLE} ${_sip_tags} ${_sip_x} ${SIP_EXTRA_OPTIONS} -j ${SIP_CONCAT_PARTS} -c ${CMAKE_CURRENT_SIP_OUTPUT_DIR} ${_sip_includes} ${_abs_module_sip}
         DEPENDS ${_abs_module_sip} ${SIP_EXTRA_FILES_DEPEND}
     )
     # not sure if type MODULE could be uses anywhere, limit to cygwin for now
-    IF (CYGWIN OR APPLE)
-        ADD_LIBRARY(${_logical_name} MODULE ${_sip_output_files} ${SIP_EXTRA_SOURCE_FILES})
-    ELSE (CYGWIN OR APPLE)
-        ADD_LIBRARY(${_logical_name} SHARED ${_sip_output_files} ${SIP_EXTRA_SOURCE_FILES})
-    ENDIF (CYGWIN OR APPLE)
-    IF (NOT APPLE)
-        TARGET_LINK_LIBRARIES(${_logical_name} ${Python3_LIBRARIES})
-    ENDIF (NOT APPLE)
+    IF (CYGWIN)
+        ADD_LIBRARY(${_logical_name} MODULE ${_sip_output_files} )
+    ELSE (CYGWIN)
+        ADD_LIBRARY(${_logical_name} SHARED ${_sip_output_files} )
+    ENDIF (CYGWIN)
+    TARGET_LINK_LIBRARIES(${_logical_name} ${PYTHON_LIBRARY})
     TARGET_LINK_LIBRARIES(${_logical_name} ${EXTRA_LINK_LIBRARIES})
-    IF (APPLE)
-        SET_TARGET_PROPERTIES(${_logical_name} PROPERTIES LINK_FLAGS "-undefined dynamic_lookup")
-    ENDIF (APPLE)
     SET_TARGET_PROPERTIES(${_logical_name} PROPERTIES PREFIX "" OUTPUT_NAME ${_child_module_name})
 
-    IF (WIN32)
-        SET_TARGET_PROPERTIES(${_logical_name} PROPERTIES SUFFIX ".pyd" IMPORT_PREFIX "_")
-    ENDIF (WIN32)
-
-    INSTALL(TARGETS ${_logical_name} DESTINATION "${Python3_SITEARCH}/${_parent_module_path}")
+    INSTALL(TARGETS ${_logical_name} DESTINATION "${PYTHON_SITE_PACKAGES_INSTALL_DIR}/${_parent_module_path}")
 
 ENDMACRO(ADD_SIP_PYTHON_MODULE)

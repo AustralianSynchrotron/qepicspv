@@ -26,8 +26,8 @@ IF(EXISTS PYQT5_VERSION)
   # Already in cache, be silent
   SET(PYQT5_FOUND TRUE)
 ELSE(EXISTS PYQT5_VERSION)
-
   FIND_FILE(_find_pyqt5_py FindPyQt5.py PATHS ${CMAKE_MODULE_PATH})
+
   EXECUTE_PROCESS(COMMAND ${Python3_EXECUTABLE} ${_find_pyqt5_py} OUTPUT_VARIABLE pyqt5_config)
   IF(pyqt5_config)
     STRING(REGEX REPLACE "^pyqt_version:([^\n]+).*$" "\\1" PYQT5_VERSION ${pyqt5_config})
@@ -35,18 +35,19 @@ ELSE(EXISTS PYQT5_VERSION)
     STRING(REGEX REPLACE ".*\npyqt_version_tag:([^\n]+).*$" "\\1" PYQT5_VERSION_TAG ${pyqt5_config})
     STRING(REGEX REPLACE ".*\npyqt_sip_dir:([^\n]+).*$" "\\1" PYQT5_SIP_DIR ${pyqt5_config})
     STRING(REGEX REPLACE ".*\npyqt_sip_flags:([^\n]+).*$" "\\1" PYQT5_SIP_FLAGS ${pyqt5_config})
+    SEPARATE_ARGUMENTS(PYQT5_SIP_FLAGS)
 
     SET(PYQT5_FOUND TRUE)
   ENDIF(pyqt5_config)
 
   IF(PYQT5_FOUND)
-    IF(NOT PyQt5_FIND_QUIETLY)
+    IF(NOT PYQT5_FIND_QUIETLY)
       MESSAGE(STATUS "Found PyQt5 version: ${PYQT5_VERSION_STR}")
-    ENDIF(NOT PyQt5_FIND_QUIETLY)
+    ENDIF(NOT PYQT5_FIND_QUIETLY)
   ELSE(PYQT5_FOUND)
-    IF(PyQt5_FIND_REQUIRED)
+    IF(PYQT5_FIND_REQUIRED)
       MESSAGE(FATAL_ERROR "Could not find PyQt5.")
-    ENDIF(PyQt5_FIND_REQUIRED)
+    ENDIF(PYQT5_FIND_REQUIRED)
   ENDIF(PYQT5_FOUND)
 
 ENDIF(EXISTS PYQT5_VERSION)
