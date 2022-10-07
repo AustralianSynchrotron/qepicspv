@@ -25,7 +25,7 @@ public:
     setStyleSheet("border: 1px solid black;"
                   "border-radius: 3px;"
                   "background-image: url(:/mesh.svg);"
-                  "background-color: rgb(0,0,0,0);");
+                  "background-color: rgba(0,0,0,0);");
     resize(parent->size());
     parent->setFocusProxy(this);
     parent->installEventFilter(this);
