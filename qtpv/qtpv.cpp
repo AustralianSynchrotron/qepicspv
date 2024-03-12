@@ -6,6 +6,11 @@
 #include <QDebug>
 
 
+unsigned QEpicsPv::debugLevel = 0;
+const QString dbgTime() {
+  return QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss.zzz");
+}
+
 
 
 bool qtWait(const QList<ObjSig> & osS, int delay_msec) {
@@ -44,7 +49,7 @@ bool qtWait(const QObject * sender, const char * signal, int delay_msec) {
 
 bool qtWait(int delay_msec) {
 
-  if (delay_msec <= 0)
+  if (delay_msec < 0)
     return true;
 
   QTimer * tT = 0;
@@ -78,7 +83,6 @@ const bool QEpicsPv::inited = QEpicsPv::init();
 
 static const QString emptystring = QString();
 
-unsigned QEpicsPv::debugLevel = 0;
 
 bool QEpicsPv::init() {
   qRegisterMetaType<QCaConnectionInfo>("QCaConnectionInfo&");
@@ -101,8 +105,7 @@ QEpicsPv::QEpicsPv(const QString & _pvName, QObject *parent) :
   updated(false)
 {
   if ( debugLevel > 0 )
-    qDebug() << "QEpicsPv DEBUG: INI" << QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss.zzz") <<
-                this << _pvName;
+    qDebug() << "QEpicsPv DEBUG: INI" << dbgTime() << this << _pvName;
   installEventFilter(this);
   setPV(pvName);
 }
@@ -115,16 +118,14 @@ QEpicsPv::QEpicsPv(QObject *parent) :
   updated(false)
 {
   if ( debugLevel > 0 )
-    qDebug() << "QEpicsPv DEBUG: INI" << QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss.zzz")
-             << this;
+    qDebug() << "QEpicsPv DEBUG: INI" << dbgTime() << this;
   installEventFilter(this);
 }
 
 
 QEpicsPv::~QEpicsPv(){
   if ( debugLevel > 0 )
-    qDebug() << "QEpicsPv DEBUG: DEL" << QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss.zzz")
-             << this << isConnected() << pv();
+    qDebug() << "QEpicsPv DEBUG: DEL" << dbgTime() << this << isConnected() << pv();
   if ( ! pv().isEmpty() )
     setPV();
 }
@@ -150,8 +151,7 @@ void QEpicsPv::setPV(const QString & _pvName) {
 void QEpicsPv::preSetPV() {
 
   if ( debugLevel > 0 )
-    qDebug() << "QEpicsPv DEBUG: SPV" << QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss.zzz")
-             << this << pvName ;
+    qDebug() << "QEpicsPv DEBUG: SPV" << dbgTime() << this << pvName ;
 
   if (qCaField) {
     qCaField->deleteChannel();
@@ -251,6 +251,7 @@ QVariant QEpicsPv::get(const QString & _pvName, int delay_msec) {
   if ( _pvName.isEmpty() )
     return badData;
   QEpicsPv tpv(_pvName);
+
   QCoreApplication::processEvents();
   return tpv.getConnected(delay_msec);
 }
@@ -260,8 +261,8 @@ const QVariant & QEpicsPv::set(const QVariant & value, int delay_msec) {
   emit valueUpdated(get());
 
   if ( debugLevel > 0 )
-    qDebug() << "QEpicsPv DEBUG: SET" << QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss.zzz")
-             << this << isConnected() << pv() << get() << value << getEnum();
+    qDebug() << "QEpicsPv DEBUG: SET" << dbgTime() << this
+             << isConnected() << pv() << get() << value << getEnum();
 
   if ( ! isConnected() || ! value.isValid() )
     return badData ;
@@ -330,8 +331,8 @@ QVariant QEpicsPv::set(const QString & _pvName, const QVariant & value, int dela
 void QEpicsPv::updateValue(const QVariant & data){
 
   if ( debugLevel > 0 )
-    qDebug() << "QEpicsPv DEBUG: UPD" << QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss.zzz")
-             << this << isConnected() << pv() << get() << data << getEnum();
+    qDebug() << "QEpicsPv DEBUG: UPD" << dbgTime() << this
+             << isConnected() << pv() << get() << data << getEnum();
 
   if ( ! qCaField || ! data.isValid() )
     return;
@@ -357,8 +358,7 @@ void QEpicsPv::updateConnection() {
 
   bool con =  isConnected();
   if ( debugLevel > 0 )
-    qDebug() << "QEpicsPv DEBUG: CON" << QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss.zzz")
-             << this << pv() << con ;
+    qDebug() << "QEpicsPv DEBUG: CON" << dbgTime() << this << pv() << con ;
 
   if (con) {
     emit connected();
